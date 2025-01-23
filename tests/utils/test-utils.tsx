@@ -32,7 +32,7 @@ function render(
       preloadedState,
     }),
     ...renderOptions
-  }: ExtendedRenderOptions = {}
+  }: ExtendedRenderOptions = {},
 ) {
   function Wrapper({ children }: { children: React.ReactNode }) {
     return (
@@ -48,4 +48,4 @@ function render(
 }
 
 export * from '@testing-library/react';
-export { render }; 
+export { render };

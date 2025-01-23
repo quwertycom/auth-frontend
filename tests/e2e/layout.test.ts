@@ -17,7 +17,7 @@ test.describe('Layout and Responsiveness', () => {
     // Check if main container is centered
     const container = await page.locator('div.min-h-screen').first();
     await expect(container).toBeVisible();
-    
+
     // Verify container has required classes
     const classes = await container.getAttribute('class');
     expect(classes).toContain('flex');
@@ -39,10 +39,16 @@ test.describe('Layout and Responsiveness', () => {
     // Check buttons visibility and container
     const buttonContainer = await page.locator('div.flex.gap-4').first();
     await expect(buttonContainer).toBeVisible();
-    
-    const setButton = await page.getByRole('button', { name: 'Set Username', exact: true });
-    const resetButton = await page.getByRole('button', { name: 'Reset Username', exact: true });
-    
+
+    const setButton = await page.getByRole('button', {
+      name: 'Set Username',
+      exact: true,
+    });
+    const resetButton = await page.getByRole('button', {
+      name: 'Reset Username',
+      exact: true,
+    });
+
     await expect(setButton).toBeVisible();
     await expect(resetButton).toBeVisible();
   });
@@ -50,11 +56,11 @@ test.describe('Layout and Responsiveness', () => {
   test('should have correct spacing between elements', async ({ page }) => {
     const container = await page.locator('div.min-h-screen').first();
     await expect(container).toBeVisible();
-    
+
     // Verify gap classes
     const containerClasses = await container.getAttribute('class');
     expect(containerClasses).toContain('gap-16');
-    
+
     const buttonContainer = await page.locator('div.flex.gap-4').first();
     await expect(buttonContainer).toBeVisible();
     const buttonContainerClasses = await buttonContainer.getAttribute('class');
@@ -69,12 +75,15 @@ test.describe('Layout and Responsiveness', () => {
     expect(headingClasses).toContain('text-4xl');
 
     // Check username text size - first set a username so it's visible
-    const setButton = await page.getByRole('button', { name: 'Set Username', exact: true });
+    const setButton = await page.getByRole('button', {
+      name: 'Set Username',
+      exact: true,
+    });
     await setButton.click();
-    
+
     const username = await page.getByRole('status').first();
     await expect(username).toBeVisible();
     const usernameClasses = await username.getAttribute('class');
     expect(usernameClasses).toContain('text-2xl');
   });
-}); 
+});

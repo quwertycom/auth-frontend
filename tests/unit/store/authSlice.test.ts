@@ -1,5 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import authReducer, { setUsername, resetUsername } from '@/app/store/features/authSlice';
+import authReducer, {
+  setUsername,
+  resetUsername,
+} from '@/app/store/features/authSlice';
 
 describe('auth reducer', () => {
   const initialState = { username: null };
@@ -17,4 +20,4 @@ describe('auth reducer', () => {
     const actual = authReducer({ username: 'JohnDoe' }, resetUsername());
     expect(actual.username).toEqual(null);
   });
-}); 
+});

@@ -1,5 +1,5 @@
-import { configureStore } from '@reduxjs/toolkit'
-import authReducer, { AuthState } from './features/authSlice'
+import { configureStore } from '@reduxjs/toolkit';
+import authReducer, { AuthState } from './features/authSlice';
 
 // Load state from localStorage
 const loadState = () => {
@@ -26,15 +26,15 @@ const saveState = (state: RootState) => {
 
 export const store = configureStore<{ auth: AuthState }>({
   reducer: {
-    auth: authReducer
+    auth: authReducer,
   },
-  preloadedState: loadState()
-})
+  preloadedState: loadState(),
+});
 
 // Subscribe to store changes
 store.subscribe(() => {
   saveState(store.getState());
 });
 
-export type RootState = ReturnType<typeof store.getState>
-export type AppDispatch = typeof store.dispatch
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
