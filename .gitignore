@@ -12,6 +12,12 @@
 
 # testing
 /coverage
+/html
+.vitest/
+__snapshots__/
+coverage.json
+coverage-final.json
+vitest.config.js.timestamp-*
 
 # next.js
 /.next/
