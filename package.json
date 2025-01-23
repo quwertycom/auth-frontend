@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "test:unit": "vitest tests/unit/",
+    "test:integration": "vitest tests/integration/",
   },
   "dependencies": {
     "@heroui/react": "^2.6.14",
