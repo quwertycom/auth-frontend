@@ -28,35 +28,41 @@ services:
     command: npm run build
 
   test-unit:
-    image: qauth:dev
+    build:
+      context: .
+      target: test
+    image: qauth:test
     volumes:
       - .:/app
       - /app/node_modules
-      - coverage:/app/coverage
     environment:
       - NODE_ENV=test
       - NEXT_TELEMETRY_DISABLED=1
     command: npm run test:unit
 
   test-integration:
-    image: qauth:dev
+    build:
+      context: .
+      target: test
+    image: qauth:test
     volumes:
       - .:/app
       - /app/node_modules
-      - coverage:/app/coverage
     environment:
       - NODE_ENV=test
       - NEXT_TELEMETRY_DISABLED=1
     command: npm run test:integration
 
   test-e2e:
-    image: qauth:dev
+    build:
+      context: .
+      target: test
+    image: qauth:test
     ipc: host
     volumes:
       - .:/app
       - /app/node_modules
       - /app/playwright-report
-      - /app/test-results
     environment:
       - NODE_ENV=test
       - NEXT_TELEMETRY_DISABLED=1
@@ -64,13 +70,15 @@ services:
     command: npm run test:e2e
 
   test-e2e-ui:
-    image: qauth:dev
+    build:
+      context: .
+      target: test
+    image: qauth:test
     ipc: host
     volumes:
       - .:/app
       - /app/node_modules
       - /app/playwright-report
-      - /app/test-results
     environment:
       - NODE_ENV=test
       - NEXT_TELEMETRY_DISABLED=1
@@ -78,13 +86,15 @@ services:
     command: npm run test:e2e:ui
 
   test-e2e-debug:
-    image: qauth:dev
+    build:
+      context: .
+      target: test
+    image: qauth:test
     ipc: host
     volumes:
       - .:/app
       - /app/node_modules
       - /app/playwright-report
-      - /app/test-results
     environment:
       - NODE_ENV=test
       - NEXT_TELEMETRY_DISABLED=1
@@ -93,13 +103,15 @@ services:
     command: npm run test:e2e:debug
 
   test-perf:
-    image: qauth:dev
+    build:
+      context: .
+      target: test
+    image: qauth:test
     ipc: host
     volumes:
       - .:/app
       - /app/node_modules
       - /app/playwright-report
-      - /app/test-results
     environment:
       - NODE_ENV=test
       - NEXT_TELEMETRY_DISABLED=1
@@ -107,36 +119,42 @@ services:
     command: npm run test:perf
 
   test-watch:
-    image: qauth:dev
+    build:
+      context: .
+      target: test
+    image: qauth:test
     volumes:
       - .:/app
       - /app/node_modules
-      - coverage:/app/coverage
     environment:
       - NODE_ENV=test
       - NEXT_TELEMETRY_DISABLED=1
     command: npm run test:watch
 
   test-coverage:
-    image: qauth:dev
+    build:
+      context: .
+      target: test
+    image: qauth:test
     volumes:
       - .:/app
       - /app/node_modules
-      - coverage:/app/tests/coverage
     environment:
       - NODE_ENV=test
       - NEXT_TELEMETRY_DISABLED=1
+      - NODE_OPTIONS=--experimental-vm-modules
     command: npm run test:coverage
 
   test-all:
-    image: qauth:dev
+    build:
+      context: .
+      target: test
+    image: qauth:test
     ipc: host
     volumes:
       - .:/app
       - /app/node_modules
-      - coverage:/app/coverage
       - /app/playwright-report
-      - /app/test-results
     environment:
       - NODE_ENV=test
       - NEXT_TELEMETRY_DISABLED=1
@@ -145,6 +163,7 @@ services:
 
 volumes:
   coverage:
+    driver: local
 
 networks:
   default:

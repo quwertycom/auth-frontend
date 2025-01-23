@@ -18,8 +18,19 @@ COPY . .
 ENV NEXT_TELEMETRY_DISABLED 1
 RUN npm run build
 
-# Stage 3: Development (with Playwright)
-FROM mcr.microsoft.com/playwright:focal AS dev
+# Stage 3: Development (without Playwright)
+FROM node:20-alpine AS dev
+WORKDIR /app
+
+# Copy project files
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+
+ENV NODE_ENV=development
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Stage 3.1: Test environment (with Playwright)
+FROM mcr.microsoft.com/playwright:focal AS test
 WORKDIR /app
 
 # Install Node.js

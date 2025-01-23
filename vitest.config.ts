@@ -1,7 +1,7 @@
 /// <reference types="vitest" />
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
+import { fileURLToPath } from 'node:url';
 import react from '@vitejs/plugin-react';
-import { resolve } from 'path';
 
 export default defineConfig({
   plugins: [react()],
@@ -10,13 +10,26 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./tests/utils/setup.tsx'],
     coverage: {
-      reportsDirectory: './coverage',
+      reportsDirectory: './tests/coverage',
       enabled: true,
       provider: 'v8',
       clean: true,
       reporter: ['text', 'json', 'html'],
-      include: ['app/**/*.{ts,tsx}'],
-      exclude: ['app/**/*.d.ts', 'app/**/*.stories.{ts,tsx}'],
+      include: [
+        'app/**/*.{ts,tsx}',
+        'components/**/*.{ts,tsx}',
+        'lib/**/*.{ts,tsx}',
+        'store/**/*.{ts,tsx}'
+      ],
+      exclude: [
+        'app/**/*.d.ts',
+        'app/**/*.stories.{ts,tsx}',
+        'app/api/**/*',
+        'tests/**/*',
+        '**/*.test.{ts,tsx}',
+        '**/*.spec.{ts,tsx}'
+      ],
+      all: true
     },
     include: [
       'tests/unit/**/*.{test,spec}.{ts,tsx}',
@@ -26,7 +39,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@': resolve(__dirname),
+      '@': fileURLToPath(new URL('.', import.meta.url)),
     },
   },
 });
