@@ -32,6 +32,7 @@ services:
     volumes:
       - .:/app
       - /app/node_modules
+      - coverage:/app/coverage
     environment:
       - NODE_ENV=test
       - NEXT_TELEMETRY_DISABLED=1
@@ -42,6 +43,7 @@ services:
     volumes:
       - .:/app
       - /app/node_modules
+      - coverage:/app/coverage
     environment:
       - NODE_ENV=test
       - NEXT_TELEMETRY_DISABLED=1
@@ -109,6 +111,7 @@ services:
     volumes:
       - .:/app
       - /app/node_modules
+      - coverage:/app/coverage
     environment:
       - NODE_ENV=test
       - NEXT_TELEMETRY_DISABLED=1
@@ -119,7 +122,7 @@ services:
     volumes:
       - .:/app
       - /app/node_modules
-      - /app/coverage
+      - coverage:/app/tests/coverage
     environment:
       - NODE_ENV=test
       - NEXT_TELEMETRY_DISABLED=1
@@ -131,14 +134,17 @@ services:
     volumes:
       - .:/app
       - /app/node_modules
+      - coverage:/app/coverage
       - /app/playwright-report
       - /app/test-results
-      - /app/coverage
     environment:
       - NODE_ENV=test
       - NEXT_TELEMETRY_DISABLED=1
       - CI=true
     command: npm run test:all
+
+volumes:
+  coverage:
 
 networks:
   default:
