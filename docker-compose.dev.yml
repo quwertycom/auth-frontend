@@ -32,6 +32,9 @@ services:
     volumes:
       - .:/app
       - /app/node_modules
+    environment:
+      - NODE_ENV=test
+      - NEXT_TELEMETRY_DISABLED=1
     command: npm run test:unit
 
   test-integration:
@@ -39,50 +42,66 @@ services:
     volumes:
       - .:/app
       - /app/node_modules
+    environment:
+      - NODE_ENV=test
+      - NEXT_TELEMETRY_DISABLED=1
     command: npm run test:integration
 
   test-e2e:
     image: qauth:dev
+    ipc: host
     volumes:
       - .:/app
       - /app/node_modules
       - /app/playwright-report
       - /app/test-results
     environment:
-      - PLAYWRIGHT_BROWSERS_PATH=/app/node_modules/playwright/.cache/browser
+      - NODE_ENV=test
+      - NEXT_TELEMETRY_DISABLED=1
+      - CI=true
     command: npm run test:e2e
 
   test-e2e-ui:
     image: qauth:dev
+    ipc: host
     volumes:
       - .:/app
       - /app/node_modules
       - /app/playwright-report
       - /app/test-results
     environment:
-      - PLAYWRIGHT_BROWSERS_PATH=/app/node_modules/playwright/.cache/browser
+      - NODE_ENV=test
+      - NEXT_TELEMETRY_DISABLED=1
+      - CI=true
     command: npm run test:e2e:ui
 
   test-e2e-debug:
     image: qauth:dev
+    ipc: host
     volumes:
       - .:/app
       - /app/node_modules
       - /app/playwright-report
       - /app/test-results
     environment:
-      - PLAYWRIGHT_BROWSERS_PATH=/app/node_modules/playwright/.cache/browser
+      - NODE_ENV=test
+      - NEXT_TELEMETRY_DISABLED=1
+      - CI=true
+      - PWDEBUG=1
     command: npm run test:e2e:debug
 
   test-perf:
     image: qauth:dev
+    ipc: host
     volumes:
       - .:/app
       - /app/node_modules
       - /app/playwright-report
       - /app/test-results
     environment:
-      - PLAYWRIGHT_BROWSERS_PATH=/app/node_modules/playwright/.cache/browser
+      - NODE_ENV=test
+      - NEXT_TELEMETRY_DISABLED=1
+      - CI=true
     command: npm run test:perf
 
   test-watch:
@@ -90,6 +109,9 @@ services:
     volumes:
       - .:/app
       - /app/node_modules
+    environment:
+      - NODE_ENV=test
+      - NEXT_TELEMETRY_DISABLED=1
     command: npm run test:watch
 
   test-coverage:
@@ -98,10 +120,14 @@ services:
       - .:/app
       - /app/node_modules
       - /app/coverage
+    environment:
+      - NODE_ENV=test
+      - NEXT_TELEMETRY_DISABLED=1
     command: npm run test:coverage
 
   test-all:
     image: qauth:dev
+    ipc: host
     volumes:
       - .:/app
       - /app/node_modules
@@ -109,7 +135,9 @@ services:
       - /app/test-results
       - /app/coverage
     environment:
-      - PLAYWRIGHT_BROWSERS_PATH=/app/node_modules/playwright/.cache/browser
+      - NODE_ENV=test
+      - NEXT_TELEMETRY_DISABLED=1
+      - CI=true
     command: npm run test:all
 
 networks:
