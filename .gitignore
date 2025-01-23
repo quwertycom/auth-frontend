@@ -12,6 +12,12 @@
 
 # testing
 /coverage
+/html
+.vitest/
+__snapshots__/
+coverage.json
+coverage-final.json
+vitest.config.js.timestamp-*
 
 # next.js
 /.next/
@@ -39,3 +45,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Playwright
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+/test-results/
+/playwright-report/
+/playwright/.cache/
+*.png

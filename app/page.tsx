@@ -10,11 +10,17 @@ export default function Home() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <div className="text-4xl font-bold">Hello World</div>
+      <h1 className="text-4xl font-bold">Hello World</h1>
       <div className="flex gap-4 items-center">
-        <Button variant="solid" onPress={() => dispatch(resetUsername())}>Reset Username</Button>
-        <span className="text-2xl">{username}</span>
-        <Button variant="solid" onPress={() => dispatch(setUsername('JohnDoe'))}>Set Username</Button>
+        <Button variant="solid" onPress={() => dispatch(resetUsername())}>
+          Reset Username
+        </Button>
+        <span className="text-2xl" role="status" aria-label="Current username">
+          {username}
+        </span>
+        <Button variant="solid" onPress={() => dispatch(setUsername('JohnDoe'))}>
+          Set Username
+        </Button>
       </div>
     </div>
   );
