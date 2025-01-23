@@ -19,7 +19,7 @@ export default defineConfig({
         'app/**/*.{ts,tsx}',
         'components/**/*.{ts,tsx}',
         'lib/**/*.{ts,tsx}',
-        'store/**/*.{ts,tsx}'
+        'store/**/*.{ts,tsx}',
       ],
       exclude: [
         'app/**/*.d.ts',
@@ -27,9 +27,9 @@ export default defineConfig({
         'app/api/**/*',
         'tests/**/*',
         '**/*.test.{ts,tsx}',
-        '**/*.spec.{ts,tsx}'
+        '**/*.spec.{ts,tsx}',
       ],
-      all: true
+      all: true,
     },
     include: [
       'tests/unit/**/*.{test,spec}.{ts,tsx}',
