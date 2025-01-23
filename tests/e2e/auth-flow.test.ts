@@ -13,7 +13,7 @@ test.describe('Authentication Flow', () => {
     // Wait for the button container to be visible first
     const buttonContainer = await page.locator('div.flex.gap-4').first();
     await expect(buttonContainer).toBeVisible();
-    
+
     // Now check the status element
     const usernameElement = await page.getByRole('status').first();
     // Don't check visibility since it's empty initially
@@ -23,9 +23,15 @@ test.describe('Authentication Flow', () => {
 
   test('should set and reset username correctly', async ({ page }) => {
     const usernameElement = await page.getByRole('status').first();
-    const setButton = await page.getByRole('button', { name: 'Set Username', exact: true });
-    const resetButton = await page.getByRole('button', { name: 'Reset Username', exact: true });
-    
+    const setButton = await page.getByRole('button', {
+      name: 'Set Username',
+      exact: true,
+    });
+    const resetButton = await page.getByRole('button', {
+      name: 'Reset Username',
+      exact: true,
+    });
+
     // Initial state - don't check visibility
     const initialText = await usernameElement.textContent();
     expect(initialText?.trim()).toBeFalsy();
@@ -42,7 +48,10 @@ test.describe('Authentication Flow', () => {
   });
 
   test('should persist username between page reloads', async ({ page }) => {
-    const setButton = await page.getByRole('button', { name: 'Set Username', exact: true });
+    const setButton = await page.getByRole('button', {
+      name: 'Set Username',
+      exact: true,
+    });
     await setButton.click();
 
     // Wait for state to be updated and verify initial set
@@ -65,20 +74,26 @@ test.describe('Authentication Flow', () => {
 
   test('should handle rapid username changes', async ({ page }) => {
     const usernameElement = await page.getByRole('status').first();
-    const setButton = await page.getByRole('button', { name: 'Set Username', exact: true });
-    const resetButton = await page.getByRole('button', { name: 'Reset Username', exact: true });
+    const setButton = await page.getByRole('button', {
+      name: 'Set Username',
+      exact: true,
+    });
+    const resetButton = await page.getByRole('button', {
+      name: 'Reset Username',
+      exact: true,
+    });
 
     // Rapid changes with proper waits
     await setButton.click();
     await expect(usernameElement).toBeVisible();
     await expect(usernameElement).toHaveText('JohnDoe', { timeout: 5000 });
-    
+
     await resetButton.click();
     const emptyText = await usernameElement.textContent();
     expect(emptyText?.trim()).toBeFalsy();
-    
+
     await setButton.click();
     await expect(usernameElement).toBeVisible();
     await expect(usernameElement).toHaveText('JohnDoe', { timeout: 5000 });
   });
-}); 
+});
