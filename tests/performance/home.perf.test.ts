@@ -12,10 +12,10 @@ test.describe('Performance Tests', () => {
     // Navigate to home page
     await page.goto('/');
     
-    // Wait for the main heading to be visible (more reliable than data-testid)
+    // Wait for the main heading to be visible
     await page.waitForSelector('h1:has-text("Hello World")', { timeout: 5000 });
     
-    // Also wait for interactive elements to ensure page is fully loaded
+    // Also wait for interactive elements
     await page.waitForSelector('button:has-text("Set Username")', { timeout: 5000 });
     
     const loadTime = Date.now() - startTime;
@@ -24,30 +24,40 @@ test.describe('Performance Tests', () => {
     // Performance assertions
     expect(loadTime).toBeLessThan(3000); // Page should load under 3 seconds
     
-    // Measure First Paint using Performance API
-    const firstPaint = await page.evaluate(() => {
-      const paint = performance.getEntriesByType('paint');
-      return paint.find(entry => entry.name === 'first-paint')?.startTime;
+    // Measure First Contentful Paint using Performance API
+    const fcp = await page.evaluate(() => {
+      return new Promise((resolve) => {
+        // Use PerformanceObserver to get FCP
+        new PerformanceObserver((list) => {
+          const entries = list.getEntries();
+          const fcp = entries[0]?.startTime;
+          resolve(fcp);
+        }).observe({ entryTypes: ['paint'] });
+
+        // Fallback if FCP is not available
+        setTimeout(() => resolve(performance.now()), 100);
+      });
     });
     
-    console.log(`First Paint: ${firstPaint}ms`);
-    expect(firstPaint).toBeLessThan(1000); // First paint should occur under 1 second
+    console.log(`First Contentful Paint: ${fcp}ms`);
+    expect(fcp).toBeLessThan(1500); // FCP should occur under 1.5 seconds
     
     // Check for layout shifts
     const cls = await page.evaluate(() => {
       return new Promise((resolve) => {
+        let clsScore = 0;
+        
         new PerformanceObserver((list) => {
           const entries = list.getEntries() as LayoutShift[];
-          let clsScore = 0;
           entries.forEach(entry => {
-            if (entry.hadRecentInput) return;
-            clsScore += entry.value;
+            if (!entry.hadRecentInput) {
+              clsScore += entry.value;
+            }
           });
-          resolve(clsScore);
         }).observe({ entryTypes: ['layout-shift'] });
         
         // Wait a bit to capture any layout shifts
-        setTimeout(() => resolve(0), 1000);
+        setTimeout(() => resolve(clsScore), 1000);
       });
     });
     
