@@ -17,6 +17,7 @@ services:
       - NODE_ENV=development
       - PORT=3000
       - HOSTNAME=0.0.0.0
+      - npm_config_update_notifier=false
     command: npm run dev
 
   build:
@@ -25,6 +26,11 @@ services:
       - .:/app
       - /app/node_modules
       - /app/.next
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
+      - npm_config_update_notifier=false
     command: npm run build
 
   test-unit:
@@ -38,6 +44,7 @@ services:
     environment:
       - NODE_ENV=test
       - NEXT_TELEMETRY_DISABLED=1
+      - npm_config_update_notifier=false
     command: npm run test:unit
 
   test-integration:
@@ -51,6 +58,7 @@ services:
     environment:
       - NODE_ENV=test
       - NEXT_TELEMETRY_DISABLED=1
+      - npm_config_update_notifier=false
     command: npm run test:integration
 
   test-e2e:
@@ -67,6 +75,7 @@ services:
       - NODE_ENV=test
       - NEXT_TELEMETRY_DISABLED=1
       - CI=true
+      - npm_config_update_notifier=false
     command: npm run test:e2e
 
   test-e2e-ui:
@@ -83,6 +92,7 @@ services:
       - NODE_ENV=test
       - NEXT_TELEMETRY_DISABLED=1
       - CI=true
+      - npm_config_update_notifier=false
     command: npm run test:e2e:ui
 
   test-e2e-debug:
@@ -100,6 +110,7 @@ services:
       - NEXT_TELEMETRY_DISABLED=1
       - CI=true
       - PWDEBUG=1
+      - npm_config_update_notifier=false
     command: npm run test:e2e:debug
 
   test-perf:
@@ -116,6 +127,7 @@ services:
       - NODE_ENV=test
       - NEXT_TELEMETRY_DISABLED=1
       - CI=true
+      - npm_config_update_notifier=false
     command: npm run test:perf
 
   test-watch:
@@ -129,6 +141,7 @@ services:
     environment:
       - NODE_ENV=test
       - NEXT_TELEMETRY_DISABLED=1
+      - npm_config_update_notifier=false
     command: npm run test:watch
 
   test-coverage:
@@ -143,6 +156,7 @@ services:
       - NODE_ENV=test
       - NEXT_TELEMETRY_DISABLED=1
       - NODE_OPTIONS=--experimental-vm-modules
+      - npm_config_update_notifier=false
     command: npm run test:coverage
 
   test-all:
@@ -159,6 +173,7 @@ services:
       - NODE_ENV=test
       - NEXT_TELEMETRY_DISABLED=1
       - CI=true
+      - npm_config_update_notifier=false
     command: npm run test:all
 
 volumes:

@@ -16,6 +16,7 @@ COPY . .
 
 # Build the application
 ENV NEXT_TELEMETRY_DISABLED 1
+ENV npm_config_update_notifier false
 RUN npm run build
 
 # Stage 3: Development (without Playwright)
@@ -28,6 +29,7 @@ COPY . .
 
 ENV NODE_ENV=development
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV npm_config_update_notifier false
 
 # Stage 3.1: Test environment (with Playwright)
 FROM mcr.microsoft.com/playwright:focal AS test
@@ -44,6 +46,7 @@ COPY . .
 
 ENV NODE_ENV=development
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV npm_config_update_notifier false
 
 # Install Playwright browsers
 RUN npx playwright install --with-deps
@@ -54,6 +57,7 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV npm_config_update_notifier false
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
