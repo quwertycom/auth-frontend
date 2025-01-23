@@ -19,27 +19,6 @@ services:
       - HOSTNAME=0.0.0.0
     command: npm run dev
 
-  lint:
-    image: qauth:dev
-    volumes:
-      - .:/app
-      - /app/node_modules
-    command: npm run lint
-
-  format:
-    image: qauth:dev
-    volumes:
-      - .:/app
-      - /app/node_modules
-    command: npm run format
-
-  format-fix:
-    image: qauth:dev
-    volumes:
-      - .:/app
-      - /app/node_modules
-    command: npm run format:fix
-
   build:
     image: qauth:dev
     volumes:
