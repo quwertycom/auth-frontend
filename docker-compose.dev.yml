@@ -1,0 +1,139 @@
+version: '3.8'
+
+services:
+  dev:
+    build:
+      context: .
+      target: dev
+    image: qauth:dev
+    container_name: qauth-dev
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
+    command: npm run dev
+
+  lint:
+    image: qauth:dev
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: npm run lint
+
+  format:
+    image: qauth:dev
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: npm run format
+
+  format-fix:
+    image: qauth:dev
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: npm run format:fix
+
+  build:
+    image: qauth:dev
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    command: npm run build
+
+  test-unit:
+    image: qauth:dev
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: npm run test:unit
+
+  test-integration:
+    image: qauth:dev
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: npm run test:integration
+
+  test-e2e:
+    image: qauth:dev
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/playwright-report
+      - /app/test-results
+    environment:
+      - PLAYWRIGHT_BROWSERS_PATH=/app/node_modules/playwright/.cache/browser
+    command: npm run test:e2e
+
+  test-e2e-ui:
+    image: qauth:dev
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/playwright-report
+      - /app/test-results
+    environment:
+      - PLAYWRIGHT_BROWSERS_PATH=/app/node_modules/playwright/.cache/browser
+    command: npm run test:e2e:ui
+
+  test-e2e-debug:
+    image: qauth:dev
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/playwright-report
+      - /app/test-results
+    environment:
+      - PLAYWRIGHT_BROWSERS_PATH=/app/node_modules/playwright/.cache/browser
+    command: npm run test:e2e:debug
+
+  test-perf:
+    image: qauth:dev
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/playwright-report
+      - /app/test-results
+    environment:
+      - PLAYWRIGHT_BROWSERS_PATH=/app/node_modules/playwright/.cache/browser
+    command: npm run test:perf
+
+  test-watch:
+    image: qauth:dev
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: npm run test:watch
+
+  test-coverage:
+    image: qauth:dev
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/coverage
+    command: npm run test:coverage
+
+  test-all:
+    image: qauth:dev
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/playwright-report
+      - /app/test-results
+      - /app/coverage
+    environment:
+      - PLAYWRIGHT_BROWSERS_PATH=/app/node_modules/playwright/.cache/browser
+    command: npm run test:all
+
+networks:
+  default:
+    name: qauth-dev-network
+    driver: bridge 
