@@ -113,6 +113,14 @@ jobs:
         with:
           path: .
           key: ${{ github.sha }}-project-installed
+      - name: Cache Next.js Build
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ github.workspace }}/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
       - name: Build
         run: npm run build
       - name: Upload Build Artifacts
@@ -120,9 +128,9 @@ jobs:
         with:
           name: build-artifacts
           path: |
-            .next
+            .next/standalone/
+            .next/static
             public
-            package.json
             next.config.mjs
 
   unit-tests:
@@ -195,12 +203,21 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build-artifacts
-          path: .
-      - name: Install Production Dependencies
-        run: npm ci --omit=dev
+          path: .output
+      - name: Prepare Standalone Build
+        run: |
+          # Create required directory structure
+          mkdir -p .output/.next/static
+          # Move static files to the correct location
+          mv .output/static .output/.next/
+          # Move public files
+          mv .output/public .output/
+          # Move config
+          mv .output/next.config.mjs .output/
       - name: Start App
         run: |
-          npm run start &
+          cd .output
+          node server.js &
           echo "Waiting for app to start..."
           for i in {1..30}; do
             if curl -s -f http://localhost:3000/api/health > /dev/null 2>&1; then
