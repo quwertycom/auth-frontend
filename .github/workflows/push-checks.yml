@@ -1,0 +1,219 @@
+name: Push Checks
+
+on:
+  push:
+    branches:
+      - '**'
+      - '!main'
+      - '!dev'
+
+env:
+  NODE_VERSION: '20.x'
+  NEXT_TELEMETRY_DISABLED: 1
+  CI: true
+  npm_config_update_notifier: false
+
+jobs:
+  setup:
+    name: Setup Node.js
+    runs-on: ubuntu-latest
+    outputs:
+      node-version: ${{ env.NODE_VERSION }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+  install:
+    name: Install Dependencies
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ needs.setup.outputs.node-version }}
+          cache: 'npm'
+      - name: Restore Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+      - name: Install Dependencies
+        run: npm ci
+      - name: Cache Project
+        uses: actions/cache@v4
+        with:
+          path: .
+          key: ${{ github.sha }}-project-installed
+
+  format-check:
+    name: Check Code Format
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ needs.setup.outputs.node-version }}
+      - name: Restore Project Cache
+        uses: actions/cache@v4
+        with:
+          path: .
+          key: ${{ github.sha }}-project-installed
+      - name: Check Format
+        run: npm run format
+
+  lint:
+    name: Lint Code
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ needs.setup.outputs.node-version }}
+      - name: Restore Project Cache
+        uses: actions/cache@v4
+        with:
+          path: .
+          key: ${{ github.sha }}-project-installed
+      - name: Run ESLint
+        run: npm run lint
+
+  build:
+    name: Build Project
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ needs.setup.outputs.node-version }}
+      - name: Restore Project Cache
+        uses: actions/cache@v4
+        with:
+          path: .
+          key: ${{ github.sha }}-project-installed
+      - name: Build
+        run: npm run build
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: |
+            .next
+            public
+            package.json
+            next.config.mjs
+
+  unit-tests:
+    name: Unit Tests
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ needs.setup.outputs.node-version }}
+      - name: Restore Project Cache
+        uses: actions/cache@v4
+        with:
+          path: .
+          key: ${{ github.sha }}-project-installed
+      - name: Run Unit Tests
+        run: npm run test:unit
+
+  integration-tests:
+    name: Integration Tests
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ needs.setup.outputs.node-version }}
+      - name: Restore Project Cache
+        uses: actions/cache@v4
+        with:
+          path: .
+          key: ${{ github.sha }}-project-installed
+      - name: Run Integration Tests
+        run: npm run test:integration
+
+  e2e-tests:
+    name: E2E Tests
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ needs.setup.outputs.node-version }}
+      - name: Restore Project Cache
+        uses: actions/cache@v4
+        with:
+          path: .
+          key: ${{ github.sha }}-project-installed
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+      - name: Run E2E Tests
+        run: npm run test:e2e
+
+  app-health:
+    name: App Health Check
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ needs.setup.outputs.node-version }}
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: .
+      - name: Install Production Dependencies
+        run: npm ci --omit=dev
+      - name: Start App
+        run: |
+          npm run start &
+          echo "Waiting for app to start..."
+          for i in {1..30}; do
+            if curl -s -f http://localhost:3000/api/health > /dev/null 2>&1; then
+              echo "App is up!"
+              break
+            fi
+            if [ $i -eq 30 ]; then
+              echo "App failed to start within 30 seconds"
+              exit 1
+            fi
+            echo "Attempt $i: App not ready yet..."
+            sleep 1
+          done
+      - name: Check App Health
+        run: |
+          curl -f http://localhost:3000/api/health || exit 1 
