@@ -11,7 +11,7 @@
 !.yarn/versions
 
 # testing
-/coverage
+/tests/coverage/
 /html
 .vitest/
 __snapshots__/

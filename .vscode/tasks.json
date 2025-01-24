@@ -1,0 +1,259 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "🚀 Run Development (Docker)",
+      "type": "shell",
+      "command": "if [ -f .env ]; then docker compose -f docker-compose.dev.yml --env-file .env up dev --build; else docker compose -f docker-compose.dev.yml up dev --build; fi",
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "🚀 Run Development (Local)",
+      "type": "shell",
+      "command": "npm run dev",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      }
+    },
+    {
+      "label": "🚀 Run Production",
+      "type": "shell",
+      "command": "if [ -f .env ]; then docker compose --env-file .env up --build; else echo 'Error: .env file not found' && exit 1; fi",
+      "problemMatcher": []
+    },
+    {
+      "label": "🧹 Build Project (Docker)",
+      "type": "shell",
+      "command": "docker compose -f docker-compose.dev.yml run --rm build",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      }
+    },
+    {
+      "label": "🧹 Build Project (Local)",
+      "type": "shell",
+      "command": "npm run build",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      }
+    },
+    {
+      "label": "🧪 Run All Tests (Docker)",
+      "type": "shell",
+      "command": "docker compose -f docker-compose.dev.yml run --rm test-all",
+      "problemMatcher": [],
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "🧪 Run All Tests (Local)",
+      "type": "shell",
+      "command": "npm run test:all",
+      "problemMatcher": [],
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "🧪 Run Unit Tests (Docker)",
+      "type": "shell",
+      "command": "docker compose -f docker-compose.dev.yml run --rm test-unit",
+      "problemMatcher": [],
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "🧪 Run Unit Tests (Local)",
+      "type": "shell",
+      "command": "npm run test:unit",
+      "problemMatcher": [],
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "🧪 Run Integration Tests (Docker)",
+      "type": "shell",
+      "command": "docker compose -f docker-compose.dev.yml run --rm test-integration",
+      "problemMatcher": [],
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "🧪 Run Integration Tests (Local)",
+      "type": "shell",
+      "command": "npm run test:integration",
+      "problemMatcher": [],
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "🧪 Run E2E Tests (Docker)",
+      "type": "shell",
+      "command": "docker compose -f docker-compose.dev.yml run --rm test-e2e",
+      "problemMatcher": [],
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "🧪 Run E2E Tests (Local)",
+      "type": "shell",
+      "command": "npm run test:e2e",
+      "problemMatcher": [],
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "🧪 Run Performance Tests (Docker)",
+      "type": "shell",
+      "command": "docker compose -f docker-compose.dev.yml run --rm test-perf",
+      "problemMatcher": [],
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "🧪 Run Performance Tests (Local)",
+      "type": "shell",
+      "command": "npm run test:perf",
+      "problemMatcher": [],
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "📊 Run Tests with Coverage (Docker)",
+      "type": "shell",
+      "command": "docker compose -f docker-compose.dev.yml run --rm test-coverage",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "📊 Run Tests with Coverage (Local)",
+      "type": "shell",
+      "command": "npm run test:coverage",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "🔍 Run Tests in Watch Mode (Docker)",
+      "type": "shell",
+      "command": "docker compose -f docker-compose.dev.yml run --rm test-watch",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "isBackground": true
+    },
+    {
+      "label": "🔍 Run Tests in Watch Mode (Local)",
+      "type": "shell",
+      "command": "npm run test:watch",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "isBackground": true
+    },
+    {
+      "label": "🎨 Format Code",
+      "type": "shell",
+      "command": "npm run format",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "🎨 Format Code (Fix)",
+      "type": "shell",
+      "command": "npm run format:fix",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "🔍 Lint Code",
+      "type": "shell",
+      "command": "npm run lint",
+      "problemMatcher": ["$eslint-stylish"],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "⏹️ Stop All Services",
+      "type": "shell",
+      "command": "if [ -f .env ]; then (docker compose -f docker-compose.dev.yml --env-file .env down && docker compose --env-file .env down); else (docker compose -f docker-compose.dev.yml down && docker compose down); fi",
+      "problemMatcher": []
+    }
+  ]
+}
