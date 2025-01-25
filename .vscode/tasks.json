@@ -250,6 +250,17 @@
       }
     },
     {
+      "label": "🔍 Lint Code (Fix)",
+      "type": "shell",
+      "command": "npm run lint:fix",
+      "problemMatcher": ["$eslint-stylish"],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
       "label": "⏹️ Stop All Services",
       "type": "shell",
       "command": "if [ -f .env ]; then (docker compose -f docker-compose.dev.yml --env-file .env down && docker compose --env-file .env down); else (docker compose -f docker-compose.dev.yml down && docker compose down); fi",
