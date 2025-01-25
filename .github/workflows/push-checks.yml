@@ -213,24 +213,16 @@ jobs:
         run: |
           echo "Contents of .output directory:"
           ls -la .output/
-      - name: Create Health Check API
-        run: |
-          mkdir -p .output/app/api
-          cat > .output/app/api/health/route.js << 'EOF'
-          export async function GET() {
-            return new Response(JSON.stringify({ status: 'ok' }), {
-              status: 200,
-              headers: { 'Content-Type': 'application/json' },
-            });
-          }
-          EOF
       - name: Start App
+        env:
+          PORT: 3000
+          HOSTNAME: "0.0.0.0"
         run: |
           cd .output
           node server.js &
           echo "Waiting for app to start..."
           for i in {1..30}; do
-            if curl -s -f http://localhost:3000/api/health > /dev/null 2>&1; then
+            if curl -s -I http://localhost:3000/ | grep -q "200 OK"; then
               echo "App is up!"
               break
             fi
@@ -243,4 +235,7 @@ jobs:
           done
       - name: Check App Health
         run: |
-          curl -f http://localhost:3000/api/health || exit 1
+          if ! curl -s -I http://localhost:3000/ | grep -q "200 OK"; then
+            echo "Health check failed"
+            exit 1
+          fi
