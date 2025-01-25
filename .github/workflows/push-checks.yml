@@ -205,6 +205,10 @@ jobs:
         with:
           name: build-artifacts
           path: .
+      - name: Create .next Directory
+        run: |
+          mkdir -p .next
+          cp -r .next-static .next/static || true
       - name: Start App
         env:
           PORT: 3000
@@ -215,19 +219,29 @@ jobs:
           echo "Current directory contents:"
           ls -la
           echo "Starting standalone server..."
-          node server.js &
+          node server.js > server.log 2>&1 &
+          SERVER_PID=$!
+          echo "Server PID: $SERVER_PID"
+          
+          # Wait for server to start
           echo "Waiting for app to start..."
           for i in {1..30}; do
-            if curl -s -I http://0.0.0.0:3000/api/health | grep -q "200 OK"; then
-              echo "App is healthy!"
-              HEALTH_RESPONSE=$(curl -s http://0.0.0.0:3000/api/health)
-              echo "Health check response: $HEALTH_RESPONSE"
-              break
-            fi
-            if [ $i -eq 30 ]; then
-              echo "App failed to start within 30 seconds"
+            if ps -p $SERVER_PID > /dev/null; then
+              if curl -s http://0.0.0.0:3000/api/health; then
+                echo "App is healthy!"
+                HEALTH_RESPONSE=$(curl -s http://0.0.0.0:3000/api/health)
+                echo "Health check response: $HEALTH_RESPONSE"
+                exit 0
+              fi
+            else
+              echo "Server process died. Server logs:"
+              cat server.log
               exit 1
             fi
             echo "Attempt $i: App not ready yet..."
-            sleep 1
+            sleep 2
           done
+          
+          echo "Server failed to respond in time. Server logs:"
+          cat server.log
+          exit 1
