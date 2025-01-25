@@ -123,39 +123,15 @@ jobs:
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
       - name: Build
         run: npm run build
-      - name: List Build Output Before Copy
-        run: |
-          echo "Contents of .next directory:"
-          ls -la .next/
-      - name: Prepare Standalone Build
-        run: |
-          # Ensure directories exist
-          mkdir -p .next/standalone/.next/static
-          # Copy all necessary files
-          cp -r .next/static/* .next/standalone/.next/static/
-          cp -r .next/server .next/standalone/.next/
-          cp -r .next/required-server-files.json .next/standalone/.next/
-          cp -r .next/build-manifest.json .next/standalone/.next/
-          cp -r .next/app-build-manifest.json .next/standalone/.next/
-          cp -r .next/prerender-manifest.json .next/standalone/.next/
-          cp -r .next/routes-manifest.json .next/standalone/.next/
-          cp -r .next/react-loadable-manifest.json .next/standalone/.next/
-          cp -r .next/BUILD_ID .next/standalone/.next/
-          # Copy public directory if it exists
-          if [ -d "public" ]; then
-            cp -r public .next/standalone/
-          fi
-      - name: List Build Output After Copy
-        run: |
-          echo "Contents of .next/standalone directory:"
-          ls -la .next/standalone/
-          echo "Contents of .next/standalone/.next directory:"
-          ls -la .next/standalone/.next/
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: build-artifacts
-          path: .next/standalone
+          path: |
+            .next/
+            public/
+            next.config.mjs
+            package.json
 
   unit-tests:
     name: Unit Tests
@@ -227,32 +203,24 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build-artifacts
-          path: standalone
-      - name: List Downloaded Files
-        run: |
-          echo "Contents of standalone directory:"
-          ls -la standalone/
+          path: .
+      - name: Install Production Dependencies
+        run: npm ci --omit=dev
       - name: Start App
         env:
           PORT: 3000
           HOSTNAME: "0.0.0.0"
           NODE_ENV: "production"
-          NEXT_TELEMETRY_DISABLED: 1
         run: |
-          cd standalone
-          # Wait for port to be available
-          while lsof -i :3000; do sleep 1; done
-          # Start the server and wait for it to be ready
-          node server.js &
-          SERVER_PID=$!
+          npm start &
           echo "Waiting for app to start..."
           for i in {1..30}; do
-            if curl -s -f http://0.0.0.0:3000/ > /dev/null 2>&1; then
+            if curl -s -I http://0.0.0.0:3000/ | grep -q "200 OK"; then
               echo "App is up!"
               break
             fi
-            if ! ps -p $SERVER_PID > /dev/null; then
-              echo "Server process died"
+            if [ $i -eq 30 ]; then
+              echo "App failed to start within 30 seconds"
               exit 1
             fi
             echo "Attempt $i: App not ready yet..."
