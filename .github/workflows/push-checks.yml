@@ -123,20 +123,22 @@ jobs:
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
       - name: Build
         run: npm run build
+      - name: Prepare Standalone Build
+        run: |
+          # Copy static and public files to standalone directory
+          cp -r .next/static .next/standalone/.next/
+          cp -r public .next/standalone/
       - name: List Build Output
         run: |
-          echo "Contents of .next directory:"
-          ls -la .next/
           echo "Contents of .next/standalone directory:"
           ls -la .next/standalone/
+          echo "Contents of .next/standalone/.next directory:"
+          ls -la .next/standalone/.next/
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: build-artifacts
-          path: |
-            .next/standalone/**/*
-            .next/static/**/*
-            public/**/*
+          path: .next/standalone
 
   unit-tests:
     name: Unit Tests
@@ -208,17 +210,18 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build-artifacts
-          path: .output
+          path: standalone
       - name: List Downloaded Files
         run: |
-          echo "Contents of .output directory:"
-          ls -la .output/
+          echo "Contents of standalone directory:"
+          ls -la standalone/
       - name: Start App
         env:
           PORT: 3000
           HOSTNAME: "0.0.0.0"
+          NODE_ENV: "production"
         run: |
-          cd .output
+          cd standalone
           node server.js &
           echo "Waiting for app to start..."
           for i in {1..30}; do
