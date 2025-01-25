@@ -122,17 +122,22 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
       - name: Build
-        run: npm run build
+        run: |
+          npm run build
+          echo "Build output contents:"
+          ls -la .next/
+          echo "Standalone output contents:"
+          ls -la .next/standalone/
+      - name: Prepare Standalone Build
+        run: |
+          # Copy necessary static files to standalone directory
+          cp -r public .next/standalone/
+          cp -r .next/static .next/standalone/.next/
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: build-artifacts
-          path: |
-            .next/
-            public/
-            next.config.ts
-            package.json
-            package-lock.json
+          path: .next/standalone
 
   unit-tests:
     name: Unit Tests
@@ -195,18 +200,11 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ needs.setup.outputs.node-version }}
       - name: Download Build Artifacts
         uses: actions/download-artifact@v4
         with:
           name: build-artifacts
           path: .
-      - name: Install Production Dependencies
-        run: npm ci --omit=dev
       - name: Start App
         env:
           PORT: 3000
@@ -214,9 +212,10 @@ jobs:
           NODE_ENV: "production"
         run: |
           echo "Verifying build artifacts..."
+          echo "Current directory contents:"
           ls -la
-          echo "Starting Next.js app..."
-          npm start &
+          echo "Starting standalone server..."
+          node server.js &
           echo "Waiting for app to start..."
           for i in {1..30}; do
             if curl -s -I http://0.0.0.0:3000/api/health | grep -q "200 OK"; then
