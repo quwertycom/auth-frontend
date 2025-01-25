@@ -205,19 +205,18 @@ jobs:
         with:
           name: build-artifacts
           path: .
-      - name: Create .next Directory
+      - name: Verify Build Artifacts
         run: |
-          mkdir -p .next
-          cp -r .next-static .next/static || true
+          echo "Current directory contents:"
+          ls -la
+          echo ".next directory contents:"
+          ls -la .next/
       - name: Start App
         env:
           PORT: 3000
           HOSTNAME: "0.0.0.0"
           NODE_ENV: "production"
         run: |
-          echo "Verifying build artifacts..."
-          echo "Current directory contents:"
-          ls -la
           echo "Starting standalone server..."
           node server.js > server.log 2>&1 &
           SERVER_PID=$!
