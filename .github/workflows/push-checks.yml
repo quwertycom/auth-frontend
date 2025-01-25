@@ -136,6 +136,7 @@ jobs:
           cp -r .next/static .next/standalone/.next/
           cp -r .next/server .next/standalone/.next/
           cp .next/BUILD_ID .next/standalone/.next/
+          cp .next/required-server-files.json .next/standalone/.next/
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
