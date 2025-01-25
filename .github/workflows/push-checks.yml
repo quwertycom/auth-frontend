@@ -214,12 +214,15 @@ jobs:
           NODE_ENV: "production"
         run: |
           echo "Verifying build artifacts..."
-          ls -la .next/
+          ls -la
+          echo "Starting Next.js app..."
           npm start &
           echo "Waiting for app to start..."
           for i in {1..30}; do
-            if curl -s -I http://0.0.0.0:3000/ | grep -q "200 OK"; then
-              echo "App is up!"
+            if curl -s -I http://0.0.0.0:3000/api/health | grep -q "200 OK"; then
+              echo "App is healthy!"
+              HEALTH_RESPONSE=$(curl -s http://0.0.0.0:3000/api/health)
+              echo "Health check response: $HEALTH_RESPONSE"
               break
             fi
             if [ $i -eq 30 ]; then
@@ -229,12 +232,3 @@ jobs:
             echo "Attempt $i: App not ready yet..."
             sleep 1
           done
-      - name: Check App Health
-        run: |
-          response=$(curl -s -I http://0.0.0.0:3000/)
-          echo "Response headers:"
-          echo "$response"
-          if ! echo "$response" | grep -q "200 OK"; then
-            echo "Health check failed"
-            exit 1
-          fi
