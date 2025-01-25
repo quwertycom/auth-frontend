@@ -123,12 +123,29 @@ jobs:
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
       - name: Build
         run: npm run build
+      - name: List Build Output Before Copy
+        run: |
+          echo "Contents of .next directory:"
+          ls -la .next/
       - name: Prepare Standalone Build
         run: |
-          # Copy static and public files to standalone directory
-          cp -r .next/static .next/standalone/.next/
-          cp -r public .next/standalone/
-      - name: List Build Output
+          # Ensure directories exist
+          mkdir -p .next/standalone/.next/static
+          # Copy all necessary files
+          cp -r .next/static/* .next/standalone/.next/static/
+          cp -r .next/server .next/standalone/.next/
+          cp -r .next/required-server-files.json .next/standalone/.next/
+          cp -r .next/build-manifest.json .next/standalone/.next/
+          cp -r .next/app-build-manifest.json .next/standalone/.next/
+          cp -r .next/prerender-manifest.json .next/standalone/.next/
+          cp -r .next/routes-manifest.json .next/standalone/.next/
+          cp -r .next/react-loadable-manifest.json .next/standalone/.next/
+          cp -r .next/BUILD_ID .next/standalone/.next/
+          # Copy public directory if it exists
+          if [ -d "public" ]; then
+            cp -r public .next/standalone/
+          fi
+      - name: List Build Output After Copy
         run: |
           echo "Contents of .next/standalone directory:"
           ls -la .next/standalone/
@@ -220,17 +237,22 @@ jobs:
           PORT: 3000
           HOSTNAME: "0.0.0.0"
           NODE_ENV: "production"
+          NEXT_TELEMETRY_DISABLED: 1
         run: |
           cd standalone
+          # Wait for port to be available
+          while lsof -i :3000; do sleep 1; done
+          # Start the server and wait for it to be ready
           node server.js &
+          SERVER_PID=$!
           echo "Waiting for app to start..."
           for i in {1..30}; do
-            if curl -s -I http://localhost:3000/ | grep -q "200 OK"; then
+            if curl -s -f http://0.0.0.0:3000/ > /dev/null 2>&1; then
               echo "App is up!"
               break
             fi
-            if [ $i -eq 30 ]; then
-              echo "App failed to start within 30 seconds"
+            if ! ps -p $SERVER_PID > /dev/null; then
+              echo "Server process died"
               exit 1
             fi
             echo "Attempt $i: App not ready yet..."
@@ -238,7 +260,10 @@ jobs:
           done
       - name: Check App Health
         run: |
-          if ! curl -s -I http://localhost:3000/ | grep -q "200 OK"; then
+          response=$(curl -s -I http://0.0.0.0:3000/)
+          echo "Response headers:"
+          echo "$response"
+          if ! echo "$response" | grep -q "200 OK"; then
             echo "Health check failed"
             exit 1
           fi
