@@ -123,15 +123,20 @@ jobs:
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
       - name: Build
         run: npm run build
+      - name: List Build Output
+        run: |
+          echo "Contents of .next directory:"
+          ls -la .next/
+          echo "Contents of .next/standalone directory:"
+          ls -la .next/standalone/
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: build-artifacts
           path: |
-            .next/standalone/
-            .next/static
-            public
-            next.config.mjs
+            .next/standalone/**/*
+            .next/static/**/*
+            public/**/*
 
   unit-tests:
     name: Unit Tests
@@ -204,16 +209,21 @@ jobs:
         with:
           name: build-artifacts
           path: .output
-      - name: Prepare Standalone Build
+      - name: List Downloaded Files
         run: |
-          # Create required directory structure
-          mkdir -p .output/.next/static
-          # Move static files to the correct location
-          mv .output/static .output/.next/
-          # Move public files
-          mv .output/public .output/
-          # Move config
-          mv .output/next.config.mjs .output/
+          echo "Contents of .output directory:"
+          ls -la .output/
+      - name: Create Health Check API
+        run: |
+          mkdir -p .output/app/api
+          cat > .output/app/api/health/route.js << 'EOF'
+          export async function GET() {
+            return new Response(JSON.stringify({ status: 'ok' }), {
+              status: 200,
+              headers: { 'Content-Type': 'application/json' },
+            });
+          }
+          EOF
       - name: Start App
         run: |
           cd .output
