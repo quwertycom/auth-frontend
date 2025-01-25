@@ -5,7 +5,7 @@ const config: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
   compress: true,
-  swcMinify: true,
+  distDir: '.next',
   images: {
     formats: ['image/avif', 'image/webp'],
     remotePatterns: [],

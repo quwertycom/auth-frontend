@@ -130,8 +130,9 @@ jobs:
           path: |
             .next/
             public/
-            next.config.mjs
+            next.config.ts
             package.json
+            package-lock.json
 
   unit-tests:
     name: Unit Tests
@@ -212,6 +213,8 @@ jobs:
           HOSTNAME: "0.0.0.0"
           NODE_ENV: "production"
         run: |
+          echo "Verifying build artifacts..."
+          ls -la .next/
           npm start &
           echo "Waiting for app to start..."
           for i in {1..30}; do
