@@ -204,13 +204,13 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build-artifacts
-          path: .
+          path: .next/standalone
       - name: Verify Build Artifacts
         run: |
           echo "Current directory contents:"
           ls -la
-          echo ".next directory contents:"
-          ls -la .next/
+          echo ".next/standalone directory contents:"
+          ls -la .next/standalone/
       - name: Start App
         env:
           PORT: 3000
@@ -218,6 +218,7 @@ jobs:
           NODE_ENV: "production"
         run: |
           echo "Starting standalone server..."
+          cd .next/standalone
           node server.js > server.log 2>&1 &
           SERVER_PID=$!
           echo "Server PID: $SERVER_PID"
