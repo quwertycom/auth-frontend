@@ -210,16 +210,9 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build-artifacts
-          path: .
-      - name: Debug Artifacts
-        run: |
-          pwd
-          echo "Current directory contents:"
-          ls -la
-          echo "Checking for .next directory:"
-          ls -la .next || echo ".next directory not found"
-          echo "Checking downloaded artifacts:"
-          find . -maxdepth 3 -type f
+          path: ./artifacts
+      - name: List Artifacts
+        run: ls -la ./artifacts
       - name: Verify Build Artifacts
         run: |
           echo "Verifying build artifacts..."
