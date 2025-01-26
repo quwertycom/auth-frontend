@@ -115,7 +115,7 @@ jobs:
           include-hidden-files: true
           if-no-files-found: error
           retention-days: 1
-          
+
   unit-tests:
     name: Unit Tests
     needs: setup
@@ -205,7 +205,7 @@ jobs:
           echo "Starting Next.js server..."
           PORT=3000 NODE_ENV=production npm start &
           echo $! > .nextpid
-          
+
           # Wait for server to be ready
           echo "Waiting for server to be ready..."
           for i in {1..30}; do
