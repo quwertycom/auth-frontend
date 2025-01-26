@@ -75,7 +75,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: ['javascript']
+        language: ['typescript']
     steps:
       - uses: actions/checkout@v4
       - name: Setup Node.js
@@ -94,6 +94,7 @@ jobs:
         with:
           languages: ${{ matrix.language }}
           queries: security-and-quality
+          config-file: ./.github/codeql/codeql-config.yml
       - name: Build for Analysis
         run: |
           npm ci
