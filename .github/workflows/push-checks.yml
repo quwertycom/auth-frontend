@@ -122,21 +122,15 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
       - name: Build
-        run: |
-          npm run build
-          echo "Build output contents:"
-          ls -la .next/
-          echo "Standalone output contents:"
-          ls -la .next/standalone/
+        run: npm run build
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: build-artifacts
           path: |
-            .next/standalone
-            .next/static
-            public
-            package.json
+            .next/standalone/
+            .next/static/
+            public/
             next.config.js
 
   unit-tests:
@@ -205,13 +199,20 @@ jobs:
         with:
           name: build-artifacts
           path: .
-      
-      - name: Restructure Standalone Directory
+
+      - name: Setup Directory Structure
         run: |
-          # Move the standalone directory to root
-          mv .next/standalone standalone
-          echo "Restructured directory contents:"
-          ls -la standalone/
+          # Create required directories
+          mkdir -p .next/static
+          
+          # Move files to their correct locations
+          mv standalone/* .
+          mv static .next/
+          
+          echo "Directory structure:"
+          ls -la
+          echo "Static files:"
+          ls -la .next/static
 
       - name: Start App
         env:
@@ -220,7 +221,6 @@ jobs:
           NODE_ENV: "production"
         run: |
           echo "Starting standalone server..."
-          cd standalone
           node server.js > server.log 2>&1 &
           SERVER_PID=$!
           echo "Server PID: $SERVER_PID"
