@@ -17,6 +17,8 @@ jobs:
   setup:
     name: Setup Node.js
     runs-on: ubuntu-latest
+    env:
+      ACTIONS_STEP_DEBUG: true
     outputs:
       node-version: ${{ env.NODE_VERSION }}
     steps:
@@ -192,6 +194,8 @@ jobs:
     name: App Health Check
     needs: [setup, build]
     runs-on: ubuntu-latest
+    env:
+      ACTIONS_STEP_DEBUG: true
     steps:
       - uses: actions/checkout@v4
       - name: Setup Node.js
