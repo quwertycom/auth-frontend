@@ -210,7 +210,6 @@ jobs:
         with:
           name: build-artifacts
           path: .
-          merge-multiple: false
       - name: Debug Artifacts
         run: |
           pwd
