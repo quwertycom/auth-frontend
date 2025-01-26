@@ -64,6 +64,45 @@ jobs:
       - name: Check for Duplicate Dependencies
         run: npm dedupe --dry-run
 
+  code-scanning:
+    name: CodeQL Analysis
+    needs: setup
+    runs-on: ubuntu-24.04
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ['javascript']
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ needs.setup.outputs.node-version }}
+      - name: Restore Dependencies Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            ~/.npm
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          queries: security-and-quality
+      - name: Build for Analysis
+        run: |
+          npm ci
+          npm run build
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{ matrix.language }}"
+
   format-check:
     name: Check Code Format
     needs: setup
@@ -295,8 +334,7 @@ jobs:
 
   docker-build:
     name: Docker Build & Test
-    needs:
-      [unit-tests, integration-tests, e2e-tests, performance-tests, app-health]
+    needs: [unit-tests, integration-tests, e2e-tests, performance-tests, app-health]
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
