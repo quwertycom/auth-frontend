@@ -260,6 +260,8 @@ jobs:
             node_modules
             ~/.npm
           key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
       - name: Run Performance Tests
         run: |
           npm run test:perf
