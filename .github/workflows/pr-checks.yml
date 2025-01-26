@@ -98,7 +98,7 @@ jobs:
         run: |
           echo "### 📦 Dependency Analysis Results" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          
+
           # Outdated Dependencies
           if [ "${{ steps.outdated.outputs.status }}" = "success" ]; then
             echo "#### ✅ Dependency Versions" >> $GITHUB_STEP_SUMMARY
@@ -111,7 +111,7 @@ jobs:
             echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
           fi
           echo "" >> $GITHUB_STEP_SUMMARY
-          
+
           # Security Audit
           if [ "${{ steps.audit.outputs.status }}" = "success" ]; then
             echo "#### ✅ Security Audit" >> $GITHUB_STEP_SUMMARY
@@ -125,7 +125,7 @@ jobs:
             echo "::error::Security vulnerabilities found in dependencies"
           fi
           echo "" >> $GITHUB_STEP_SUMMARY
-          
+
           # Duplicate Dependencies
           if [ "${{ steps.dedupe.outputs.status }}" = "success" ]; then
             echo "#### ✅ Dependency Deduplication" >> $GITHUB_STEP_SUMMARY
@@ -137,7 +137,7 @@ jobs:
             cat dedupe.log >> $GITHUB_STEP_SUMMARY
             echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
           fi
-          
+
           # Overall Status
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Summary" >> $GITHUB_STEP_SUMMARY
@@ -189,7 +189,7 @@ jobs:
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
         with:
-          category: "/language:${{ matrix.language }}"
+          category: '/language:${{ matrix.language }}'
       - name: CodeQL Analysis Summary
         if: always()
         run: |
@@ -501,7 +501,8 @@ jobs:
 
   docker-build:
     name: Docker Build & Test
-    needs: [unit-tests, integration-tests, e2e-tests, performance-tests, app-health]
+    needs:
+      [unit-tests, integration-tests, e2e-tests, performance-tests, app-health]
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4

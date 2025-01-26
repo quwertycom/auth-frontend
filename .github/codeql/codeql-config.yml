@@ -1,4 +1,4 @@
-name: "QAuth Frontend CodeQL config"
+name: 'QAuth Frontend CodeQL config'
 
 queries:
   - uses: security-and-quality
@@ -37,10 +37,10 @@ extraction:
   typescript:
     index:
       include:
-        - "**/*.ts"
-        - "**/*.tsx"
-        - "**/*.mts"
-        - "**/*.cts"
+        - '**/*.ts'
+        - '**/*.tsx'
+        - '**/*.mts'
+        - '**/*.cts'
       exclude:
-        - "**/*.d.ts"
-      typescript-version: 5 
+        - '**/*.d.ts'
+      typescript-version: 5
