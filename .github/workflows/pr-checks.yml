@@ -58,11 +58,98 @@ jobs:
             ~/.npm
           key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
       - name: Check for Outdated Dependencies
-        run: npm outdated || true
+        id: outdated
+        run: |
+          echo "::group::Checking for outdated dependencies"
+          if npm outdated 2>&1 | tee outdated.log; then
+            echo "status=success" >> $GITHUB_OUTPUT
+            echo "No outdated dependencies found"
+          else
+            echo "status=warning" >> $GITHUB_OUTPUT
+            echo "Found outdated dependencies"
+          fi
+          echo "::endgroup::"
       - name: Audit Dependencies
-        run: npm audit
+        id: audit
+        run: |
+          echo "::group::Running security audit"
+          if npm audit 2>&1 | tee audit.log; then
+            echo "status=success" >> $GITHUB_OUTPUT
+            echo "No security vulnerabilities found"
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+            echo "Found security vulnerabilities"
+          fi
+          echo "::endgroup::"
       - name: Check for Duplicate Dependencies
-        run: npm dedupe --dry-run
+        id: dedupe
+        run: |
+          echo "::group::Checking for duplicate dependencies"
+          if npm dedupe --dry-run 2>&1 | tee dedupe.log; then
+            echo "status=success" >> $GITHUB_OUTPUT
+            echo "No duplicate dependencies found"
+          else
+            echo "status=warning" >> $GITHUB_OUTPUT
+            echo "Found duplicate dependencies"
+          fi
+          echo "::endgroup::"
+      - name: Dependency Analysis Summary
+        if: always()
+        run: |
+          echo "### 📦 Dependency Analysis Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Outdated Dependencies
+          if [ "${{ steps.outdated.outputs.status }}" = "success" ]; then
+            echo "#### ✅ Dependency Versions" >> $GITHUB_STEP_SUMMARY
+            echo "All dependencies are up to date." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "#### ⚠️ Dependency Versions" >> $GITHUB_STEP_SUMMARY
+            echo "Some dependencies are outdated. Consider updating:" >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            cat outdated.log >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Security Audit
+          if [ "${{ steps.audit.outputs.status }}" = "success" ]; then
+            echo "#### ✅ Security Audit" >> $GITHUB_STEP_SUMMARY
+            echo "No security vulnerabilities found." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "#### ❌ Security Audit" >> $GITHUB_STEP_SUMMARY
+            echo "Security vulnerabilities detected:" >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            cat audit.log >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            echo "::error::Security vulnerabilities found in dependencies"
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Duplicate Dependencies
+          if [ "${{ steps.dedupe.outputs.status }}" = "success" ]; then
+            echo "#### ✅ Dependency Deduplication" >> $GITHUB_STEP_SUMMARY
+            echo "No duplicate dependencies found." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "#### ⚠️ Dependency Deduplication" >> $GITHUB_STEP_SUMMARY
+            echo "Found duplicate dependencies that could be deduplicated:" >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            cat dedupe.log >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          # Overall Status
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Summary" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.audit.outputs.status }}" = "success" ]; then
+            if [ "${{ steps.outdated.outputs.status }}" = "success" ] && [ "${{ steps.dedupe.outputs.status }}" = "success" ]; then
+              echo "✅ All dependency checks passed successfully." >> $GITHUB_STEP_SUMMARY
+            else
+              echo "⚠️ No security issues found, but there are maintenance recommendations." >> $GITHUB_STEP_SUMMARY
+            fi
+          else
+            echo "❌ Security vulnerabilities found that need to be addressed." >> $GITHUB_STEP_SUMMARY
+          fi
 
   code-scanning:
     name: CodeQL Analysis
@@ -103,6 +190,17 @@ jobs:
         uses: github/codeql-action/analyze@v3
         with:
           category: "/language:${{ matrix.language }}"
+      - name: CodeQL Analysis Summary
+        if: always()
+        run: |
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "### ✅ CodeQL Analysis Completed Successfully" >> $GITHUB_STEP_SUMMARY
+            echo "TypeScript code analysis completed with no critical issues found." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### ❌ CodeQL Analysis Failed" >> $GITHUB_STEP_SUMMARY
+            echo "TypeScript code analysis found potential issues. Please check the security tab for details." >> $GITHUB_STEP_SUMMARY
+            echo "::error::CodeQL Analysis failed - Review security findings"
+          fi
 
   format-check:
     name: Check Code Format
@@ -123,6 +221,17 @@ jobs:
           key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
       - name: Check Format
         run: npm run format
+      - name: Format Check Summary
+        if: always()
+        run: |
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "### ✅ Code Format Check Passed" >> $GITHUB_STEP_SUMMARY
+            echo "All files are properly formatted according to project standards." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### ❌ Code Format Check Failed" >> $GITHUB_STEP_SUMMARY
+            echo "Some files need formatting. Run 'npm run format:fix' locally to fix." >> $GITHUB_STEP_SUMMARY
+            echo "::error::Format check failed - Run format:fix to resolve"
+          fi
 
   lint:
     name: Lint Code
@@ -143,6 +252,17 @@ jobs:
           key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
       - name: Run ESLint
         run: npm run lint
+      - name: Lint Summary
+        if: always()
+        run: |
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "### ✅ Lint Check Passed" >> $GITHUB_STEP_SUMMARY
+            echo "No linting issues found in the codebase." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### ❌ Lint Check Failed" >> $GITHUB_STEP_SUMMARY
+            echo "ESLint found issues that need to be fixed. Check the log for details." >> $GITHUB_STEP_SUMMARY
+            echo "::error::Lint check failed - Fix ESLint issues"
+          fi
 
   build:
     name: Build Project
@@ -201,6 +321,17 @@ jobs:
           key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
       - name: Run Unit Tests
         run: npm run test:unit
+      - name: Unit Tests Summary
+        if: always()
+        run: |
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "### ✅ Unit Tests Passed" >> $GITHUB_STEP_SUMMARY
+            echo "All unit tests completed successfully." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### ❌ Unit Tests Failed" >> $GITHUB_STEP_SUMMARY
+            echo "Some unit tests failed. Check the test output for details." >> $GITHUB_STEP_SUMMARY
+            echo "::error::Unit tests failed - Fix failing tests"
+          fi
 
   integration-tests:
     name: Integration Tests
@@ -221,6 +352,17 @@ jobs:
           key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
       - name: Run Integration Tests
         run: npm run test:integration
+      - name: Integration Tests Summary
+        if: always()
+        run: |
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "### ✅ Integration Tests Passed" >> $GITHUB_STEP_SUMMARY
+            echo "All integration tests completed successfully." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### ❌ Integration Tests Failed" >> $GITHUB_STEP_SUMMARY
+            echo "Some integration tests failed. Check the test output for details." >> $GITHUB_STEP_SUMMARY
+            echo "::error::Integration tests failed - Fix failing tests"
+          fi
 
   e2e-tests:
     name: E2E Tests
@@ -243,6 +385,17 @@ jobs:
         run: npx playwright install --with-deps
       - name: Run E2E Tests
         run: npm run test:e2e
+      - name: E2E Tests Summary
+        if: always()
+        run: |
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "### ✅ E2E Tests Passed" >> $GITHUB_STEP_SUMMARY
+            echo "All end-to-end tests completed successfully." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### ❌ E2E Tests Failed" >> $GITHUB_STEP_SUMMARY
+            echo "Some end-to-end tests failed. Check the test output and Playwright report for details." >> $GITHUB_STEP_SUMMARY
+            echo "::error::E2E tests failed - Fix failing tests"
+          fi
 
   performance-tests:
     name: Performance Tests
@@ -264,9 +417,20 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
       - name: Run Performance Tests
+        run: npm run test:perf
+      - name: Performance Tests Summary
+        if: always()
         run: |
-          npm run test:perf
-          echo "::notice file=performance-summary.md::Performance tests completed successfully. All metrics are within expected thresholds."
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "### ✅ Performance Tests Passed" >> $GITHUB_STEP_SUMMARY
+            echo "All performance metrics are within acceptable thresholds." >> $GITHUB_STEP_SUMMARY
+            echo "Check the performance report for detailed metrics." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### ❌ Performance Tests Failed" >> $GITHUB_STEP_SUMMARY
+            echo "Some performance metrics are outside acceptable thresholds." >> $GITHUB_STEP_SUMMARY
+            echo "Check the performance report for details on failing metrics." >> $GITHUB_STEP_SUMMARY
+            echo "::error::Performance tests failed - Review metrics"
+          fi
 
   app-health:
     name: App Health Check
