@@ -122,6 +122,7 @@ jobs:
           path: |
             .next/
             public/
+          include-hidden-files: true
           if-no-files-found: error
           retention-days: 1
           
@@ -211,6 +212,18 @@ jobs:
         with:
           name: build-artifacts
           path: ./artifacts
+      - name: Verify Downloaded Artifacts
+        run: |
+          echo "Listing contents of artifacts directory:"
+          ls -la ./artifacts
+          echo "Checking for .next directory in artifacts:"
+          ls -la ./artifacts/.next || echo ".next directory not found"
+      - name: Copy Artifacts
+        run: |
+          mkdir -p ./copied_artifacts
+          cp -r ./artifacts/. ./copied_artifacts/
+          echo "Contents of copied_artifacts directory:"
+          ls -la ./copied_artifacts
       - name: List Artifacts
         run: ls -la ./artifacts
       - name: Verify Build Artifacts
