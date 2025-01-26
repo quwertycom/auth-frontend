@@ -108,11 +108,13 @@ jobs:
         with:
           name: build-artifacts
           path: |
-            .next
-            public
+            .next/**
+            public/**
             package.json
             package-lock.json
             next.config.ts
+          if-no-files-found: error
+          retention-days: 1
 
   unit-tests:
     name: Unit Tests
@@ -198,6 +200,16 @@ jobs:
         with:
           name: build-artifacts
           path: .
+          merge-multiple: false
+      - name: Debug Artifacts
+        run: |
+          pwd
+          echo "Current directory contents:"
+          ls -la
+          echo "Checking for .next directory:"
+          ls -la .next || echo ".next directory not found"
+          echo "Checking downloaded artifacts:"
+          find . -maxdepth 3 -type f
       - name: Verify Build Artifacts
         run: |
           echo "Verifying build artifacts..."
