@@ -133,9 +133,9 @@ jobs:
         with:
           name: build-artifacts
           path: |
-            .next/standalone/
-            .next/static/
-            public/
+            .next/standalone
+            .next/static
+            public
             package.json
             next.config.js
 
@@ -205,16 +205,14 @@ jobs:
         with:
           name: build-artifacts
           path: .
-      - name: Verify Build Artifacts
+      
+      - name: Restructure Standalone Directory
         run: |
-          echo "Current directory contents:"
-          ls -la
-          echo ".next/standalone directory contents:"
-          ls -la .next/standalone/
-          echo ".next/static directory contents:"
-          ls -la .next/static/
-          echo "public directory contents:"
-          ls -la public/
+          # Move the standalone directory to root
+          mv .next/standalone standalone
+          echo "Restructured directory contents:"
+          ls -la standalone/
+
       - name: Start App
         env:
           PORT: 3000
@@ -222,9 +220,7 @@ jobs:
           NODE_ENV: "production"
         run: |
           echo "Starting standalone server..."
-          # Move into the standalone directory
-          cd .next/standalone
-          # Start the server
+          cd standalone
           node server.js > server.log 2>&1 &
           SERVER_PID=$!
           echo "Server PID: $SERVER_PID"
