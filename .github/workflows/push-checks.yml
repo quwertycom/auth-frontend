@@ -136,6 +136,8 @@ jobs:
             .next/standalone/
             .next/static/
             public/
+            package.json
+            next.config.js
 
   unit-tests:
     name: Unit Tests
@@ -220,9 +222,9 @@ jobs:
           NODE_ENV: "production"
         run: |
           echo "Starting standalone server..."
-          # Move the .next directory from standalone to root
-          mv .next/standalone/.next .next
+          # Move into the standalone directory
           cd .next/standalone
+          # Start the server
           node server.js > server.log 2>&1 &
           SERVER_PID=$!
           echo "Server PID: $SERVER_PID"
