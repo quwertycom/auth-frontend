@@ -103,6 +103,16 @@ jobs:
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
       - name: Build
         run: npm run build
+      - name: List Root Directory Contents
+        run: ls -la
+      - name: List .next Directory Contents
+        run: |
+          if [ -d ".next" ]; then
+            echo "Contents of .next directory:"
+            ls -la .next
+          else
+            echo ".next directory does not exist"
+          fi
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -115,7 +125,7 @@ jobs:
             next.config.ts
           if-no-files-found: error
           retention-days: 1
-
+          
   unit-tests:
     name: Unit Tests
     needs: setup
