@@ -3,11 +3,6 @@ name: PR Checks
 on:
   pull_request:
     types: [opened, synchronize, reopened]
-  push:
-    branches:
-      - '**'
-      - '!main'
-      - '!dev'
 
 env:
   NODE_VERSION: '20.x'
