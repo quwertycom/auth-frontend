@@ -290,7 +290,8 @@ jobs:
 
   docker-build:
     name: Docker Build & Test
-    needs: [unit-tests, integration-tests, e2e-tests, performance-tests, app-health]
+    needs:
+      [unit-tests, integration-tests, e2e-tests, performance-tests, app-health]
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -303,4 +304,4 @@ jobs:
           push: false
           tags: auth-frontend:${{ github.sha }}
           cache-from: type=gha
-          cache-to: type=gha,mode=max 
+          cache-to: type=gha,mode=max
