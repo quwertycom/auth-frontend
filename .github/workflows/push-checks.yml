@@ -105,16 +105,6 @@ jobs:
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
       - name: Build
         run: npm run build
-      - name: List Root Directory Contents
-        run: ls -la
-      - name: List .next Directory Contents
-        run: |
-          if [ -d ".next" ]; then
-            echo "Contents of .next directory:"
-            ls -la .next
-          else
-            echo ".next directory does not exist"
-          fi
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -192,8 +182,6 @@ jobs:
     name: App Health Check
     needs: [setup, build]
     runs-on: ubuntu-latest
-    env:
-      ACTIONS_STEP_DEBUG: true
     steps:
       - uses: actions/checkout@v4
       - name: Setup Node.js
@@ -212,25 +200,6 @@ jobs:
         with:
           name: build-artifacts
           path: .
-      - name: Verify Downloaded Artifacts
-        run: |
-          echo "Listing contents of artifacts directory:"
-          ls -la
-          echo "Checking for .next directory in artifacts:"
-          ls -la .next || echo ".next directory not found"
-      - name: Verify Build Artifacts
-        run: |
-          echo "Verifying build artifacts..."
-          if [ ! -d ".next" ]; then
-            echo "Error: .next directory not found"
-            exit 1
-          fi
-          if [ ! -f ".next/BUILD_ID" ]; then
-            echo "Error: .next/BUILD_ID not found"
-            exit 1
-          fi
-          echo "Build artifacts verified successfully"
-          ls -la .next
       - name: Start Next.js Server
         run: |
           echo "Starting Next.js server..."
