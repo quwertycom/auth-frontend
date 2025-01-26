@@ -220,6 +220,8 @@ jobs:
           NODE_ENV: "production"
         run: |
           echo "Starting standalone server..."
+          # Move the .next directory from standalone to root
+          mv .next/standalone/.next .next
           cd .next/standalone
           node server.js > server.log 2>&1 &
           SERVER_PID=$!
