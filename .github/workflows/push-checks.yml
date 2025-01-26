@@ -112,7 +112,7 @@ jobs:
             public
             package.json
             package-lock.json
-            next.config.js
+            next.config.ts
 
   unit-tests:
     name: Unit Tests
@@ -186,11 +186,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ needs.setup.outputs.node-version }}
-      - name: Download Build Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: build-artifacts
-          path: .
       - name: Restore Dependencies
         uses: actions/cache@v4
         with:
@@ -198,38 +193,65 @@ jobs:
             node_modules
             ~/.npm
           key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
-      - name: List Files
-        run: ls -la
-      - name: Start App
-        env:
-          PORT: 3000
-          HOSTNAME: "0.0.0.0"
-          NODE_ENV: "production"
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: .
+      - name: Verify Build Artifacts
+        run: |
+          echo "Verifying build artifacts..."
+          if [ ! -d ".next" ]; then
+            echo "Error: .next directory not found"
+            exit 1
+          fi
+          if [ ! -f ".next/BUILD_ID" ]; then
+            echo "Error: .next/BUILD_ID not found"
+            exit 1
+          fi
+          echo "Build artifacts verified successfully"
+          ls -la .next
+      - name: Start Next.js Server
         run: |
           echo "Starting Next.js server..."
-          npm start > server.log 2>&1 &
-          SERVER_PID=$!
-          echo "Server PID: $SERVER_PID"
+          PORT=3000 NODE_ENV=production npm start &
+          echo $! > .nextpid
           
-          # Wait for server to start
-          echo "Waiting for app to start..."
+          # Wait for server to be ready
+          echo "Waiting for server to be ready..."
           for i in {1..30}; do
-            if ps -p $SERVER_PID > /dev/null; then
-              if curl -s http://0.0.0.0:3000/api/health; then
-                echo "App is healthy!"
-                HEALTH_RESPONSE=$(curl -s http://0.0.0.0:3000/api/health)
-                echo "Health check response: $HEALTH_RESPONSE"
-                exit 0
-              fi
-            else
-              echo "Server process died. Server logs:"
-              cat server.log
+            if ! ps -p $(cat .nextpid) > /dev/null; then
+              echo "Server process died"
               exit 1
             fi
-            echo "Attempt $i: App not ready yet..."
+            
+            response=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/api/health || true)
+            if [ "$response" = "200" ]; then
+              echo "Server is ready!"
+              break
+            fi
+            
+            if [ $i -eq 30 ]; then
+              echo "Timeout waiting for server"
+              kill $(cat .nextpid) || true
+              exit 1
+            fi
+            
+            echo "Waiting... (attempt $i/30)"
             sleep 2
           done
-          
-          echo "Server failed to respond in time. Server logs:"
-          cat server.log
-          exit 1
+      - name: Check Health Endpoint
+        run: |
+          response=$(curl -s http://localhost:3000/api/health)
+          echo "Health check response: $response"
+          if ! echo "$response" | grep -q '"status":"healthy"'; then
+            echo "Health check failed"
+            exit 1
+          fi
+          echo "Health check passed"
+      - name: Cleanup
+        if: always()
+        run: |
+          if [ -f .nextpid ]; then
+            kill $(cat .nextpid) || true
+          fi
