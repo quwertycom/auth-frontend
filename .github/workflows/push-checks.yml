@@ -37,6 +37,17 @@ jobs:
             node_modules
             ~/.npm
           key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+      - name: Setup Summary
+        if: always()
+        run: |
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "### ✅ Setup Completed Successfully" >> $GITHUB_STEP_SUMMARY
+            echo "Node.js environment and dependencies are ready." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### ❌ Setup Failed" >> $GITHUB_STEP_SUMMARY
+            echo "Failed to set up Node.js environment or install dependencies." >> $GITHUB_STEP_SUMMARY
+            echo "::error::Setup failed - Check environment and package.json"
+          fi
 
   format-check:
     name: Check Code Format
@@ -57,6 +68,17 @@ jobs:
           key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
       - name: Check Format
         run: npm run format
+      - name: Format Check Summary
+        if: always()
+        run: |
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "### ✅ Code Format Check Passed" >> $GITHUB_STEP_SUMMARY
+            echo "All files are properly formatted according to project standards." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### ❌ Code Format Check Failed" >> $GITHUB_STEP_SUMMARY
+            echo "Some files need formatting. Run 'npm run format:fix' locally to fix." >> $GITHUB_STEP_SUMMARY
+            echo "::error::Format check failed - Run format:fix to resolve"
+          fi
 
   lint:
     name: Lint Code
@@ -77,6 +99,17 @@ jobs:
           key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
       - name: Run ESLint
         run: npm run lint
+      - name: Lint Summary
+        if: always()
+        run: |
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "### ✅ Lint Check Passed" >> $GITHUB_STEP_SUMMARY
+            echo "No linting issues found in the codebase." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### ❌ Lint Check Failed" >> $GITHUB_STEP_SUMMARY
+            echo "ESLint found issues that need to be fixed. Check the log for details." >> $GITHUB_STEP_SUMMARY
+            echo "::error::Lint check failed - Fix ESLint issues"
+          fi
 
   build:
     name: Build Project
@@ -115,6 +148,17 @@ jobs:
           include-hidden-files: true
           if-no-files-found: error
           retention-days: 1
+      - name: Build Summary
+        if: always()
+        run: |
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "### ✅ Build Completed Successfully" >> $GITHUB_STEP_SUMMARY
+            echo "Next.js application built and artifacts uploaded." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### ❌ Build Failed" >> $GITHUB_STEP_SUMMARY
+            echo "Failed to build the Next.js application. Check the build log for details." >> $GITHUB_STEP_SUMMARY
+            echo "::error::Build failed - Fix build errors"
+          fi
 
   unit-tests:
     name: Unit Tests
@@ -135,6 +179,17 @@ jobs:
           key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
       - name: Run Unit Tests
         run: npm run test:unit
+      - name: Unit Tests Summary
+        if: always()
+        run: |
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "### ✅ Unit Tests Passed" >> $GITHUB_STEP_SUMMARY
+            echo "All unit tests completed successfully." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### ❌ Unit Tests Failed" >> $GITHUB_STEP_SUMMARY
+            echo "Some unit tests failed. Check the test output for details." >> $GITHUB_STEP_SUMMARY
+            echo "::error::Unit tests failed - Fix failing tests"
+          fi
 
   integration-tests:
     name: Integration Tests
@@ -155,6 +210,17 @@ jobs:
           key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
       - name: Run Integration Tests
         run: npm run test:integration
+      - name: Integration Tests Summary
+        if: always()
+        run: |
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "### ✅ Integration Tests Passed" >> $GITHUB_STEP_SUMMARY
+            echo "All integration tests completed successfully." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### ❌ Integration Tests Failed" >> $GITHUB_STEP_SUMMARY
+            echo "Some integration tests failed. Check the test output for details." >> $GITHUB_STEP_SUMMARY
+            echo "::error::Integration tests failed - Fix failing tests"
+          fi
 
   e2e-tests:
     name: E2E Tests
@@ -177,6 +243,17 @@ jobs:
         run: npx playwright install --with-deps
       - name: Run E2E Tests
         run: npm run test:e2e
+      - name: E2E Tests Summary
+        if: always()
+        run: |
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "### ✅ E2E Tests Passed" >> $GITHUB_STEP_SUMMARY
+            echo "All end-to-end tests completed successfully." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### ❌ E2E Tests Failed" >> $GITHUB_STEP_SUMMARY
+            echo "Some end-to-end tests failed. Check the test output and Playwright report for details." >> $GITHUB_STEP_SUMMARY
+            echo "::error::E2E tests failed - Fix failing tests"
+          fi
 
   app-health:
     name: App Health Check
@@ -243,4 +320,15 @@ jobs:
         run: |
           if [ -f .nextpid ]; then
             kill $(cat .nextpid) || true
+          fi
+      - name: Health Check Summary
+        if: always()
+        run: |
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "### ✅ Health Check Passed" >> $GITHUB_STEP_SUMMARY
+            echo "Application is running and responding correctly." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### ❌ Health Check Failed" >> $GITHUB_STEP_SUMMARY
+            echo "Application failed to start or health endpoint is not responding correctly." >> $GITHUB_STEP_SUMMARY
+            echo "::error::Health check failed - Check application logs"
           fi
