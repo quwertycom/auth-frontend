@@ -27,17 +27,18 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
       - name: Cache node_modules
+        id: cache-node-modules
         uses: actions/cache@v4
         with:
           path: |
             node_modules
-            ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+      - name: Install Dependencies
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        run: npm ci
 
-  install:
-    name: Install Dependencies
+  format-check:
+    name: Check Code Format
     needs: setup
     runs-on: ubuntu-latest
     steps:
@@ -46,43 +47,18 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ needs.setup.outputs.node-version }}
-          cache: 'npm'
-      - name: Restore Cache
+      - name: Restore node_modules
         uses: actions/cache@v4
         with:
           path: |
             node_modules
-            ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-      - name: Install Dependencies
-        run: npm ci
-      - name: Cache Project
-        uses: actions/cache@v4
-        with:
-          path: .
-          key: ${{ github.sha }}-project-installed
-
-  format-check:
-    name: Check Code Format
-    needs: install
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ needs.setup.outputs.node-version }}
-      - name: Restore Project Cache
-        uses: actions/cache@v4
-        with:
-          path: .
-          key: ${{ github.sha }}-project-installed
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
       - name: Check Format
         run: npm run format
 
   lint:
     name: Lint Code
-    needs: install
+    needs: setup
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -90,17 +66,18 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ needs.setup.outputs.node-version }}
-      - name: Restore Project Cache
+      - name: Restore node_modules
         uses: actions/cache@v4
         with:
-          path: .
-          key: ${{ github.sha }}-project-installed
+          path: |
+            node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
       - name: Run ESLint
         run: npm run lint
 
   build:
     name: Build Project
-    needs: install
+    needs: setup
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -108,11 +85,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ needs.setup.outputs.node-version }}
-      - name: Restore Project Cache
+      - name: Restore node_modules
         uses: actions/cache@v4
         with:
-          path: .
-          key: ${{ github.sha }}-project-installed
+          path: |
+            node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
       - name: Cache Next.js Build
         uses: actions/cache@v4
         with:
@@ -131,6 +109,7 @@ jobs:
             .next/
             public/
             package.json
+            package-lock.json
             next.config.js
             node_modules/
 
@@ -144,11 +123,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ needs.setup.outputs.node-version }}
-      - name: Restore Project Cache
-        uses: actions/cache@v4
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
         with:
+          name: build-artifacts
           path: .
-          key: ${{ github.sha }}-project-installed
       - name: Run Unit Tests
         run: npm run test:unit
 
@@ -162,11 +141,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ needs.setup.outputs.node-version }}
-      - name: Restore Project Cache
-        uses: actions/cache@v4
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
         with:
+          name: build-artifacts
           path: .
-          key: ${{ github.sha }}-project-installed
       - name: Run Integration Tests
         run: npm run test:integration
 
@@ -180,11 +159,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ needs.setup.outputs.node-version }}
-      - name: Restore Project Cache
-        uses: actions/cache@v4
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
         with:
+          name: build-artifacts
           path: .
-          key: ${{ github.sha }}-project-installed
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
       - name: Run E2E Tests
@@ -199,20 +178,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ needs.setup.outputs.node-version }}
-
       - name: Download Build Artifacts
         uses: actions/download-artifact@v4
         with:
           name: build-artifacts
           path: .
-
-      - name: Restore node_modules Cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-
       - name: Start App
         env:
           PORT: 3000
@@ -220,7 +190,7 @@ jobs:
           NODE_ENV: "production"
         run: |
           echo "Starting Next.js server..."
-          node_modules/.bin/next start > server.log 2>&1 &
+          npm start > server.log 2>&1 &
           SERVER_PID=$!
           echo "Server PID: $SERVER_PID"
           
