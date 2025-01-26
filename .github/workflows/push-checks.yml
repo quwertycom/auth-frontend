@@ -211,21 +211,13 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build-artifacts
-          path: ./artifacts
+          path: .
       - name: Verify Downloaded Artifacts
         run: |
           echo "Listing contents of artifacts directory:"
-          ls -la ./artifacts
+          ls -la
           echo "Checking for .next directory in artifacts:"
-          ls -la ./artifacts/.next || echo ".next directory not found"
-      - name: Copy Artifacts
-        run: |
-          mkdir -p ./copied_artifacts
-          cp -r ./artifacts/. ./copied_artifacts/
-          echo "Contents of copied_artifacts directory:"
-          ls -la ./copied_artifacts
-      - name: List Artifacts
-        run: ls -la ./artifacts
+          ls -la .next || echo ".next directory not found"
       - name: Verify Build Artifacts
         run: |
           echo "Verifying build artifacts..."
