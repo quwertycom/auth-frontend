@@ -128,10 +128,11 @@ jobs:
         with:
           name: build-artifacts
           path: |
-            .next/standalone/
-            .next/static/
+            .next/
             public/
+            package.json
             next.config.js
+            node_modules/
 
   unit-tests:
     name: Unit Tests
@@ -200,28 +201,14 @@ jobs:
           name: build-artifacts
           path: .
 
-      - name: Setup Directory Structure
-        run: |
-          # Create required directories
-          mkdir -p .next/static
-          
-          # Move files to their correct locations
-          mv .next/standalone/* .
-          mv .next/static .next/
-          
-          echo "Directory structure:"
-          ls -la
-          echo "Static files:"
-          ls -la .next/static
-
       - name: Start App
         env:
           PORT: 3000
           HOSTNAME: "0.0.0.0"
           NODE_ENV: "production"
         run: |
-          echo "Starting standalone server..."
-          node server.js > server.log 2>&1 &
+          echo "Starting Next.js server..."
+          npm start > server.log 2>&1 &
           SERVER_PID=$!
           echo "Server PID: $SERVER_PID"
           
