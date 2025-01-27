@@ -15,7 +15,7 @@ export default function LoginPage() {
   return (
     <div className="flex h-screen w-full flex-col items-center justify-center gap-6">
       <h1 className="text-4xl font-bold">QUWERTY Auth</h1>
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-md" data-testid="heroui-card">
         <CardHeader>
           <div className="w-full text-center text-2xl font-bold">Login</div>
         </CardHeader>

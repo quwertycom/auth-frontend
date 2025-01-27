@@ -3,7 +3,7 @@ import { render as rtlRender } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import authReducer from '@/app/store/features/authSlice';
-import { HeroUIProvider } from '@heroui/react';
+import { HeroUIProvider, NextUIProvider } from '@heroui/react';
 import { RootState } from '@/app/store/store';
 import { cleanup } from '@testing-library/react';
 import { afterEach } from 'vitest';

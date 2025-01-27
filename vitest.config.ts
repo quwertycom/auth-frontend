@@ -9,6 +9,7 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: ['./tests/utils/setup.tsx'],
+    css: true,
     coverage: {
       reportsDirectory: './tests/coverage',
       enabled: true,
