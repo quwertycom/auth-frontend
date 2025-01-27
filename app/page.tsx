@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@heroui/react';
+import { Button, Link } from '@heroui/react';
 import { useAppDispatch, useAppSelector } from '@/app/store/hooks';
 import { setUsername, resetUsername } from '@/app/store/features/authSlice';
 
@@ -24,6 +24,7 @@ export default function Home() {
         >
           Set Username
         </Button>
+        <Link href="/app/auth">Auth</Link>
       </div>
     </div>
   );
