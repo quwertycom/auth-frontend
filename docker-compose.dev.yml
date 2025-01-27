@@ -1,0 +1,184 @@
+services:
+  dev:
+    build:
+      context: .
+      target: dev
+    image: qauth:dev
+    container_name: qauth-dev
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    ports:
+      - '3000:3000'
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
+      - npm_config_update_notifier=false
+    command: npm run dev
+
+  build:
+    image: qauth:dev
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
+      - npm_config_update_notifier=false
+    command: npm run build
+
+  test-unit:
+    build:
+      context: .
+      target: test
+    image: qauth:test
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=test
+      - NEXT_TELEMETRY_DISABLED=1
+      - npm_config_update_notifier=false
+    command: npm run test:unit
+
+  test-integration:
+    build:
+      context: .
+      target: test
+    image: qauth:test
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=test
+      - NEXT_TELEMETRY_DISABLED=1
+      - npm_config_update_notifier=false
+    command: npm run test:integration
+
+  test-e2e:
+    build:
+      context: .
+      target: test
+    image: qauth:test
+    ipc: host
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/playwright-report
+    environment:
+      - NODE_ENV=test
+      - NEXT_TELEMETRY_DISABLED=1
+      - CI=true
+      - npm_config_update_notifier=false
+    command: npm run test:e2e
+
+  test-e2e-ui:
+    build:
+      context: .
+      target: test
+    image: qauth:test
+    ipc: host
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/playwright-report
+    environment:
+      - NODE_ENV=test
+      - NEXT_TELEMETRY_DISABLED=1
+      - CI=true
+      - npm_config_update_notifier=false
+    command: npm run test:e2e:ui
+
+  test-e2e-debug:
+    build:
+      context: .
+      target: test
+    image: qauth:test
+    ipc: host
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/playwright-report
+    environment:
+      - NODE_ENV=test
+      - NEXT_TELEMETRY_DISABLED=1
+      - CI=true
+      - PWDEBUG=1
+      - npm_config_update_notifier=false
+    command: npm run test:e2e:debug
+
+  test-perf:
+    build:
+      context: .
+      target: test
+    image: qauth:test
+    ipc: host
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/playwright-report
+    environment:
+      - NODE_ENV=test
+      - NEXT_TELEMETRY_DISABLED=1
+      - CI=true
+      - npm_config_update_notifier=false
+    command: npm run test:perf
+
+  test-watch:
+    build:
+      context: .
+      target: test
+    image: qauth:test
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=test
+      - NEXT_TELEMETRY_DISABLED=1
+      - npm_config_update_notifier=false
+    command: npm run test:watch
+
+  test-coverage:
+    build:
+      context: .
+      target: test
+    image: qauth:test
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=test
+      - NEXT_TELEMETRY_DISABLED=1
+      - NODE_OPTIONS=--experimental-vm-modules
+      - npm_config_update_notifier=false
+    command: npm run test:coverage
+
+  test-all:
+    build:
+      context: .
+      target: test
+    image: qauth:test
+    ipc: host
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/playwright-report
+    environment:
+      - NODE_ENV=test
+      - NEXT_TELEMETRY_DISABLED=1
+      - CI=true
+      - npm_config_update_notifier=false
+    command: npm run test:all
+
+volumes:
+  coverage:
+    driver: local
+
+networks:
+  default:
+    name: qauth-dev-network
+    driver: bridge
