@@ -62,11 +62,14 @@ ENV npm_config_update_notifier false
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
+# Copy only necessary files
+COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
+COPY --from=builder --chown=nextjs:nodejs /app/package-lock.json ./package-lock.json
 
-RUN chown -R nextjs:nodejs /app
+# Install only production dependencies
+RUN npm ci --only=production
 
 USER nextjs
 
@@ -75,4 +78,4 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-CMD ["node", "server.js"] 
+CMD ["npm", "start"] 

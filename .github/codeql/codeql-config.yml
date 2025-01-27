@@ -1,0 +1,46 @@
+name: 'QAuth Frontend CodeQL config'
+
+queries:
+  - uses: security-and-quality
+
+paths:
+  - app
+  - components
+  - lib
+  - pages
+  - public
+  - styles
+  - tests
+  - types
+
+paths-ignore:
+  - '**/*.test.ts'
+  - '**/*.test.tsx'
+  - '**/*.spec.ts'
+  - '**/*.spec.tsx'
+  - '**/node_modules'
+  - '**/dist'
+  - '**/.next'
+  - '**/coverage'
+  - '**/test-results'
+  - '**/playwright-report'
+  - '**/.playwright'
+
+query-filters:
+  - exclude:
+      problem.severity:
+        - warning
+        - recommendation
+      tags contain: maintainability
+
+extraction:
+  typescript:
+    index:
+      include:
+        - '**/*.ts'
+        - '**/*.tsx'
+        - '**/*.mts'
+        - '**/*.cts'
+      exclude:
+        - '**/*.d.ts'
+      typescript-version: 5

@@ -1,14 +1,25 @@
 import type { NextConfig } from 'next';
 
-const nextConfig: NextConfig = {
-  output: 'standalone',
+const config: NextConfig = {
+  poweredByHeader: false,
+  reactStrictMode: true,
+  compress: true,
+  distDir: '.next',
   experimental: {
-    turbo: {
-      rules: {
-        '*.svg': ['@svgr/webpack'],
-      },
+    serverActions: {
+      allowedOrigins: ['localhost:3000', '0.0.0.0:3000'],
     },
+  },
+  images: {
+    formats: ['image/avif', 'image/webp'],
+    remotePatterns: [],
+  },
+  typescript: {
+    ignoreBuildErrors: false,
+  },
+  eslint: {
+    ignoreDuringBuilds: false,
   },
 };
 
-export default nextConfig;
+export default config;
