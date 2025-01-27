@@ -24,7 +24,7 @@ export default function Home() {
         >
           Set Username
         </Button>
-        <Link href="/app/auth">Auth</Link>
+        <Link href="/app/auth/login">Auth</Link>
       </div>
     </div>
   );
