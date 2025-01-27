@@ -1,0 +1,582 @@
+name: PR Checks
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+env:
+  NODE_VERSION: '20.x'
+  NEXT_TELEMETRY_DISABLED: 1
+  CI: true
+  npm_config_update_notifier: false
+
+jobs:
+  setup:
+    name: Setup Node.js
+    runs-on: ubuntu-24.04
+    env:
+      ACTIONS_STEP_DEBUG: true
+    outputs:
+      node-version: ${{ env.NODE_VERSION }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      - name: Install Dependencies
+        run: npm ci
+      - name: Cache Dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            ~/.npm
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+
+  dependency-check:
+    name: Dependency Analysis
+    needs: setup
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ needs.setup.outputs.node-version }}
+      - name: Restore Dependencies Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            ~/.npm
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+      - name: Check for Outdated Dependencies
+        id: outdated
+        run: |
+          echo "::group::Checking for outdated dependencies"
+          if npm outdated 2>&1 | tee outdated.log; then
+            echo "status=success" >> $GITHUB_OUTPUT
+            echo "No outdated dependencies found"
+          else
+            echo "status=warning" >> $GITHUB_OUTPUT
+            echo "Found outdated dependencies"
+          fi
+          echo "::endgroup::"
+      - name: Audit Dependencies
+        id: audit
+        run: |
+          echo "::group::Running security audit"
+          if npm audit 2>&1 | tee audit.log; then
+            echo "status=success" >> $GITHUB_OUTPUT
+            echo "No security vulnerabilities found"
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+            echo "Found security vulnerabilities"
+          fi
+          echo "::endgroup::"
+      - name: Check for Duplicate Dependencies
+        id: dedupe
+        run: |
+          echo "::group::Checking for duplicate dependencies"
+          if npm dedupe --dry-run 2>&1 | tee dedupe.log; then
+            echo "status=success" >> $GITHUB_OUTPUT
+            echo "No duplicate dependencies found"
+          else
+            echo "status=warning" >> $GITHUB_OUTPUT
+            echo "Found duplicate dependencies"
+          fi
+          echo "::endgroup::"
+      - name: Dependency Analysis Summary
+        if: always()
+        run: |
+          echo "### 📦 Dependency Analysis Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Outdated Dependencies
+          if [ "${{ steps.outdated.outputs.status }}" = "success" ]; then
+            echo "#### ✅ Dependency Versions" >> $GITHUB_STEP_SUMMARY
+            echo "All dependencies are up to date." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "#### ⚠️ Dependency Versions" >> $GITHUB_STEP_SUMMARY
+            echo "Some dependencies are outdated. Consider updating:" >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            cat outdated.log >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Security Audit
+          if [ "${{ steps.audit.outputs.status }}" = "success" ]; then
+            echo "#### ✅ Security Audit" >> $GITHUB_STEP_SUMMARY
+            echo "No security vulnerabilities found." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "#### ❌ Security Audit" >> $GITHUB_STEP_SUMMARY
+            echo "Security vulnerabilities detected:" >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            cat audit.log >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            echo "::error::Security vulnerabilities found in dependencies"
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Duplicate Dependencies
+          if [ "${{ steps.dedupe.outputs.status }}" = "success" ]; then
+            echo "#### ✅ Dependency Deduplication" >> $GITHUB_STEP_SUMMARY
+            echo "No duplicate dependencies found." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "#### ⚠️ Dependency Deduplication" >> $GITHUB_STEP_SUMMARY
+            echo "Found duplicate dependencies that could be deduplicated:" >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            cat dedupe.log >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          # Overall Status
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Summary" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.audit.outputs.status }}" = "success" ]; then
+            if [ "${{ steps.outdated.outputs.status }}" = "success" ] && [ "${{ steps.dedupe.outputs.status }}" = "success" ]; then
+              echo "✅ All dependency checks passed successfully." >> $GITHUB_STEP_SUMMARY
+            else
+              echo "⚠️ No security issues found, but there are maintenance recommendations." >> $GITHUB_STEP_SUMMARY
+            fi
+          else
+            echo "❌ Security vulnerabilities found that need to be addressed." >> $GITHUB_STEP_SUMMARY
+          fi
+
+  code-scanning:
+    name: CodeQL Analysis
+    needs: setup
+    runs-on: ubuntu-24.04
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ['typescript']
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ needs.setup.outputs.node-version }}
+      - name: Restore Dependencies Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            ~/.npm
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          queries: security-and-quality
+          config-file: ./.github/codeql/codeql-config.yml
+      - name: Build for Analysis
+        run: |
+          npm ci
+          npm run build
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: '/language:${{ matrix.language }}'
+      - name: CodeQL Analysis Summary
+        if: always()
+        run: |
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "### ✅ CodeQL Analysis Completed Successfully" >> $GITHUB_STEP_SUMMARY
+            echo "TypeScript code analysis completed with no critical issues found." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### ❌ CodeQL Analysis Failed" >> $GITHUB_STEP_SUMMARY
+            echo "TypeScript code analysis found potential issues. Please check the security tab for details." >> $GITHUB_STEP_SUMMARY
+            echo "::error::CodeQL Analysis failed - Review security findings"
+          fi
+
+  format-check:
+    name: Check Code Format
+    needs: setup
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ needs.setup.outputs.node-version }}
+      - name: Restore Dependencies Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            ~/.npm
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+      - name: Check Format
+        run: npm run format
+      - name: Format Check Summary
+        if: always()
+        run: |
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "### ✅ Code Format Check Passed" >> $GITHUB_STEP_SUMMARY
+            echo "All files are properly formatted according to project standards." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### ❌ Code Format Check Failed" >> $GITHUB_STEP_SUMMARY
+            echo "Some files need formatting. Run 'npm run format:fix' locally to fix." >> $GITHUB_STEP_SUMMARY
+            echo "::error::Format check failed - Run format:fix to resolve"
+          fi
+
+  lint:
+    name: Lint Code
+    needs: setup
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ needs.setup.outputs.node-version }}
+      - name: Restore Dependencies Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            ~/.npm
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+      - name: Run ESLint
+        run: npm run lint
+      - name: Lint Summary
+        if: always()
+        run: |
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "### ✅ Lint Check Passed" >> $GITHUB_STEP_SUMMARY
+            echo "No linting issues found in the codebase." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### ❌ Lint Check Failed" >> $GITHUB_STEP_SUMMARY
+            echo "ESLint found issues that need to be fixed. Check the log for details." >> $GITHUB_STEP_SUMMARY
+            echo "::error::Lint check failed - Fix ESLint issues"
+          fi
+
+  build:
+    name: Build Project
+    needs: setup
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ needs.setup.outputs.node-version }}
+      - name: Restore Dependencies Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            ~/.npm
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+      - name: Cache Next.js Build
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ github.workspace }}/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
+      - name: Build
+        run: npm run build
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: |
+            .next/
+            public/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 1
+
+  unit-tests:
+    name: Unit Tests
+    needs: setup
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ needs.setup.outputs.node-version }}
+      - name: Restore Dependencies Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            ~/.npm
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+      - name: Run Unit Tests
+        run: npm run test:unit
+      - name: Unit Tests Summary
+        if: always()
+        run: |
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "### ✅ Unit Tests Passed" >> $GITHUB_STEP_SUMMARY
+            echo "All unit tests completed successfully." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### ❌ Unit Tests Failed" >> $GITHUB_STEP_SUMMARY
+            echo "Some unit tests failed. Check the test output for details." >> $GITHUB_STEP_SUMMARY
+            echo "::error::Unit tests failed - Fix failing tests"
+          fi
+
+  integration-tests:
+    name: Integration Tests
+    needs: setup
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ needs.setup.outputs.node-version }}
+      - name: Restore Dependencies Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            ~/.npm
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+      - name: Run Integration Tests
+        run: npm run test:integration
+      - name: Integration Tests Summary
+        if: always()
+        run: |
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "### ✅ Integration Tests Passed" >> $GITHUB_STEP_SUMMARY
+            echo "All integration tests completed successfully." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### ❌ Integration Tests Failed" >> $GITHUB_STEP_SUMMARY
+            echo "Some integration tests failed. Check the test output for details." >> $GITHUB_STEP_SUMMARY
+            echo "::error::Integration tests failed - Fix failing tests"
+          fi
+
+  e2e-tests:
+    name: E2E Tests
+    needs: setup
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ needs.setup.outputs.node-version }}
+      - name: Restore Dependencies Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            ~/.npm
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+      - name: Run E2E Tests
+        run: npm run test:e2e
+      - name: E2E Tests Summary
+        if: always()
+        run: |
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "### ✅ E2E Tests Passed" >> $GITHUB_STEP_SUMMARY
+            echo "All end-to-end tests completed successfully." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### ❌ E2E Tests Failed" >> $GITHUB_STEP_SUMMARY
+            echo "Some end-to-end tests failed. Check the test output and Playwright report for details." >> $GITHUB_STEP_SUMMARY
+            echo "::error::E2E tests failed - Fix failing tests"
+          fi
+
+  performance-tests:
+    name: Performance Tests
+    needs: setup
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ needs.setup.outputs.node-version }}
+      - name: Restore Dependencies Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            ~/.npm
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+      - name: Run Performance Tests
+        run: npm run test:perf
+      - name: Performance Tests Summary
+        if: always()
+        run: |
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "### ✅ Performance Tests Passed" >> $GITHUB_STEP_SUMMARY
+            echo "All performance metrics are within acceptable thresholds." >> $GITHUB_STEP_SUMMARY
+            echo "Check the performance report for detailed metrics." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### ❌ Performance Tests Failed" >> $GITHUB_STEP_SUMMARY
+            echo "Some performance metrics are outside acceptable thresholds." >> $GITHUB_STEP_SUMMARY
+            echo "Check the performance report for details on failing metrics." >> $GITHUB_STEP_SUMMARY
+            echo "::error::Performance tests failed - Review metrics"
+          fi
+
+  app-health:
+    name: App Health Check
+    needs: [setup, build]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ needs.setup.outputs.node-version }}
+      - name: Restore Dependencies Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            ~/.npm
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: .
+      - name: Start Next.js Server
+        run: |
+          echo "Starting Next.js server..."
+          PORT=3000 NODE_ENV=production npm start &
+          echo $! > .nextpid
+
+          # Wait for server to be ready
+          echo "Waiting for server to be ready..."
+          for i in {1..30}; do
+            if ! ps -p $(cat .nextpid) > /dev/null; then
+              echo "Server process died"
+              exit 1
+            fi
+            
+            response=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/api/health || true)
+            if [ "$response" = "200" ]; then
+              echo "Server is ready!"
+              break
+            fi
+            
+            if [ $i -eq 30 ]; then
+              echo "Timeout waiting for server"
+              kill $(cat .nextpid) || true
+              exit 1
+            fi
+            
+            echo "Waiting... (attempt $i/30)"
+            sleep 2
+          done
+      - name: Check Health Endpoint
+        run: |
+          response=$(curl -s http://localhost:3000/api/health)
+          echo "Health check response: $response"
+          if ! echo "$response" | grep -q '"status":"healthy"'; then
+            echo "Health check failed"
+            exit 1
+          fi
+          echo "Health check passed"
+      - name: Cleanup
+        if: always()
+        run: |
+          if [ -f .nextpid ]; then
+            kill $(cat .nextpid) || true
+          fi
+
+  coverage-report:
+    name: Test Coverage Report
+    needs: [unit-tests, integration-tests]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ needs.setup.outputs.node-version }}
+      - name: Restore Dependencies Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            ~/.npm
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+      - name: Generate Coverage Report
+        run: |
+          # Run tests with coverage and output in the format we need
+          NODE_OPTIONS=--experimental-vm-modules npx vitest run --coverage.enabled --coverage.provider v8 --coverage.reporter json-summary --coverage.reporter html --coverage.reportsDirectory ./coverage
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
+          retention-days: 14
+      - name: Coverage Summary
+        if: always()
+        run: |
+          if [ -f "coverage/coverage-summary.json" ]; then
+            # Extract coverage data directly from the summary
+            LINES=$(jq -r '.total.lines.pct' coverage/coverage-summary.json)
+            STATEMENTS=$(jq -r '.total.statements.pct' coverage/coverage-summary.json)
+            FUNCTIONS=$(jq -r '.total.functions.pct' coverage/coverage-summary.json)
+            BRANCHES=$(jq -r '.total.branches.pct' coverage/coverage-summary.json)
+            
+            echo "### 📊 Test Coverage Report" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "| Metric | Coverage |" >> $GITHUB_STEP_SUMMARY
+            echo "|--------|----------|" >> $GITHUB_STEP_SUMMARY
+            echo "| Lines | ${LINES}% |" >> $GITHUB_STEP_SUMMARY
+            echo "| Statements | ${STATEMENTS}% |" >> $GITHUB_STEP_SUMMARY
+            echo "| Functions | ${FUNCTIONS}% |" >> $GITHUB_STEP_SUMMARY
+            echo "| Branches | ${BRANCHES}% |" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            
+            # Set status based on coverage thresholds
+            if (( $(echo "$LINES < 80" | bc -l) )) || \
+               (( $(echo "$STATEMENTS < 80" | bc -l) )) || \
+               (( $(echo "$FUNCTIONS < 80" | bc -l) )) || \
+               (( $(echo "$BRANCHES < 80" | bc -l) )); then
+              echo "### ⚠️ Coverage Below Threshold" >> $GITHUB_STEP_SUMMARY
+              echo "Some coverage metrics are below the 80% threshold." >> $GITHUB_STEP_SUMMARY
+              echo "::warning::Test coverage is below 80% threshold"
+            else
+              echo "### ✅ Coverage Meets Requirements" >> $GITHUB_STEP_SUMMARY
+              echo "All coverage metrics are above the 80% threshold." >> $GITHUB_STEP_SUMMARY
+            fi
+            
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Full coverage report has been uploaded as an artifact." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### ❌ Coverage Report Generation Failed" >> $GITHUB_STEP_SUMMARY
+            echo "Failed to generate coverage report. Check the job logs for details." >> $GITHUB_STEP_SUMMARY
+            echo "::error::Failed to generate coverage report"
+            exit 1
+          fi
+
+  docker-build:
+    name: Docker Build & Test
+    needs:
+      [unit-tests, integration-tests, e2e-tests, performance-tests, app-health]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Build Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: false
+          tags: auth-frontend:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
