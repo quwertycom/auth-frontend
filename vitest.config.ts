@@ -36,6 +36,12 @@ export default defineConfig({
       'tests/integration/**/*.{test,spec}.{ts,tsx}',
     ],
     exclude: ['tests/e2e/**/*', 'tests/performance/**/*'],
+    environmentOptions: {
+      jsdom: {
+        resources: 'usable',
+        runScripts: 'dangerously'
+      }
+    }
   },
   resolve: {
     alias: {

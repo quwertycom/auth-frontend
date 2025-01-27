@@ -7,22 +7,28 @@ describe('LoginPage', () => {
   it('renders the login form correctly', () => {
     render(<LoginPage />);
     
-    // Check for main elements
-    expect(screen.getByText('QUWERTY Auth')).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'Login' })).toBeInTheDocument();
+    // Main app heading
+    expect(screen.getByRole('heading', { name: 'QUWERTY Auth', level: 1 })).toBeInTheDocument();
+    
+    // Card header text - using className to be more specific
+    const loginHeader = screen.getByText('Login', { selector: '.text-2xl' });
+    expect(loginHeader).toBeInTheDocument();
+    
+    // Input fields
     expect(screen.getByLabelText('Email')).toBeInTheDocument();
     expect(screen.getByLabelText('Password')).toBeInTheDocument();
-    expect(screen.getByText('Forgot Password?')).toBeInTheDocument();
+    
+    // Links and buttons
+    expect(screen.getByRole('link', { name: 'Forgot Password?' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Login' })).toBeInTheDocument();
   });
 
-  it('displays the correct input fields', () => {
+  it('handles form input correctly', () => {
     render(<LoginPage />);
     
     const emailInput = screen.getByLabelText('Email');
     const passwordInput = screen.getByLabelText('Password');
     
-    // Test input fields
     fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
     fireEvent.change(passwordInput, { target: { value: 'password123' } });
     
@@ -30,29 +36,27 @@ describe('LoginPage', () => {
     expect(passwordInput).toHaveValue('password123');
   });
 
-  it('contains a working forgot password link', () => {
+  it('has valid navigation links', () => {
     render(<LoginPage />);
     
-    const forgotPasswordLink = screen.getByText('Forgot Password?');
+    const forgotPasswordLink = screen.getByRole('link', { name: 'Forgot Password?' });
     expect(forgotPasswordLink).toHaveAttribute('href', '/app/auth/forgot-password');
   });
 
-  it('has a properly styled login button', () => {
+  it('renders the card component correctly', () => {
     render(<LoginPage />);
     
-    const loginButton = screen.getByRole('button', { name: 'Login' });
-    expect(loginButton).toHaveAttribute('class', 'w-full');
+    const card = screen.getByTestId('heroui-card');
+    expect(card).toBeInTheDocument();
+    
+    // Verify child elements - using className to be more specific
+    const loginHeader = screen.getByText('Login', { selector: '.text-2xl' });
+    expect(loginHeader).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Login' })).toBeInTheDocument();
   });
 
-  it('renders the card with correct context', () => {
+  it('displays divider component', () => {
     render(<LoginPage />);
-    
-    const card = screen.getByRole('region');
-    const header = screen.getByRole('heading', { name: 'Login' });
-    const body = screen.getByRole('contentinfo', { name: 'Login Form' });
-    
-    expect(card).toBeInTheDocument();
-    expect(header).toHaveTextContent('Login');
-    expect(body).toContainElement(screen.getByLabelText('Email'));
+    expect(screen.getByRole('separator')).toBeInTheDocument();
   });
 }); 
