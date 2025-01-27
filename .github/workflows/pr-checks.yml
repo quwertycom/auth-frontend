@@ -514,7 +514,7 @@ jobs:
       - name: Generate Coverage Report
         run: |
           # Run tests with coverage and output in the format we need
-          NODE_OPTIONS=--experimental-vm-modules npx vitest run --coverage.enabled --coverage.provider v8 --coverage.reporter json --coverage.reporter html --coverage.reportsDirectory ./coverage
+          NODE_OPTIONS=--experimental-vm-modules npx vitest run --coverage.enabled --coverage.provider v8 --coverage.reporter json-summary --coverage.reporter html --coverage.reportsDirectory ./coverage
       - name: Upload Coverage Report
         uses: actions/upload-artifact@v4
         with:
@@ -524,24 +524,21 @@ jobs:
       - name: Coverage Summary
         if: always()
         run: |
-          if [ -f "coverage/coverage-final.json" ]; then
-            # Parse the coverage data using jq
-            COVERAGE_DATA=$(cat coverage/coverage-final.json)
-            
-            # Calculate total coverage metrics
-            LINES=$(echo "$COVERAGE_DATA" | jq -r '[.[].lines.pct] | add / length')
-            STATEMENTS=$(echo "$COVERAGE_DATA" | jq -r '[.[].statements.pct] | add / length')
-            FUNCTIONS=$(echo "$COVERAGE_DATA" | jq -r '[.[].functions.pct] | add / length')
-            BRANCHES=$(echo "$COVERAGE_DATA" | jq -r '[.[].branches.pct] | add / length')
+          if [ -f "coverage/coverage-summary.json" ]; then
+            # Extract coverage data directly from the summary
+            LINES=$(jq -r '.total.lines.pct' coverage/coverage-summary.json)
+            STATEMENTS=$(jq -r '.total.statements.pct' coverage/coverage-summary.json)
+            FUNCTIONS=$(jq -r '.total.functions.pct' coverage/coverage-summary.json)
+            BRANCHES=$(jq -r '.total.branches.pct' coverage/coverage-summary.json)
             
             echo "### 📊 Test Coverage Report" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "| Metric | Coverage |" >> $GITHUB_STEP_SUMMARY
             echo "|--------|----------|" >> $GITHUB_STEP_SUMMARY
-            echo "| Lines | $(printf "%.2f" $LINES)% |" >> $GITHUB_STEP_SUMMARY
-            echo "| Statements | $(printf "%.2f" $STATEMENTS)% |" >> $GITHUB_STEP_SUMMARY
-            echo "| Functions | $(printf "%.2f" $FUNCTIONS)% |" >> $GITHUB_STEP_SUMMARY
-            echo "| Branches | $(printf "%.2f" $BRANCHES)% |" >> $GITHUB_STEP_SUMMARY
+            echo "| Lines | ${LINES}% |" >> $GITHUB_STEP_SUMMARY
+            echo "| Statements | ${STATEMENTS}% |" >> $GITHUB_STEP_SUMMARY
+            echo "| Functions | ${FUNCTIONS}% |" >> $GITHUB_STEP_SUMMARY
+            echo "| Branches | ${BRANCHES}% |" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             
             # Set status based on coverage thresholds
