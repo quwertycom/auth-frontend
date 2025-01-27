@@ -26,6 +26,18 @@ const eslintConfig = [
       'import/no-cycle': 'error',
     },
   },
+  {
+    files: ['tests/**/*.{ts,tsx}'],
+    rules: {
+      '@typescript-eslint/no-unused-vars': ['error'],
+      '@typescript-eslint/no-explicit-any': ['error'],
+      'no-console': ['warn', { allow: ['warn', 'error'] }],
+      'prefer-const': 'error',
+      eqeqeq: ['error', 'always'],
+      'no-unused-expressions': 'error',
+      'no-duplicate-imports': 'error',
+    },
+  },
 ];
 
 export default eslintConfig;
