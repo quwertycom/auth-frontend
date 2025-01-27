@@ -37,9 +37,7 @@ function render(
   function Wrapper({ children }: { children: React.ReactNode }) {
     return (
       <Provider store={store}>
-        <HeroUIProvider>
-          {children}
-        </HeroUIProvider>
+        <HeroUIProvider>{children}</HeroUIProvider>
       </Provider>
     );
   }

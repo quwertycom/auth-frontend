@@ -40,9 +40,9 @@ export default defineConfig({
     environmentOptions: {
       jsdom: {
         resources: 'usable',
-        runScripts: 'dangerously'
-      }
-    }
+        runScripts: 'dangerously',
+      },
+    },
   },
   resolve: {
     alias: {
