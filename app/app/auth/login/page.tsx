@@ -70,7 +70,9 @@ export default function LoginPage() {
     <div className="flex h-screen w-full flex-col items-center justify-center gap-6">
       <Card className="w-full max-w-md" data-testid="heroui-card">
         <CardHeader>
-          <div className="w-full text-center text-3xl font-bold">Login with qID</div>
+          <div className="w-full text-center text-3xl font-bold">
+            Login with qID
+          </div>
         </CardHeader>
         <CardBody className="flex flex-col gap-2">
           <Input
@@ -107,7 +109,9 @@ export default function LoginPage() {
         </CardBody>
         <Divider />
         <CardFooter>
-          <Link href="/app/auth/register">Don't have an account? Register</Link>
+          <Link href="/app/auth/register">
+            Don&apos;t have an account? Register
+          </Link>
         </CardFooter>
       </Card>
     </div>

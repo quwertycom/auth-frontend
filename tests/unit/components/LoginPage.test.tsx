@@ -51,10 +51,7 @@ describe('LoginPage', () => {
     const registerLink = screen.getByRole('link', {
       name: /don't have an account\? register/i,
     });
-    expect(registerLink).toHaveAttribute(
-      'href',
-      '/app/auth/register',
-    );
+    expect(registerLink).toHaveAttribute('href', '/app/auth/register');
   });
 
   it('renders the card component correctly', () => {
