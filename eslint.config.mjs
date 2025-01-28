@@ -64,7 +64,7 @@ export default [
       'react-hooks/exhaustive-deps': 'warn',
       'no-console': ['warn', { allow: ['warn', 'error'] }],
       'prefer-const': 'error',
-      'eqeqeq': ['error', 'always'],
+      eqeqeq: ['error', 'always'],
       'no-unused-expressions': 'error',
       'no-duplicate-imports': 'error',
       'unused-imports/no-unused-imports': 'error',
@@ -105,9 +105,9 @@ export default [
       '@typescript-eslint/no-explicit-any': 'off', // Relaxed for test mocks
       'no-console': 'off', // Allowed in tests for debugging
       'prefer-const': 'error',
-      'eqeqeq': ['error', 'always'],
+      eqeqeq: ['error', 'always'],
       'no-unused-expressions': 'error',
       'no-duplicate-imports': 'error',
     },
   },
-]; 
+];
