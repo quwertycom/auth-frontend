@@ -3,6 +3,7 @@ import js from '@eslint/js';
 import { FlatCompat } from '@eslint/eslintrc';
 import typescript from '@typescript-eslint/eslint-plugin';
 import typescriptParser from '@typescript-eslint/parser';
+import unusedImports from 'eslint-plugin-unused-imports';
 
 const __filename = fileURLToPath(import.meta.url);
 
@@ -54,6 +55,7 @@ export default [
     },
     plugins: {
       '@typescript-eslint': typescript,
+      'unused-imports': unusedImports,
     },
     rules: {
       '@typescript-eslint/no-unused-vars': ['error'],
@@ -65,6 +67,16 @@ export default [
       'eqeqeq': ['error', 'always'],
       'no-unused-expressions': 'error',
       'no-duplicate-imports': 'error',
+      'unused-imports/no-unused-imports': 'error',
+      'unused-imports/no-unused-vars': [
+        'warn',
+        {
+          vars: 'all',
+          varsIgnorePattern: '^_',
+          args: 'after-used',
+          argsIgnorePattern: '^_',
+        },
+      ],
     },
   },
 
