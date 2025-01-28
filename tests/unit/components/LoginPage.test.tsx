@@ -19,7 +19,7 @@ describe('LoginPage', () => {
     expect(loginHeader).toBeInTheDocument();
 
     // Input fields
-    expect(screen.getByRole('textbox', { name: /email/i })).toBeInTheDocument();
+    expect(screen.getByLabelText(/username/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
 
     // Links and buttons
@@ -32,13 +32,13 @@ describe('LoginPage', () => {
   it('handles form input correctly', () => {
     render(<LoginPage />);
 
-    const emailInput = screen.getByRole('textbox', { name: /email/i });
+    const usernameInput = screen.getByLabelText(/username/i);
     const passwordInput = screen.getByLabelText(/password/i);
 
-    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
+    fireEvent.change(usernameInput, { target: { value: 'testuser' } });
     fireEvent.change(passwordInput, { target: { value: 'password123' } });
 
-    expect(emailInput).toHaveValue('test@example.com');
+    expect(usernameInput).toHaveValue('testuser');
     expect(passwordInput).toHaveValue('password123');
   });
 
