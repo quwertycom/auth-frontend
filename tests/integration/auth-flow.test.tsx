@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen, fireEvent } from '../utils/test-utils';
 import Home from '../../app/page';
-import { store } from '../../app/store/store';
 import type { RootState } from '../../app/store/store';
 
 describe('Authentication Flow', () => {
