@@ -3,15 +3,18 @@ import '@testing-library/jest-dom';
 
 // Mock CSS modules
 vi.mock('material-symbols', async () => {
-  const actual = await vi.importActual<typeof import('material-symbols')>('material-symbols');
+  const actual =
+    await vi.importActual<typeof import('material-symbols')>(
+      'material-symbols',
+    );
   return {
     ...actual,
     default: {},
     css: {
       'material-symbols-outlined': 'material-symbols-outlined',
       'material-symbols-rounded': 'material-symbols-rounded',
-      'material-symbols-sharp': 'material-symbols-sharp'
-    }
+      'material-symbols-sharp': 'material-symbols-sharp',
+    },
   };
 });
 
@@ -26,20 +29,24 @@ Object.defineProperty(window, 'getComputedStyle', {
           return match ? match[1].trim() : '';
         }
         return '';
-      }
+      },
     };
 
     // Get the inline styles
     const styleString = element.getAttribute('style') || '';
-    const styles = styleString.split(';').reduce((acc: { [key: string]: string }, style: string) => {
-      const [property, value] = style.split(':').map(s => s.trim());
-      if (property && value) {
-        // Convert CSS property names to camelCase
-        const camelProperty = property.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
-        acc[camelProperty] = value;
-      }
-      return acc;
-    }, {});
+    const styles = styleString
+      .split(';')
+      .reduce((acc: { [key: string]: string }, style: string) => {
+        const [property, value] = style.split(':').map((s) => s.trim());
+        if (property && value) {
+          // Convert CSS property names to camelCase
+          const camelProperty = property.replace(/-([a-z])/g, (g) =>
+            g[1].toUpperCase(),
+          );
+          acc[camelProperty] = value;
+        }
+        return acc;
+      }, {});
 
     // Handle inherited styles from parent elements
     let currentElement: HTMLElement | null = element;
@@ -74,9 +81,9 @@ Object.defineProperty(window, 'getComputedStyle', {
     // Return both the computed styles and the parsed inline styles
     return {
       ...computedStyles,
-      ...styles
+      ...styles,
     };
-  }
+  },
 });
 
 // Only keep any necessary global setup, remove all HeroUI mocks

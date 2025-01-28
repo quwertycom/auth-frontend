@@ -7,8 +7,8 @@ const materialSymbols = {
 const css = {
   'material-symbols-outlined': 'material-symbols-outlined',
   'material-symbols-rounded': 'material-symbols-rounded',
-  'material-symbols-sharp': 'material-symbols-sharp'
+  'material-symbols-sharp': 'material-symbols-sharp',
 };
 
 export { css };
-export default materialSymbols; 
+export default materialSymbols;

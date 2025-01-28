@@ -8,12 +8,12 @@ describe('MaterialSymbol Integration', () => {
       <button>
         <MaterialSymbol symbol="add" />
         Add Item
-      </button>
+      </button>,
     );
-    
+
     const icon = screen.getByText('add');
     const button = icon.closest('button');
-    
+
     expect(icon).toBeInTheDocument();
     expect(button).toHaveTextContent('add');
     expect(button).toHaveTextContent('Add Item');
@@ -34,17 +34,17 @@ describe('MaterialSymbol Integration', () => {
         <MaterialSymbol symbol="star" color="gold" />
         <MaterialSymbol symbol="star" color="gold" />
         <MaterialSymbol symbol="star" color="gray" />
-      </div>
+      </div>,
     );
 
     const stars = screen.getAllByText('star');
     expect(stars).toHaveLength(3);
-    
-    stars.slice(0, 2).forEach(star => {
+
+    stars.slice(0, 2).forEach((star) => {
       const style = window.getComputedStyle(star);
       expect(style.color).toBe('rgb(255, 215, 0)'); // gold in RGB
     });
-    
+
     const style = window.getComputedStyle(stars[2]);
     expect(style.color).toBe('rgb(128, 128, 128)'); // gray in RGB
   });
@@ -54,7 +54,7 @@ describe('MaterialSymbol Integration', () => {
       <div>
         {true && <MaterialSymbol symbol="check" color="green" />}
         {false && <MaterialSymbol symbol="close" color="red" />}
-      </div>
+      </div>,
     );
 
     expect(screen.getByText('check')).toBeInTheDocument();
@@ -64,7 +64,7 @@ describe('MaterialSymbol Integration', () => {
       <div>
         {false && <MaterialSymbol symbol="check" color="green" />}
         {true && <MaterialSymbol symbol="close" color="red" />}
-      </div>
+      </div>,
     );
 
     expect(screen.queryByText('check')).not.toBeInTheDocument();
@@ -73,29 +73,23 @@ describe('MaterialSymbol Integration', () => {
 
   it('works with dynamic styles based on state', () => {
     const { rerender } = render(
-      <MaterialSymbol 
-        symbol="favorite" 
-        fill={false}
-        color="gray" 
-      />
+      <MaterialSymbol symbol="favorite" fill={false} color="gray" />,
     );
 
     let icon = screen.getByText('favorite');
     const style = window.getComputedStyle(icon);
-    expect(style.getPropertyValue('font-variation-settings')).toContain(`'FILL' 0`);
+    expect(style.getPropertyValue('font-variation-settings')).toContain(
+      `'FILL' 0`,
+    );
     expect(style.color).toBe('rgb(128, 128, 128)'); // gray in RGB
 
-    rerender(
-      <MaterialSymbol 
-        symbol="favorite" 
-        fill={true}
-        color="red" 
-      />
-    );
+    rerender(<MaterialSymbol symbol="favorite" fill={true} color="red" />);
 
     icon = screen.getByText('favorite');
     const newStyle = window.getComputedStyle(icon);
-    expect(newStyle.getPropertyValue('font-variation-settings')).toContain(`'FILL' 1`);
+    expect(newStyle.getPropertyValue('font-variation-settings')).toContain(
+      `'FILL' 1`,
+    );
     expect(newStyle.color).toBe('rgb(255, 0, 0)'); // red in RGB
   });
 
@@ -110,7 +104,7 @@ describe('MaterialSymbol Integration', () => {
       <Wrapper>
         <MaterialSymbol symbol="info" />
         <MaterialSymbol symbol="warning" color="orange" />
-      </Wrapper>
+      </Wrapper>,
     );
 
     const infoIcon = screen.getByText('info');
@@ -124,4 +118,4 @@ describe('MaterialSymbol Integration', () => {
     const warningStyle = window.getComputedStyle(warningIcon);
     expect(warningStyle.color).toBe('rgb(255, 165, 0)'); // orange in RGB
   });
-}); 
+});

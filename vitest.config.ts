@@ -13,9 +13,9 @@ export default defineConfig({
     deps: {
       optimizer: {
         web: {
-          include: ['material-symbols']
-        }
-      }
+          include: ['material-symbols'],
+        },
+      },
     },
     mockReset: true,
     coverage: {
@@ -55,7 +55,9 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('.', import.meta.url)),
-      'material-symbols': fileURLToPath(new URL('./tests/__mocks__/material-symbols.ts', import.meta.url)),
+      'material-symbols': fileURLToPath(
+        new URL('./tests/__mocks__/material-symbols.ts', import.meta.url),
+      ),
     },
   },
 });
