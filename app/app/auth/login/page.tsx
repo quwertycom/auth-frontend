@@ -68,12 +68,10 @@ export default function LoginPage() {
 
   return (
     <div className="flex h-screen w-full flex-col items-center justify-center gap-6">
-      <h1 className="text-4xl font-bold">QUWERTY Auth</h1>
       <Card className="w-full max-w-md" data-testid="heroui-card">
         <CardHeader>
-          <div className="w-full text-center text-2xl font-bold">Login</div>
+          <div className="w-full text-center text-3xl font-bold">Login with qID</div>
         </CardHeader>
-        <Divider />
         <CardBody className="flex flex-col gap-2">
           <Input
             label="Username"
@@ -102,10 +100,14 @@ export default function LoginPage() {
           />
           <Link href="/app/auth/forgot-password">Forgot Password?</Link>
         </CardBody>
-        <CardFooter>
+        <CardBody>
           <Button className="w-full" color="primary" onPress={handleLogin}>
             Login
           </Button>
+        </CardBody>
+        <Divider />
+        <CardFooter>
+          <Link href="/app/auth/register">Don't have an account? Register</Link>
         </CardFooter>
       </Card>
     </div>
