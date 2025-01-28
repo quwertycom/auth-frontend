@@ -7,14 +7,9 @@ describe('LoginPage', () => {
   it('renders the login form correctly', () => {
     render(<LoginPage />);
 
-    // Main app heading
-    expect(
-      screen.getByRole('heading', { name: 'QUWERTY Auth', level: 1 }),
-    ).toBeInTheDocument();
-
     // Card header text
-    const loginHeader = screen.getByText('Login', {
-      selector: 'div.text-2xl.font-bold',
+    const loginHeader = screen.getByText('Login with qID', {
+      selector: 'div.text-center.text-3xl.font-bold',
     });
     expect(loginHeader).toBeInTheDocument();
 
@@ -52,18 +47,27 @@ describe('LoginPage', () => {
       'href',
       '/app/auth/forgot-password',
     );
+
+    const registerLink = screen.getByRole('link', {
+      name: /don't have an account\? register/i,
+    });
+    expect(registerLink).toHaveAttribute(
+      'href',
+      '/app/auth/register',
+    );
   });
 
   it('renders the card component correctly', () => {
     render(<LoginPage />);
 
-    // Card should be present - using class and structure instead of role
+    // Card should be present
     const card = screen.getByTestId('heroui-card');
     expect(card).toBeInTheDocument();
-    expect(card).toHaveClass('flex', 'flex-col', 'relative');
 
     // Verify child elements
-    const loginHeader = screen.getByText('Login', { selector: 'div.text-2xl' });
+    const loginHeader = screen.getByText('Login with qID', {
+      selector: 'div.text-center.text-3xl.font-bold',
+    });
     expect(loginHeader).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument();
   });
