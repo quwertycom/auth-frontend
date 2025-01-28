@@ -11,7 +11,7 @@ import {
   Link,
 } from '@heroui/react';
 import { useState } from 'react';
-
+import OTPCard from '@/app/components/otpCard';
 export default function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -114,6 +114,7 @@ export default function LoginPage() {
           </Link>
         </CardFooter>
       </Card>
+      <OTPCard />
     </div>
   );
 }
