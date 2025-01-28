@@ -1,3 +1,5 @@
+import 'material-symbols';
+
 interface MaterialSymbolProps {
     symbol: string;
     type?: 'outlined' | 'rounded' | 'sharp';
