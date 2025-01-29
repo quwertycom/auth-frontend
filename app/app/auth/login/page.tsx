@@ -70,7 +70,7 @@ export default function LoginPage() {
 
   return (
     <div className="w-screen h-screen flex items-center justify-center">
-      <div className={`flex h-screen w-full flex-col items-center justify-center gap-6 ${showOTP ? 'scale-80 blur opacity-50 -translate-y-[10vh]' : ''} transition-all duration-[800ms] ease-in-out-cubic`}>
+      <div className={`flex h-screen w-full flex-col items-center justify-center gap-6 ${showOTP ? 'scale-80 blur-lg opacity-50' : ''} transition-all duration-[500ms] ease-in-out-cubic`}>
         <Card className="w-full max-w-md" data-testid="heroui-card">
           <CardHeader>
             <div className="w-full text-center text-3xl font-bold">

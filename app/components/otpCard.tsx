@@ -5,15 +5,10 @@ import MaterialSymbol from "./materialSymbol";
 
 export default function OTPCard(props: {show: boolean}) {
   return (
-    <div className={`fixed z-50 inset-0 flex items-center justify-center bg-transparent ${props.show ? 'opacity-100 blur-none' : 'translate-y-[80vh]'} transition-all duration-[800ms] ease-in-out-cubic`}>
+    <div className={`fixed z-50 inset-0 flex items-center justify-center bg-transparent ${props.show ? 'opacity-100 blur-none' : 'translate-y-[80vh]'} transition-all duration-[550ms] ease-in-out-cubic`}>
       <div style={{perspective: '1000px'}}>
         <Card 
-          className={`w-full max-w-md ${props.show ? 'ease-out-cubic' : 'ease-in-out-cubic'}`}
-          style={{
-            transition: 'transform 1200ms',
-            transform: props.show ? 'rotateX(0deg)' : 'rotateX(45deg)',
-            transformStyle: 'preserve-3d',
-          }}
+          className={`w-full max-w-md`}
         >
           <CardHeader className="flex flex-row gap-2">
               <MaterialSymbol symbol="lock" type="rounded" weight={600} size={24} />
