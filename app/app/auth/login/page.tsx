@@ -15,10 +15,12 @@ import OTPCard from '@/app/components/otpCard';
 export default function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [otp, setOtp] = useState('');
   const [error, setError] = useState<{
     username: { invalid: boolean; message: string } | null;
     password: { invalid: boolean; message: string } | null;
   } | null>(null);
+  const [showOTP, setShowOTP] = useState(false);
 
   const handleLogin = () => {
     setError(null);
@@ -67,54 +69,59 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex h-screen w-full flex-col items-center justify-center gap-6">
-      <Card className="w-full max-w-md" data-testid="heroui-card">
-        <CardHeader>
-          <div className="w-full text-center text-3xl font-bold">
-            Login with qID
-          </div>
-        </CardHeader>
-        <CardBody className="flex flex-col gap-2">
-          <Input
-            label="Username"
-            isInvalid={error?.username?.invalid ?? false}
-            errorMessage={error?.username?.message}
-            className={error?.username?.invalid ? 'mb-0' : 'mb-6'}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                handleLogin();
-              }
-            }}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-          <Input
-            label="Password"
-            type="password"
-            isInvalid={error?.password?.invalid ?? false}
-            errorMessage={error?.password?.message}
-            className={error?.password?.invalid ? 'mb-0' : 'mb-6'}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                handleLogin();
-              }
-            }}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <Link href="/app/auth/forgot-password">Forgot Password?</Link>
-        </CardBody>
-        <CardBody>
-          <Button className="w-full" color="primary" onPress={handleLogin}>
-            Login
-          </Button>
-        </CardBody>
-        <Divider />
-        <CardFooter>
-          <Link href="/app/auth/register">
-            Don&apos;t have an account? Register
-          </Link>
-        </CardFooter>
-      </Card>
-      <OTPCard />
+    <div className="w-screen h-screen flex items-center justify-center">
+      <div className={`flex h-screen w-full flex-col items-center justify-center gap-6 ${showOTP ? '' : 'scale-80 blur-sm'} transition-all duration-400 ease-in-out-quart`}>
+        <Card className="w-full max-w-md" data-testid="heroui-card">
+          <CardHeader>
+            <div className="w-full text-center text-3xl font-bold">
+              Login with qID
+            </div>
+          </CardHeader>
+          <CardBody className="flex flex-col gap-2">
+            <Input
+              label="Username"
+              isInvalid={error?.username?.invalid ?? false}
+              errorMessage={error?.username?.message}
+              className={error?.username?.invalid ? 'mb-0' : 'mb-6'}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleLogin();
+                }
+              }}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+            <Input
+              label="Password"
+              type="password"
+              isInvalid={error?.password?.invalid ?? false}
+              errorMessage={error?.password?.message}
+              className={error?.password?.invalid ? 'mb-0' : 'mb-6'}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleLogin();
+                }
+              }}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <Link href="/app/auth/forgot-password">Forgot Password?</Link>
+          </CardBody>
+          <CardBody>
+            <Button className="w-full" color="primary" onPress={handleLogin}>
+              Login
+            </Button>
+          </CardBody>
+          <Divider />
+          <CardFooter>
+            <Link href="/app/auth/register">
+              Don&apos;t have an account? Register
+            </Link>
+          </CardFooter>
+        </Card>
+      </div>
+      <div>
+        <OTPCard />
+        <Button className='z-50' onPress={() => setShowOTP(!showOTP)}>toggle OTP</Button>
+      </div>
     </div>
   );
 }
