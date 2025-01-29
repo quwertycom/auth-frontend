@@ -1,6 +1,6 @@
 'use client';
 
-import './globals.css';
+import './globals.scss';
 import { Providers } from './providers';
 
 export default function RootLayout({
