@@ -5,7 +5,7 @@ import MaterialSymbol from "./materialSymbol";
 
 export default function OTPCard(props: {show: boolean}) {
   return (
-    <div className={`fixed z-50 inset-0 flex items-center justify-center bg-transparent ${props.show ? 'opacity-100 blur-none' : 'translate-y-[80vh]'} transition-all duration-[550ms] ease-in-out-cubic`}>
+    <div className={`fixed z-50 inset-0 flex items-center justify-center bg-transparent ${props.show ? 'opacity-100 blur-none scale-100' : 'opacity-0 translate-y-[30vh] blur-sm scale-110'} transition-all duration-[550ms] ease-in-out-cubic`}>
       <div style={{perspective: '1000px'}}>
         <Card 
           className={`w-full max-w-md`}
