@@ -10,9 +10,12 @@ import {
   Divider,
   Link,
   Spinner,
+  Progress,
 } from '@heroui/react';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
+import { CSSTransition } from 'react-transition-group';
 import OTPCard from '@/app/components/otpCard';
+
 export default function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -23,6 +26,7 @@ export default function LoginPage() {
   } | null>(null);
   const [showOTP, setShowOTP] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const nodeRef = useRef(null);
 
   const handleLogin = () => {
     setError(null);
@@ -71,12 +75,12 @@ export default function LoginPage() {
     //   return;
     // }
 
-    setIsLoading(true);
+    setIsLoading(!isLoading);
   };
 
   return (
     <div className="w-screen h-screen flex items-center justify-center">
-      <div className={`flex h-screen w-full flex-col items-center justify-center gap-6 ${isLoading && 'scale-85 blur-lg opacity-50'} transition-all duration-[500ms] ease-in-out-quint`}>
+      <div className={`flex h-screen w-full flex-col items-center justify-center gap-6 ${isLoading ? 'opacity-50 scale-95 blur-sm' : 'opacity-100 scale-100 blur-0'} transition-all duration-300`}>
         <Card className="w-full max-w-md" data-testid="heroui-card">
           <CardHeader>
             <div className="w-full text-center text-3xl font-bold">
@@ -112,9 +116,11 @@ export default function LoginPage() {
             <Link href="/app/auth/forgot-password">Forgot Password?</Link>
           </CardBody>
           <CardBody>
-            <Button className="w-full" color="primary" onPress={handleLogin}>
-              Login
-            </Button>
+            <div className='w-full relative flex items-center justify-center'>
+              <Button className="w-full" color="primary" onPress={handleLogin}>
+                Login
+              </Button>
+            </div>
           </CardBody>
           <Divider />
           <CardFooter>
@@ -124,8 +130,22 @@ export default function LoginPage() {
           </CardFooter>
         </Card>
       </div>
-      <div className={`${isLoading ? 'opacity-100' : 'opacity-0'} transition-all duration-[500ms] ease-in-out-quint fixed left-50 top-50 translate-x-[-50%] translate-y-[-50%]`}>
-        <Spinner size="lg" />
+      <div className='fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2'>
+        <CSSTransition
+          in={isLoading}
+          timeout={300}
+          classNames="scale-down"
+          unmountOnExit
+          nodeRef={nodeRef}
+        >
+          <div ref={nodeRef}>
+            <Card className='rounded-full'>
+              <CardBody>
+                <Spinner size='lg' />
+              </CardBody>
+            </Card>
+          </div>
+        </CSSTransition>
       </div>
     </div>
   );
