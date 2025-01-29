@@ -14,7 +14,7 @@ import {
 } from '@heroui/react';
 import { useState, useRef } from 'react';
 import { CSSTransition } from 'react-transition-group';
-import OTPCard from '@/app/components/otpCard';
+import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
@@ -27,6 +27,7 @@ export default function LoginPage() {
   const [showOTP, setShowOTP] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const nodeRef = useRef(null);
+  const router = useRouter();
 
   const handleLogin = () => {
     setError(null);
@@ -76,6 +77,12 @@ export default function LoginPage() {
     // }
 
     setIsLoading(!isLoading);
+
+    // TODO: Replace with real api call and logic
+    setTimeout(() => {
+      router.push('/app/auth/login/verify');
+    }, 3000);
+
   };
 
   return (
