@@ -70,7 +70,7 @@ export default function LoginPage() {
 
   return (
     <div className="w-screen h-screen flex items-center justify-center">
-      <div className={`flex h-screen w-full flex-col items-center justify-center gap-6 ${showOTP ? '' : 'scale-80 blur-sm'} transition-all duration-400 ease-in-out-quart`}>
+      <div className={`flex h-screen w-full flex-col items-center justify-center gap-6 ${showOTP ? '' : 'scale-80 blur opacity-50'} transition-all duration-400 ease-in-out-quart`}>
         <Card className="w-full max-w-md" data-testid="heroui-card">
           <CardHeader>
             <div className="w-full text-center text-3xl font-bold">
@@ -119,8 +119,10 @@ export default function LoginPage() {
         </Card>
       </div>
       <div>
-        <OTPCard />
-        <Button className='z-50' onPress={() => setShowOTP(!showOTP)}>toggle OTP</Button>
+        <div className={`fixed z-50 inset-0 flex items-center justify-center bg-transparent ${showOTP ? 'opacity-0 blur-sm translate-y-full' : 'opacity-100 blur-none translate-y-0'} transition-all duration-500 ease-in-out-quart`}>
+          <OTPCard />
+        </div>
+        <Button className='z-50 absolute top-0 left-0' onPress={() => setShowOTP(!showOTP)}>toggle OTP</Button>
       </div>
     </div>
   );
