@@ -9,6 +9,7 @@ import {
   Button,
   Divider,
   Link,
+  Spinner,
 } from '@heroui/react';
 import { useState } from 'react';
 import OTPCard from '@/app/components/otpCard';
@@ -21,6 +22,7 @@ export default function LoginPage() {
     password: { invalid: boolean; message: string } | null;
   } | null>(null);
   const [showOTP, setShowOTP] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = () => {
     setError(null);
@@ -61,16 +63,20 @@ export default function LoginPage() {
       };
     }
 
+
+    // TODO: Uncomment after testing
     // If any errors exist, set them and return
-    if (errors.username || errors.password) {
-      setError(errors);
-      return;
-    }
+    // if (errors.username || errors.password) {
+    //   setError(errors);
+    //   return;
+    // }
+
+    setIsLoading(true);
   };
 
   return (
     <div className="w-screen h-screen flex items-center justify-center">
-      <div className={`flex h-screen w-full flex-col items-center justify-center gap-6 ${showOTP ? 'scale-80 blur-lg opacity-50' : ''} transition-all duration-[500ms] ease-in-out-cubic`}>
+      <div className={`flex h-screen w-full flex-col items-center justify-center gap-6 ${isLoading && 'scale-85 blur-lg opacity-50'} transition-all duration-[500ms] ease-in-out-quint`}>
         <Card className="w-full max-w-md" data-testid="heroui-card">
           <CardHeader>
             <div className="w-full text-center text-3xl font-bold">
@@ -118,10 +124,9 @@ export default function LoginPage() {
           </CardFooter>
         </Card>
       </div>
-      <div>
-        <OTPCard show={showOTP} />
+      <div className={`${isLoading ? 'opacity-100' : 'opacity-0'} transition-all duration-[500ms] ease-in-out-quint fixed left-50 top-50 translate-x-[-50%] translate-y-[-50%]`}>
+        <Spinner size="lg" />
       </div>
-      <Button className='z-50 absolute top-0 left-0' onPress={() => setShowOTP(!showOTP)}>toggle OTP</Button>
     </div>
   );
 }
