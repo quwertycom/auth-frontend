@@ -1,0 +1,45 @@
+{
+    "version": 1.1,
+    "atDirectives": [
+      {
+        "name": "@layer",
+        "description": "Use the `@layer` directive to organize your custom styles into Tailwind's `base`, `components`, and `utilities` layers.",
+        "references": [
+          {
+            "name": "Tailwind Documentation",
+            "url": "https://tailwindcss.com/docs/adding-custom-styles#using-css-and-layer"
+          }
+        ]
+      },
+      {
+        "name": "@apply",
+        "description": "Use the `@apply` directive to inline any existing utility classes into your own custom CSS. This is useful when you find a common utility pattern in your HTML that you’d like to extract to a new component.",
+        "references": [
+          {
+            "name": "Tailwind Documentation",
+            "url": "https://tailwindcss.com/docs/functions-and-directives#apply"
+          }
+        ]
+      },
+      {
+        "name": "@screen",
+        "description": "The `@screen` directive allows you to create media queries that reference your breakpoints by **name** instead of duplicating their values in your own CSS:\n```css\n@screen sm {\n  /* ... */\n}\n```\n…gets transformed into this:\n```css\n@media (min-width: 640px) {\n  /* ... */\n}\n```\n",
+        "references": [
+          {
+            "name": "Tailwind Documentation",
+            "url": "https://tailwindcss.com/docs/functions-and-directives#screen"
+          }
+        ]
+      },
+      {
+        "name": "@config",
+        "description": "Use the `@config` directive to specify which Tailwind config file should be used for a particular CSS file.",
+        "references": [
+          {
+            "name": "Tailwind Documentation",
+            "url": "https://tailwindcss.com/docs/functions-and-directives#config"
+          }
+        ]
+      }
+    ]
+  }
