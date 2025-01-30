@@ -66,12 +66,11 @@ export default function LoginPage() {
       };
     }
 
-    // TODO: Uncomment after testing
     // If any errors exist, set them and return
-    // if (errors.username || errors.password) {
-    //   setError(errors);
-    //   return;
-    // }
+    if (errors.username || errors.password) {
+      setError(errors);
+      return;
+    }
 
     setIsLoading(!isLoading);
 
