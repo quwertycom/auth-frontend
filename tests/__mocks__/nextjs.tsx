@@ -22,4 +22,4 @@ const useRouter = vi.fn(() => ({
 const usePathname = vi.fn(() => '/');
 const useSearchParams = vi.fn(() => new URLSearchParams());
 
-export { useRouter, usePathname, useSearchParams }; 
+export { useRouter, usePathname, useSearchParams };
