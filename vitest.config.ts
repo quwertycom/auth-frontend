@@ -9,6 +9,15 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: ['./tests/utils/setup.tsx'],
+    css: true,
+    deps: {
+      optimizer: {
+        web: {
+          include: ['material-symbols'],
+        },
+      },
+    },
+    mockReset: true,
     coverage: {
       reportsDirectory: './tests/coverage',
       enabled: true,
@@ -36,10 +45,19 @@ export default defineConfig({
       'tests/integration/**/*.{test,spec}.{ts,tsx}',
     ],
     exclude: ['tests/e2e/**/*', 'tests/performance/**/*'],
+    environmentOptions: {
+      jsdom: {
+        resources: 'usable',
+        runScripts: 'dangerously',
+      },
+    },
   },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('.', import.meta.url)),
+      'material-symbols': fileURLToPath(
+        new URL('./tests/__mocks__/material-symbols.ts', import.meta.url),
+      ),
     },
   },
 });

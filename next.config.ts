@@ -19,6 +19,7 @@ const config: NextConfig = {
   },
   eslint: {
     ignoreDuringBuilds: false,
+    dirs: ['app', 'components', 'lib', 'pages', 'tests', 'utils', 'types'],
   },
 };
 
