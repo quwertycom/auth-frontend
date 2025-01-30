@@ -1,6 +1,6 @@
 'use client';
 
-import './globals.css';
+import './globals.scss';
 import { Providers } from './providers';
 
 export default function RootLayout({
@@ -10,8 +10,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased dark">
-        <Providers>{children}</Providers>
+      <body className="min-w-screen max-w-screen max-h-screen min-h-screen overflow-hidden antialiased dark">
+        <main>
+          <Providers>{children}</Providers>
+        </main>
       </body>
     </html>
   );
