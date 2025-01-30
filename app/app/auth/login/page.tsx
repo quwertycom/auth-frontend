@@ -10,24 +10,22 @@ import {
   Divider,
   Link,
   Spinner,
-  Progress,
 } from '@heroui/react';
 import { useState, useRef } from 'react';
 import { CSSTransition } from 'react-transition-group';
-import { useRouter } from 'next/navigation';
+import { useNavigateWithAnimation } from '@/app/utils/NavigateWithAnimation';
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [otp, setOtp] = useState('');
   const [error, setError] = useState<{
     username: { invalid: boolean; message: string } | null;
     password: { invalid: boolean; message: string } | null;
   } | null>(null);
-  const [showOTP, setShowOTP] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const nodeRef = useRef(null);
-  const router = useRouter();
+
+  const navigateWithAnimation = useNavigateWithAnimation();
 
   const handleLogin = () => {
     setError(null);
@@ -68,7 +66,6 @@ export default function LoginPage() {
       };
     }
 
-
     // TODO: Uncomment after testing
     // If any errors exist, set them and return
     // if (errors.username || errors.password) {
@@ -80,9 +77,8 @@ export default function LoginPage() {
 
     // TODO: Replace with real api call and logic
     setTimeout(() => {
-      router.push('/app/auth/login/verify');
-    }, 3000);
-
+      navigateWithAnimation({ href: '/app/auth/login/verify', duration: 500, animation: 'pop'});
+    }, 500);
   };
 
   return (
