@@ -1,0 +1,82 @@
+// --------------------------------------------------------
+// --- Page Pop -------------------------------------------
+// --------------------------------------------------------
+.page-pop-leave-from {
+    @apply opacity-100 scale-100 blur-none;
+}
+
+.page-pop-leave-to {
+    @apply opacity-0 scale-125 blur-md;
+}
+
+.page-pop-enter-from {
+    @apply opacity-0 scale-75 blur-md;
+}
+
+.page-pop-enter-to {
+    @apply opacity-100 scale-100 blur-none;
+}
+
+.page-pop-enter-active {
+    @apply transition-all ease-out-circ;
+}
+
+.page-pop-leave-active {
+    @apply transition-all ease-in-circ;
+}
+
+// --------------------------------------------------------
+// --- Slide down -----------------------------------------
+// --------------------------------------------------------
+
+.page-slide-down-leave-from {
+    @apply opacity-100 scale-100 blur-none;
+}
+
+.page-slide-down-leave-to {
+    @apply opacity-0 blur-md translate-y-24 scale-95;
+}
+
+.page-slide-down-enter-from {
+    @apply opacity-0 blur-md -translate-y-24 scale-95;
+}
+
+.page-slide-down-enter-to {
+    @apply opacity-100 scale-100 blur-none translate-y-0;
+}
+
+.page-slide-down-enter-active {
+    @apply transition-all ease-out-circ;
+}
+
+.page-slide-down-leave-active {
+    @apply transition-all ease-in-circ;
+}
+
+// --------------------------------------------------------
+// --- Slide up -------------------------------------------
+// --------------------------------------------------------
+
+.page-slide-up-leave-from {
+    @apply opacity-100 scale-100 blur-none;
+}
+
+.page-slide-up-leave-to {
+    @apply opacity-0 blur-md -translate-y-24 scale-95;
+}
+
+.page-slide-up-enter-from {
+    @apply opacity-0 blur-md translate-y-24 scale-95;
+}
+
+.page-slide-up-enter-to {
+    @apply opacity-100 scale-100 blur-none translate-y-0;
+}
+
+.page-slide-up-enter-active {
+    @apply transition-all ease-out-circ;
+}
+
+.page-slide-up-leave-active {
+    @apply transition-all ease-in-circ;
+}
