@@ -22,7 +22,7 @@ export default function OTPCard(props: {show: boolean}) {
             <div className="flex flex-col items-center">
               <div className="flex flex-col items-center gap-2">
                 <InputOtp length={8} />
-                <Link href="/app/auth/login" className="w-full">Didn't receive the code?</Link>
+                <Link href="/app/auth/login" className="w-full">Didn&apos;t receive the code?</Link>
               </div>
             </div>
           </CardBody>
