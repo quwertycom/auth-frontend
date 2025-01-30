@@ -10,7 +10,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased dark">
+      <body className="antialiased dark overflow-hidden min-w-screen min-h-screen max-w-screen max-h-screen">
         <main>
           <Providers>
             {children}
