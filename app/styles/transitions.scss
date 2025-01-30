@@ -4,55 +4,55 @@
 // --- Pop Center -----------------------------------------
 // --------------------------------------------------------
 .center-pop-enter {
-  @apply transform opacity-0 scale-50;
+  @apply scale-50 transform opacity-0;
 }
 
 .center-pop-enter-active {
-  @apply transform opacity-100 scale-100 transition-all duration-300 ease-in-out-quart;
+  @apply scale-100 transform opacity-100 transition-all duration-300 ease-in-out-quart;
 }
 
 .center-pop-exit {
-  @apply opacity-100 scale-100;
+  @apply scale-100 opacity-100;
 }
 
 .center-pop-exit-active {
-  @apply opacity-0 scale-75 transition-all duration-300 ease-in-out-quart;
+  @apply scale-75 opacity-0 transition-all duration-300 ease-in-out-quart;
 }
 
 // --------------------------------------------------------
 // --- Scale Down -----------------------------------------
 // --------------------------------------------------------
 .scale-down-enter {
-  @apply opacity-0 scale-125;
+  @apply scale-125 opacity-0;
 }
 
 .scale-down-enter-active {
-  @apply opacity-100 scale-100 transition-all duration-300 ease-in-out-quart;
+  @apply scale-100 opacity-100 transition-all duration-300 ease-in-out-quart;
 }
 
 .scale-down-exit {
-  @apply opacity-100 scale-100;
+  @apply scale-100 opacity-100;
 }
 
 .scale-down-exit-active {
-  @apply opacity-0 scale-75 transition-all duration-300 ease-in-out-quart;
+  @apply scale-75 opacity-0 transition-all duration-300 ease-in-out-quart;
 }
 
 // --------------------------------------------------------
 // --- Scale Up -------------------------------------------
 // --------------------------------------------------------
 .scale-up-enter {
-  @apply opacity-0 scale-75;
+  @apply scale-75 opacity-0;
 }
 
 .scale-up-enter-active {
-  @apply opacity-100 scale-100 transition-all duration-300 ease-in-out-quart;
+  @apply scale-100 opacity-100 transition-all duration-300 ease-in-out-quart;
 }
 
 .scale-up-exit {
-  @apply opacity-100 scale-100;
+  @apply scale-100 opacity-100;
 }
 
 .scale-up-exit-active {
-  @apply opacity-0 scale-125 transition-all duration-300 ease-in-out-quart;
+  @apply scale-125 opacity-0 transition-all duration-300 ease-in-out-quart;
 }

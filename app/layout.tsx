@@ -10,11 +10,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased dark overflow-hidden min-w-screen min-h-screen max-w-screen max-h-screen">
+      <body className="min-w-screen max-w-screen max-h-screen min-h-screen overflow-hidden antialiased dark">
         <main>
-          <Providers>
-            {children}
-          </Providers>
+          <Providers>{children}</Providers>
         </main>
       </body>
     </html>

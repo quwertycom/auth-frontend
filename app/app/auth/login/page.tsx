@@ -77,13 +77,19 @@ export default function LoginPage() {
 
     // TODO: Replace with real api call and logic
     setTimeout(() => {
-      navigateWithAnimation({ href: '/app/auth/login/verify', duration: 500, animation: 'pop'});
+      navigateWithAnimation({
+        href: '/app/auth/login/verify',
+        duration: 500,
+        animation: 'pop',
+      });
     }, 500);
   };
 
   return (
-    <div className="w-screen h-screen flex items-center justify-center">
-      <div className={`flex h-screen w-full flex-col items-center justify-center gap-6 ${isLoading ? 'opacity-50 scale-95 blur-sm' : 'opacity-100 scale-100 blur-0'} transition-all duration-300`}>
+    <div className="flex h-screen w-screen items-center justify-center">
+      <div
+        className={`flex h-screen w-full flex-col items-center justify-center gap-6 ${isLoading ? 'scale-95 opacity-50 blur-sm' : 'scale-100 opacity-100 blur-0'} transition-all duration-300`}
+      >
         <Card className="w-full max-w-md" data-testid="heroui-card">
           <CardHeader>
             <div className="w-full text-center text-3xl font-bold">
@@ -119,7 +125,7 @@ export default function LoginPage() {
             <Link href="/app/auth/forgot-password">Forgot Password?</Link>
           </CardBody>
           <CardBody>
-            <div className='w-full relative flex items-center justify-center'>
+            <div className="relative flex w-full items-center justify-center">
               <Button className="w-full" color="primary" onPress={handleLogin}>
                 Login
               </Button>
@@ -133,7 +139,7 @@ export default function LoginPage() {
           </CardFooter>
         </Card>
       </div>
-      <div className='fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2'>
+      <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
         <CSSTransition
           in={isLoading}
           timeout={300}
@@ -142,9 +148,9 @@ export default function LoginPage() {
           nodeRef={nodeRef}
         >
           <div ref={nodeRef}>
-            <Card className='rounded-full'>
+            <Card className="rounded-full">
               <CardBody>
-                <Spinner size='lg' />
+                <Spinner size="lg" />
               </CardBody>
             </Card>
           </div>
