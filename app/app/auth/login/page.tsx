@@ -132,7 +132,11 @@ export default function LoginPage() {
           </CardBody>
           <Divider />
           <CardFooter>
-            <TransitionLink href="/app/auth/register" duration={500}>
+            <TransitionLink
+              href="/app/auth/register"
+              duration={500}
+              animation="slide-up"
+            >
               Don&apos;t have an account? Register
             </TransitionLink>
           </CardFooter>

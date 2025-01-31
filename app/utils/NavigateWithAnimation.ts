@@ -16,7 +16,7 @@ export function useNavigateWithAnimation() {
     href,
     animation = 'pop',
     duration = 300,
-    delayBetweenPages = 100,
+    delayBetweenPages = 0,
     onComplete,
   }: NavigateWithAnimationProps) => {
     const main = document.querySelector('main');
@@ -24,7 +24,7 @@ export function useNavigateWithAnimation() {
 
     // Get animation styles based on type
     const animationStyles = {
-      'pop': pagePop,
+      pop: pagePop,
       'slide-down': pageSlideDown,
       'slide-up': pageSlideUp,
     }[animation];
