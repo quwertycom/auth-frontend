@@ -23,11 +23,11 @@ export function useNavigateWithAnimation() {
     const halfDuration = duration / 2;
 
     // Get animation styles based on type
-    const animationStyles = {
-      pop: pagePop,
-      'slide-down': pageSlideDown,
-      'slide-up': pageSlideUp,
-    }[animation];
+    const animationStyles = 
+      animation === 'slide-down' ? pageSlideDown(duration) :
+      animation === 'slide-up' ? pageSlideUp(duration) :
+      animation === 'pop' ? pagePop(duration) :
+      pagePop(duration);
 
     if (!animationStyles) return;
 
@@ -38,13 +38,13 @@ export function useNavigateWithAnimation() {
 
     // Start leave animation
     main?.classList.add('page-leave-active');
-    Object.assign(main!.style, animationStyles.leaveFrom);
+    Object.assign(main!.style, animationStyles.exit);
 
     // Force reflow to trigger animation
     void main?.offsetHeight;
 
     // Start leave transition
-    Object.assign(main!.style, animationStyles.leaveTo);
+    Object.assign(main!.style, animationStyles.exitActive);
 
     setTimeout(() => {
       // Ensure minimum 50ms delay between pages
@@ -63,7 +63,7 @@ export function useNavigateWithAnimation() {
           // Add another delay before starting enter animation
           setTimeout(() => {
             // Start enter animation
-            Object.assign(main!.style, animationStyles.enterFrom);
+            Object.assign(main!.style, animationStyles.enter);
             main?.classList.remove('page-leave-active');
             main?.classList.add('page-enter-active');
 
@@ -76,7 +76,7 @@ export function useNavigateWithAnimation() {
             }
 
             // Start enter transition
-            Object.assign(main!.style, animationStyles.enterTo);
+            Object.assign(main!.style, animationStyles.enterActive);
 
             // Clean up enter animation after delay
             setTimeout(() => {

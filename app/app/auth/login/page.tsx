@@ -135,7 +135,7 @@ export default function LoginPage() {
             <TransitionLink
               href="/app/auth/register"
               duration={500}
-              animation="slide-up"
+              animation="pop"
             >
               Don&apos;t have an account? Register
             </TransitionLink>
