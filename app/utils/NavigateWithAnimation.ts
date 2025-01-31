@@ -1,4 +1,5 @@
 import { useRouter } from 'next/navigation';
+import { pagePop, pageSlideDown, pageSlideUp } from '@/app/styles/transitions';
 
 interface NavigateWithAnimationProps {
   href: string;
@@ -20,7 +21,15 @@ export function useNavigateWithAnimation() {
   }: NavigateWithAnimationProps) => {
     const main = document.querySelector('main');
     const halfDuration = duration / 2;
-    const animationPrefix = `page-${animation}`;
+
+    // Get animation styles based on type
+    const animationStyles = {
+      'pop': pagePop,
+      'slide-down': pageSlideDown,
+      'slide-up': pageSlideUp,
+    }[animation];
+
+    if (!animationStyles) return;
 
     // Apply duration directly to the element's style
     if (main) {
@@ -28,15 +37,14 @@ export function useNavigateWithAnimation() {
     }
 
     // Start leave animation
-    main?.classList.add(`${animationPrefix}-leave-active`);
-    main?.classList.add(`${animationPrefix}-leave-from`);
+    main?.classList.add('page-leave-active');
+    Object.assign(main!.style, animationStyles.leaveFrom);
 
     // Force reflow to trigger animation
     void main?.offsetHeight;
 
     // Start leave transition
-    main?.classList.remove(`${animationPrefix}-leave-from`);
-    main?.classList.add(`${animationPrefix}-leave-to`);
+    Object.assign(main!.style, animationStyles.leaveTo);
 
     setTimeout(() => {
       // Ensure minimum 50ms delay between pages
@@ -54,30 +62,25 @@ export function useNavigateWithAnimation() {
         setTimeout(() => {
           // Add another delay before starting enter animation
           setTimeout(() => {
-            main?.classList.add(`${animationPrefix}-enter-from`);
-            // Clean up leave animation
-            main?.classList.remove(`${animationPrefix}-leave-active`);
-            main?.classList.remove(`${animationPrefix}-leave-to`);
             // Start enter animation
-            main?.classList.add(`${animationPrefix}-enter-active`);
+            Object.assign(main!.style, animationStyles.enterFrom);
+            main?.classList.remove('page-leave-active');
+            main?.classList.add('page-enter-active');
 
             // Force reflow to trigger animation
             void main?.offsetHeight;
 
-            // add transition duration
+            // Add transition duration
             if (main) {
               main.style.transitionDuration = `${halfDuration}ms`;
             }
 
             // Start enter transition
-            main?.classList.remove(`${animationPrefix}-enter-from`);
-            main?.classList.add(`${animationPrefix}-enter-to`);
+            Object.assign(main!.style, animationStyles.enterTo);
 
             // Clean up enter animation after delay
             setTimeout(() => {
-              main?.classList.remove(`${animationPrefix}-enter-active`);
-              main?.classList.remove(`${animationPrefix}-enter-to`);
-
+              main?.classList.remove('page-enter-active');
               if (onComplete) {
                 onComplete();
               }
