@@ -14,7 +14,7 @@ import {
 import { useState, useRef } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import { useNavigateWithAnimation } from '@/app/utils/NavigateWithAnimation';
-
+import TransitionLink from '@/app/components/transitionLink';
 export default function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -132,9 +132,9 @@ export default function LoginPage() {
           </CardBody>
           <Divider />
           <CardFooter>
-            <Link href="/app/auth/register">
+            <TransitionLink href="/app/auth/register" duration={500}>
               Don&apos;t have an account? Register
-            </Link>
+            </TransitionLink>
           </CardFooter>
         </Card>
       </div>
