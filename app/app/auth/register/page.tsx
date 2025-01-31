@@ -1,38 +1,41 @@
-'use client'
+'use client';
 
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { centerPop } from '@/app/styles/transitions';
+import { slideDown } from '@/app/styles/transitions';
 import { Button } from '@heroui/react';
 
 export default function RegisterPage() {
   const [step, setStep] = useState(0);
 
+  const animation = slideDown(800);
+
   return (
-    <div className='flex flex-col items-center justify-center h-screen p-4'>
+    <div className="flex h-screen flex-col items-center justify-center p-4">
       <div className="w-full">
-        <AnimatePresence mode='wait'>
+        <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={step}
-            initial={centerPop.enter}
-            animate={centerPop.enterActive}
-            exit={centerPop.exitActive}
-            className="flex justify-center items-center"
+            initial={step === 0 ? false : animation.enter}
+            animate={animation.enterActive}
+            exit={animation.exitActive}
+            className="flex items-center justify-center"
           >
             {step === 0 && (
-              <div className='flex flex-col items-center justify-center'>
-                <div className='text-2xl sm:text-4xl lg:text-6xl xl:text-7xl font-bold text-center transition-all duration-300'>
+              <div className="flex flex-col items-center justify-center">
+                <div className="text-center text-2xl font-bold transition-all duration-300 sm:text-4xl lg:text-6xl xl:text-7xl">
                   Welcome to QUWERTY
                 </div>
-                <div className='text-xs sm:text-base lg:text-2xl xl:text-3xl text-center transition-all duration-300'>
+                <div className="text-center text-xs transition-all duration-300 sm:text-base lg:text-2xl xl:text-3xl">
                   New here? Let&apos;s start your journey.
                 </div>
                 <div>
                   <Button
-                    color='primary'
-                    variant='shadow'
-                    size='lg'
-                    className='w-full mt-4'
+                    color="primary"
+                    variant="shadow"
+                    size="lg"
+                    className="mt-4 w-full"
+                    onPress={() => setStep(1)}
                   >
                     Let&apos;s go!
                   </Button>
@@ -40,12 +43,12 @@ export default function RegisterPage() {
               </div>
             )}
             {step === 1 && (
-              <div className="bg-green-100 p-6 rounded-lg w-full">
+              <div className="w-full rounded-lg bg-green-100 p-6">
                 Step 2 Content
               </div>
             )}
             {step === 2 && (
-              <div className="bg-red-100 p-6 rounded-lg w-full">
+              <div className="w-full rounded-lg bg-red-100 p-6">
                 Step 3 Content
               </div>
             )}
