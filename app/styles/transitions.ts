@@ -372,7 +372,7 @@ export const slideUpScaleDown = (duration = 1000) => ({
 // --- Page Transitions -----------------------------------
 // --------------------------------------------------------
 
-export const pagePop = (duration = 1000) => ({
+export const pagePop = (duration = 600) => ({
   enterFrom: {
     scale: 0.9,
     opacity: 0,
@@ -445,9 +445,9 @@ export const pagePop = (duration = 1000) => ({
   }
 });
 
-export const defaultPagePop = pagePop(1000);
+export const defaultPagePop = pagePop();
 
-export const pagePopDown = (duration = 1000) => ({
+export const pagePopDown = (duration = 600) => ({
   enterFrom: {
     scale: 0.95,
     opacity: 0,
@@ -528,9 +528,9 @@ export const pagePopDown = (duration = 1000) => ({
   }
 });
 
-export const defaultPagePopDown = pagePopDown(1000);
+export const defaultPagePopDown = pagePopDown();
 
-export const pageSlideDown = (duration = 1000) => ({
+export const pageSlideDown = (duration = 600) => ({
   enterFrom: {
     transform: 'translateY(-4rem)',
     opacity: 0,
@@ -611,9 +611,9 @@ export const pageSlideDown = (duration = 1000) => ({
   }
 });
 
-export const defaultPageSlideDown = pageSlideDown(1000);
+export const defaultPageSlideDown = pageSlideDown();
 
-export const pageSlideUp = (duration = 1000) => ({
+export const pageSlideUp = (duration = 600) => ({
   enterFrom: {
     transform: 'translateY(4rem)',
     opacity: 0,
@@ -694,4 +694,4 @@ export const pageSlideUp = (duration = 1000) => ({
   }
 });
 
-export const defaultPageSlideUp = pageSlideUp(1000);
+export const defaultPageSlideUp = pageSlideUp();

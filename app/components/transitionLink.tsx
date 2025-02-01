@@ -34,7 +34,7 @@ export default function TransitionLink({
   href,
   animation = 'pop',
   back = false,
-  duration = 300,
+  duration = 600,
   delayBetweenPages = 100,
   onComplete,
   className = '',

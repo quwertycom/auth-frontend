@@ -17,7 +17,7 @@ export function useNavigateWithAnimation() {
     href,
     animation = 'pop',
     back = false,
-    duration = 300,
+    duration = 600,
     delayBetweenPages = 0,
     onComplete,
   }: NavigateWithAnimationProps) => {
