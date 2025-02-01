@@ -389,7 +389,7 @@ export const pagePop = (duration = 600) => ({
   enterTo: {
     scale: 1,
     opacity: 1,
-    filter: 'blur(0)'
+    filter: 'blur(0)',
   },
   enterActive: {
     transition: {
@@ -406,7 +406,7 @@ export const pagePop = (duration = 600) => ({
   leaveTo: {
     scale: 1.1,
     opacity: 0,
-    filter: 'blur(6px)'
+    filter: 'blur(6px)',
   },
   leaveActive: {
     transition: {
