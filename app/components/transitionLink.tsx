@@ -10,7 +10,6 @@ interface TransitionLinkProps
   animation?: 'pop' | 'slide-down' | 'slide-up' | 'pop-down' | 'pop-up';
   back?: boolean;
   duration?: number;
-  delayBetweenPages?: number;
   onComplete?: () => void;
   size?: 'sm' | 'md' | 'lg';
   color?:
@@ -34,8 +33,7 @@ export default function TransitionLink({
   href,
   animation = 'pop',
   back = false,
-  duration = 600,
-  delayBetweenPages = 100,
+  duration = 300,
   onComplete,
   className = '',
   size = 'md',
@@ -59,7 +57,6 @@ export default function TransitionLink({
       animation,
       back,
       duration,
-      delayBetweenPages,
       onComplete,
     });
   };

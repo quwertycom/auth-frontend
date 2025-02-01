@@ -6,19 +6,23 @@ export const centerPop = (duration = 1000) => ({
   enterFrom: {
     scale: 0.5,
     opacity: 0,
-    transform: 'scale(0.5)',
-    filter: 'blur(8px)',
+    transform: 'scale(0.95)',
+    filter: 'blur(2px)',
   },
   enterTo: {
     transform: 'scale(1)',
     opacity: 1,
     filter: 'blur(0)',
+    transition: {
+      duration: duration / 1000,
+      ease: [0.23, 1, 0.32, 1],
+    },
   },
   enterActive: {
     transition: {
       type: 'tween',
-      ease: [0, 0.55, 0.45, 1],
-      duration: duration / 2 / 1000,
+      ease: [0.23, 1, 0.32, 1],
+      duration: duration / 1000,
     },
   },
   leaveFrom: {
@@ -28,14 +32,18 @@ export const centerPop = (duration = 1000) => ({
   },
   leaveTo: {
     opacity: 0,
-    transform: 'scale(0.75)',
-    filter: 'blur(8px)',
+    transform: 'scale(0.95)',
+    filter: 'blur(2px)',
+    transition: {
+      duration: duration / 1000,
+      ease: [0.755, 0.05, 0.855, 0.06],
+    },
   },
   leaveActive: {
     transition: {
       type: 'tween',
-      ease: [0.4, 0, 0.6, 1],
-      duration: duration / 2 / 1000,
+      ease: [0.755, 0.05, 0.855, 0.06],
+      duration: duration / 1000,
     },
   },
 });
@@ -381,12 +389,12 @@ export const pagePop = (duration = 600) => ({
   enterTo: {
     scale: 1,
     opacity: 1,
-    filter: 'blur(0)',
+    filter: 'blur(0)'
   },
   enterActive: {
     transition: {
       type: 'tween',
-      ease: [0.075, 0.82, 0.165, 1],
+      ease: [0.33, 1, 0.68, 1],
       duration: duration / 1000,
     },
   },
@@ -398,12 +406,12 @@ export const pagePop = (duration = 600) => ({
   leaveTo: {
     scale: 1.1,
     opacity: 0,
-    filter: 'blur(6px)',
+    filter: 'blur(6px)'
   },
   leaveActive: {
     transition: {
       type: 'tween',
-      ease: [0.6, 0.04, 0.98, 0.335],
+      ease: [0.32, 0, 0.67, 0],
       duration: duration / 1000,
     },
   },
@@ -416,12 +424,12 @@ export const pagePop = (duration = 600) => ({
     enterTo: {
       scale: 1,
       opacity: 1,
-    filter: 'blur(0)',
+      filter: 'blur(0)',
     },
     enterActive: {
       transition: {
         type: 'tween',
-        ease: [0.075, 0.82, 0.165, 1],
+        ease: [0.33, 1, 0.68, 1],
         duration: duration / 1000,
       },
     },
@@ -438,11 +446,11 @@ export const pagePop = (duration = 600) => ({
     leaveActive: {
       transition: {
         type: 'tween',
-        ease: [0.6, 0.04, 0.98, 0.335],
+        ease: [0.32, 0, 0.67, 0],
         duration: duration / 1000,
       },
     },
-  }
+  },
 });
 
 export const defaultPagePop = pagePop();
@@ -463,7 +471,7 @@ export const pagePopDown = (duration = 600) => ({
   enterActive: {
     transition: {
       type: 'tween',
-      ease: [0.075, 0.82, 0.165, 1],
+      ease: [0.33, 1, 0.68, 1],
       duration: duration / 1000,
     },
   },
@@ -482,7 +490,7 @@ export const pagePopDown = (duration = 600) => ({
   leaveActive: {
     transition: {
       type: 'tween',
-      ease: [0.6, 0.04, 0.98, 0.335],
+      ease: [0.32, 0, 0.67, 0],
       duration: duration / 1000,
     },
   },
@@ -502,7 +510,7 @@ export const pagePopDown = (duration = 600) => ({
     enterActive: {
       transition: {
         type: 'tween',
-        ease: [0.075, 0.82, 0.165, 1],
+        ease: [0.33, 1, 0.68, 1],
         duration: duration / 1000,
       },
     },
@@ -521,11 +529,11 @@ export const pagePopDown = (duration = 600) => ({
     leaveActive: {
       transition: {
         type: 'tween',
-        ease: [0.6, 0.04, 0.98, 0.335],
+        ease: [0.32, 0, 0.67, 0],
         duration: duration / 1000,
       },
     },
-  }
+  },
 });
 
 export const defaultPagePopDown = pagePopDown();
@@ -546,7 +554,7 @@ export const pageSlideDown = (duration = 600) => ({
   enterActive: {
     transition: {
       type: 'tween',
-      ease: [0.075, 0.82, 0.165, 1],
+      ease: [0.33, 1, 0.68, 1],
       duration: duration / 1000,
     },
   },
@@ -565,7 +573,7 @@ export const pageSlideDown = (duration = 600) => ({
   leaveActive: {
     transition: {
       type: 'tween',
-      ease: [0.6, 0.04, 0.98, 0.335],
+      ease: [0.32, 0, 0.67, 0],
       duration: duration / 1000,
     },
   },
@@ -585,7 +593,7 @@ export const pageSlideDown = (duration = 600) => ({
     enterActive: {
       transition: {
         type: 'tween',
-        ease: [0.075, 0.82, 0.165, 1],
+        ease: [0.33, 1, 0.68, 1],
         duration: duration / 1000,
       },
     },
@@ -604,11 +612,11 @@ export const pageSlideDown = (duration = 600) => ({
     leaveActive: {
       transition: {
         type: 'tween',
-        ease: [0.6, 0.04, 0.98, 0.335],
+        ease: [0.32, 0, 0.67, 0],
         duration: duration / 1000,
       },
     },
-  }
+  },
 });
 
 export const defaultPageSlideDown = pageSlideDown();
@@ -629,7 +637,7 @@ export const pageSlideUp = (duration = 600) => ({
   enterActive: {
     transition: {
       type: 'tween',
-      ease: [0.075, 0.82, 0.165, 1],
+      ease: [0.33, 1, 0.68, 1],
       duration: duration / 1000,
     },
   },
@@ -648,7 +656,7 @@ export const pageSlideUp = (duration = 600) => ({
   leaveActive: {
     transition: {
       type: 'tween',
-      ease: [0.6, 0.04, 0.98, 0.335],
+      ease: [0.32, 0, 0.67, 0],
       duration: duration / 1000,
     },
   },
@@ -668,7 +676,7 @@ export const pageSlideUp = (duration = 600) => ({
     enterActive: {
       transition: {
         type: 'tween',
-        ease: [0.075, 0.82, 0.165, 1],
+        ease: [0.33, 1, 0.68, 1],
         duration: duration / 1000,
       },
     },
@@ -687,11 +695,11 @@ export const pageSlideUp = (duration = 600) => ({
     leaveActive: {
       transition: {
         type: 'tween',
-        ease: [0.6, 0.04, 0.98, 0.335],
+        ease: [0.32, 0, 0.67, 0],
         duration: duration / 1000,
       },
     },
-  }
+  },
 });
 
 export const defaultPageSlideUp = pageSlideUp();
