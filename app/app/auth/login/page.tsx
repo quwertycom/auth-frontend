@@ -134,8 +134,8 @@ export default function LoginPage() {
           <CardFooter>
             <TransitionLink
               href="/app/auth/register"
-              duration={500}
-              animation="pop"
+              duration={750}
+              animation="slide-down"
             >
               Don&apos;t have an account? Register
             </TransitionLink>

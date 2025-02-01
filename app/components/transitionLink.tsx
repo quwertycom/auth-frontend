@@ -7,7 +7,7 @@ interface TransitionLinkProps
   extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
   children: React.ReactNode;
   href: string;
-  animation?: 'pop' | 'slide-down' | 'slide-up';
+  animation?: 'pop' | 'slide-down' | 'slide-up' | 'pop-down';
   duration?: number;
   delayBetweenPages?: number;
   onComplete?: () => void;

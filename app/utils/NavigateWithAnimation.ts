@@ -1,9 +1,9 @@
 import { useRouter } from 'next/navigation';
-import { pagePop, pageSlideDown, pageSlideUp } from '@/app/styles/transitions';
+import { pagePop, pagePopDown, pageSlideDown, pageSlideUp } from '@/app/styles/transitions';
 
 interface NavigateWithAnimationProps {
   href: string;
-  animation?: 'pop' | 'slide-down' | 'slide-up';
+  animation?: 'pop' | 'slide-down' | 'slide-up' | 'pop-down';
   duration?: number;
   delayBetweenPages?: number;
   onComplete?: () => void;
@@ -27,6 +27,7 @@ export function useNavigateWithAnimation() {
       animation === 'slide-down' ? pageSlideDown(duration) :
       animation === 'slide-up' ? pageSlideUp(duration) :
       animation === 'pop' ? pagePop(duration) :
+      animation === 'pop-down' ? pagePopDown(duration) :
       pagePop(duration);
 
     if (!animationStyles) return;
@@ -38,17 +39,18 @@ export function useNavigateWithAnimation() {
 
     // Start leave animation
     main?.classList.add('page-leave-active');
-    Object.assign(main!.style, animationStyles.exit);
+    Object.assign(main!.style, animationStyles.leaveFrom);
 
     // Force reflow to trigger animation
     void main?.offsetHeight;
 
     // Start leave transition
-    Object.assign(main!.style, animationStyles.exitActive);
+    Object.assign(main!.style, animationStyles.leaveTo);
+    Object.assign(main!.style, animationStyles.leaveActive.transition);
 
     setTimeout(() => {
-      // Ensure minimum 50ms delay between pages
-      const effectiveDelay = delayBetweenPages < 50 ? 50 : delayBetweenPages;
+      // Only enforce minimum delay if delayBetweenPages is greater than 0
+      const effectiveDelay = delayBetweenPages === 0 ? 5 : delayBetweenPages > 0 && delayBetweenPages < 25 ? 10 : delayBetweenPages;
 
       // Add delay before navigation
       router.push(href);
@@ -63,7 +65,7 @@ export function useNavigateWithAnimation() {
           // Add another delay before starting enter animation
           setTimeout(() => {
             // Start enter animation
-            Object.assign(main!.style, animationStyles.enter);
+            Object.assign(main!.style, animationStyles.enterFrom);
             main?.classList.remove('page-leave-active');
             main?.classList.add('page-enter-active');
 
@@ -76,7 +78,8 @@ export function useNavigateWithAnimation() {
             }
 
             // Start enter transition
-            Object.assign(main!.style, animationStyles.enterActive);
+            Object.assign(main!.style, animationStyles.enterTo);
+            Object.assign(main!.style, animationStyles.enterActive.transition);
 
             // Clean up enter animation after delay
             setTimeout(() => {
