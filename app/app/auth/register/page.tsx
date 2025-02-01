@@ -2,13 +2,13 @@
 
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { slideDown } from '@/app/styles/transitions';
+import { centerPop } from '@/app/styles/transitions';
 import { Button } from '@heroui/react';
 
 export default function RegisterPage() {
   const [step, setStep] = useState(0);
 
-  const animation = slideDown(800);
+  const animation = centerPop(400);
 
   return (
     <div className="flex h-screen flex-col items-center justify-center p-4">
@@ -16,9 +16,9 @@ export default function RegisterPage() {
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={step}
-            initial={step === 0 ? false : animation.enter}
-            animate={animation.enterActive}
-            exit={animation.exitActive}
+            initial={step === 0 ? false : animation.enterFrom}
+            animate={animation.enterTo}
+            exit={animation.leaveTo}
             className="flex items-center justify-center"
           >
             {step === 0 && (
