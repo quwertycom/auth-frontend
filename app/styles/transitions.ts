@@ -374,9 +374,9 @@ export const slideUpScaleDown = (duration = 1000) => ({
 
 export const pagePop = (duration = 300) => ({
   enterFrom: {
-    scale: 0.85,
+    scale: 0.9,
     opacity: 0,
-    filter: 'blur(12px)',
+    filter: 'blur(6px)',
   },
   enterTo: {
     scale: 1,
@@ -396,9 +396,9 @@ export const pagePop = (duration = 300) => ({
     filter: 'blur(0)',
   },
   leaveTo: {
-    scale: 1.15,
+    scale: 1.1,
     opacity: 0,
-    filter: 'blur(12px)',
+    filter: 'blur(6px)',
   },
   leaveActive: {
     transition: {
@@ -413,9 +413,9 @@ export const defaultPagePop = pagePop(300);
 
 export const pagePopDown = (duration = 300) => ({
   enterFrom: {
-    scale: 0.85,
+    scale: 0.95,
     opacity: 0,
-    filter: 'blur(12px)',
+    filter: 'blur(6px)',
     transform: 'translateY(0)',
   },
   enterTo: {
@@ -435,11 +435,13 @@ export const pagePopDown = (duration = 300) => ({
     opacity: 1,
     filter: 'blur(0)',
     transform: 'translateY(0)',
+    scale: 1,
   },
   leaveTo: {
     opacity: 0,
-    filter: 'blur(12px)',
-    transform: 'translateY(10rem)',
+    filter: 'blur(6px)',
+    scale: 0.96,
+    transform: 'translateY(4rem)',
   },
   leaveActive: {
     transition: {
@@ -454,14 +456,16 @@ export const defaultPagePopDown = pagePopDown(300);
 
 export const pageSlideDown = (duration = 300) => ({
   enterFrom: {
-    transform: 'translateY(-10vh)',
+    transform: 'translateY(-4rem)',
     opacity: 0,
-    filter: 'blur(12px)',
+    filter: 'blur(6px)',
+    scale: 1.04,
   },
   enterTo: {
     transform: 'translateY(0)',
     opacity: 1,
     filter: 'blur(0)',
+    scale: 1,
   },
   enterActive: {
     transition: {
@@ -474,11 +478,13 @@ export const pageSlideDown = (duration = 300) => ({
     transform: 'translateY(0)',
     opacity: 1,
     filter: 'blur(0)',
+    scale: 1,
   },
   leaveTo: {
-    transform: 'translateY(10vh)',
+    transform: 'translateY(4rem)',
     opacity: 0,
-    filter: 'blur(12px)',
+    filter: 'blur(6px)',
+    scale: 0.96,
   },
   leaveActive: {
     transition: {
@@ -493,14 +499,16 @@ export const defaultPageSlideDown = pageSlideDown(300);
 
 export const pageSlideUp = (duration = 300) => ({
   enterFrom: {
-    transform: 'translateY(10vh)',
+    transform: 'translateY(4rem)',
     opacity: 0,
-    filter: 'blur(12px)',
+    filter: 'blur(6px)',
+    scale: 1.04,
   },
   enterTo: {
     transform: 'translateY(0)',
     opacity: 1,
     filter: 'blur(0)',
+    scale: 1,
   },
   enterActive: {
     transition: {
@@ -513,11 +521,13 @@ export const pageSlideUp = (duration = 300) => ({
     transform: 'translateY(0)',
     opacity: 1,
     filter: 'blur(0)',
+    scale: 1,
   },
   leaveTo: {
-    transform: 'translateY(-10vh)',
+    transform: 'translateY(-4rem)',
     opacity: 0,
-    filter: 'blur(12px)',
+    filter: 'blur(6px)',
+    scale: 0.96,
   },
   leaveActive: {
     transition: {
