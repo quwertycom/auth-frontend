@@ -3,7 +3,8 @@ import { pagePop, pagePopDown, pageSlideDown, pageSlideUp } from '@/app/styles/t
 
 interface NavigateWithAnimationProps {
   href: string;
-  animation?: 'pop' | 'slide-down' | 'slide-up' | 'pop-down';
+  animation?: 'pop' | 'slide-down' | 'slide-up' | 'pop-down' | 'pop-up';
+  back?: boolean;
   duration?: number;
   delayBetweenPages?: number;
   onComplete?: () => void;
@@ -15,6 +16,7 @@ export function useNavigateWithAnimation() {
   return ({
     href,
     animation = 'pop',
+    back = false,
     duration = 300,
     delayBetweenPages = 0,
     onComplete,
@@ -23,12 +25,14 @@ export function useNavigateWithAnimation() {
     const halfDuration = duration / 2;
 
     // Get animation styles based on type
-    const animationStyles = 
+    const animationType = 
       animation === 'slide-down' ? pageSlideDown(duration) :
       animation === 'slide-up' ? pageSlideUp(duration) :
       animation === 'pop' ? pagePop(duration) :
       animation === 'pop-down' ? pagePopDown(duration) :
       pagePop(duration);
+
+    const animationStyles = back ? animationType.reverse : animationType;
 
     if (!animationStyles) return;
 

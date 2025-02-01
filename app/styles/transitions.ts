@@ -372,7 +372,7 @@ export const slideUpScaleDown = (duration = 1000) => ({
 // --- Page Transitions -----------------------------------
 // --------------------------------------------------------
 
-export const pagePop = (duration = 300) => ({
+export const pagePop = (duration = 1000) => ({
   enterFrom: {
     scale: 0.9,
     opacity: 0,
@@ -407,11 +407,47 @@ export const pagePop = (duration = 300) => ({
       duration: duration / 1000,
     },
   },
+  reverse: {
+    enterFrom: {
+      scale: 1.1,
+      opacity: 0,
+      filter: 'blur(6px)',
+    },
+    enterTo: {
+      scale: 1,
+      opacity: 1,
+    filter: 'blur(0)',
+    },
+    enterActive: {
+      transition: {
+        type: 'tween',
+        ease: [0.075, 0.82, 0.165, 1],
+        duration: duration / 1000,
+      },
+    },
+    leaveFrom: {
+      scale: 1,
+      opacity: 1,
+      filter: 'blur(0)',
+    },
+    leaveTo: {
+      scale: 0.9,
+      opacity: 0,
+      filter: 'blur(6px)',
+    },
+    leaveActive: {
+      transition: {
+        type: 'tween',
+        ease: [0.6, 0.04, 0.98, 0.335],
+        duration: duration / 1000,
+      },
+    },
+  }
 });
 
-export const defaultPagePop = pagePop(300);
+export const defaultPagePop = pagePop(1000);
 
-export const pagePopDown = (duration = 300) => ({
+export const pagePopDown = (duration = 1000) => ({
   enterFrom: {
     scale: 0.95,
     opacity: 0,
@@ -450,11 +486,51 @@ export const pagePopDown = (duration = 300) => ({
       duration: duration / 1000,
     },
   },
+  reverse: {
+    enterFrom: {
+      scale: 0.96,
+      opacity: 0,
+      filter: 'blur(6px)',
+      transform: 'translateY(4rem)',
+    },
+    enterTo: {
+      scale: 1,
+      opacity: 1,
+      filter: 'blur(0)',
+      transform: 'translateY(0)',
+    },
+    enterActive: {
+      transition: {
+        type: 'tween',
+        ease: [0.075, 0.82, 0.165, 1],
+        duration: duration / 1000,
+      },
+    },
+    leaveFrom: {
+      scale: 1,
+      opacity: 1,
+      filter: 'blur(0)',
+      transform: 'translateY(0)',
+    },
+    leaveTo: {
+      scale: 0.95,
+      opacity: 0,
+      filter: 'blur(6px)',
+      transform: 'translateY(0)',
+    },
+    leaveActive: {
+      transition: {
+        type: 'tween',
+        ease: [0.6, 0.04, 0.98, 0.335],
+        duration: duration / 1000,
+      },
+    },
+  }
 });
 
-export const defaultPagePopDown = pagePopDown(300);
+export const defaultPagePopDown = pagePopDown(1000);
 
-export const pageSlideDown = (duration = 300) => ({
+export const pageSlideDown = (duration = 1000) => ({
   enterFrom: {
     transform: 'translateY(-4rem)',
     opacity: 0,
@@ -493,11 +569,51 @@ export const pageSlideDown = (duration = 300) => ({
       duration: duration / 1000,
     },
   },
+  reverse: {
+    enterFrom: {
+      transform: 'translateY(4rem)',
+      opacity: 0,
+      filter: 'blur(6px)',
+      scale: 0.96,
+    },
+    enterTo: {
+      transform: 'translateY(0)',
+      opacity: 1,
+      filter: 'blur(0)',
+      scale: 1,
+    },
+    enterActive: {
+      transition: {
+        type: 'tween',
+        ease: [0.075, 0.82, 0.165, 1],
+        duration: duration / 1000,
+      },
+    },
+    leaveFrom: {
+      transform: 'translateY(0)',
+      opacity: 1,
+      filter: 'blur(0)',
+      scale: 1,
+    },
+    leaveTo: {
+      transform: 'translateY(-4rem)',
+      opacity: 0,
+      filter: 'blur(6px)',
+      scale: 1.04,
+    },
+    leaveActive: {
+      transition: {
+        type: 'tween',
+        ease: [0.6, 0.04, 0.98, 0.335],
+        duration: duration / 1000,
+      },
+    },
+  }
 });
 
-export const defaultPageSlideDown = pageSlideDown(300);
+export const defaultPageSlideDown = pageSlideDown(1000);
 
-export const pageSlideUp = (duration = 300) => ({
+export const pageSlideUp = (duration = 1000) => ({
   enterFrom: {
     transform: 'translateY(4rem)',
     opacity: 0,
@@ -536,6 +652,46 @@ export const pageSlideUp = (duration = 300) => ({
       duration: duration / 1000,
     },
   },
+  reverse: {
+    enterFrom: {
+      transform: 'translateY(-4rem)',
+      opacity: 0,
+      filter: 'blur(6px)',
+      scale: 0.96,
+    },
+    enterTo: {
+      transform: 'translateY(0)',
+      opacity: 1,
+      filter: 'blur(0)',
+      scale: 1,
+    },
+    enterActive: {
+      transition: {
+        type: 'tween',
+        ease: [0.075, 0.82, 0.165, 1],
+        duration: duration / 1000,
+      },
+    },
+    leaveFrom: {
+      transform: 'translateY(0)',
+      opacity: 1,
+      filter: 'blur(0)',
+      scale: 1,
+    },
+    leaveTo: {
+      transform: 'translateY(4rem)',
+      opacity: 0,
+      filter: 'blur(6px)',
+      scale: 1.04,
+    },
+    leaveActive: {
+      transition: {
+        type: 'tween',
+        ease: [0.6, 0.04, 0.98, 0.335],
+        duration: duration / 1000,
+      },
+    },
+  }
 });
 
-export const defaultPageSlideUp = pageSlideUp(300);
+export const defaultPageSlideUp = pageSlideUp(1000);
