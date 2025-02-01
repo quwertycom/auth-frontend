@@ -12,6 +12,7 @@ interface NavigateWithAnimationProps {
 
 export function useNavigateWithAnimation() {
   const router = useRouter();
+  const controller = new AbortController();
 
   return ({
     href,
@@ -22,9 +23,17 @@ export function useNavigateWithAnimation() {
     onComplete,
   }: NavigateWithAnimationProps) => {
     const main = document.querySelector('main');
-    const halfDuration = duration / 2;
+    if (!main) return;
 
-    // Get animation styles based on type
+    // Abort any ongoing transitions
+    if (controller.signal.aborted) return;
+    controller.abort();
+
+    // Clean up previous transitions
+    main.style.transition = 'none';
+    main.classList.remove('page-leave-active', 'page-enter-active');
+
+    // Get animation styles
     const animationType = 
       animation === 'slide-down' ? pageSlideDown(duration) :
       animation === 'slide-up' ? pageSlideUp(duration) :
@@ -34,67 +43,58 @@ export function useNavigateWithAnimation() {
 
     const animationStyles = back ? animationType.reverse : animationType;
 
-    if (!animationStyles) return;
-
-    // Apply duration directly to the element's style
-    if (main) {
-      main.style.transitionDuration = `${halfDuration}ms`;
-    }
+    // Setup transition properties
+    const applyTransition = (styles: any) => {
+      main.style.transition = `
+        all ${styles.transition.duration}s
+        cubic-bezier(${styles.transition.ease.join(', ')})
+      `;
+    };
 
     // Start leave animation
-    main?.classList.add('page-leave-active');
-    Object.assign(main!.style, animationStyles.leaveFrom);
+    main.classList.add('page-leave-active');
+    Object.assign(main.style, animationStyles.leaveFrom);
+    
+    requestAnimationFrame(() => {
+      applyTransition(animationStyles.leaveActive);
+      Object.assign(main.style, animationStyles.leaveTo);
 
-    // Force reflow to trigger animation
-    void main?.offsetHeight;
+      const finishLeave = () => {
+        main.removeEventListener('transitionend', finishLeave);
+        
+        // Reset to enter-from state without transition
+        main.style.transition = 'none';
+        Object.assign(main.style, animationStyles.enterFrom);
+        
+        router.push(href);
 
-    // Start leave transition
-    Object.assign(main!.style, animationStyles.leaveTo);
-    Object.assign(main!.style, animationStyles.leaveActive.transition);
-
-    setTimeout(() => {
-      // Only enforce minimum delay if delayBetweenPages is greater than 0
-      const effectiveDelay = delayBetweenPages === 0 ? 5 : delayBetweenPages > 0 && delayBetweenPages < 25 ? 10 : delayBetweenPages;
-
-      // Add delay before navigation
-      router.push(href);
-      setTimeout(() => {
-        // Remove transition duration before removing leave classes
-        if (main) {
-          main.style.transitionDuration = '0ms';
-        }
-
-        // Wait for the new page to load before starting enter animation
+        // Start enter animation after minimal delay
         setTimeout(() => {
-          // Add another delay before starting enter animation
-          setTimeout(() => {
-            // Start enter animation
-            Object.assign(main!.style, animationStyles.enterFrom);
-            main?.classList.remove('page-leave-active');
-            main?.classList.add('page-enter-active');
+          requestAnimationFrame(() => {
+            main.classList.remove('page-leave-active');
+            main.classList.add('page-enter-active');
 
-            // Force reflow to trigger animation
-            void main?.offsetHeight;
+            // Apply enter transition properties
+            main.style.transition = `
+              all ${animationStyles.enterActive.transition.duration}s
+              cubic-bezier(${animationStyles.enterActive.transition.ease.join(', ')})
+            `;
+            
+            Object.assign(main.style, animationStyles.enterTo);
 
-            // Add transition duration
-            if (main) {
-              main.style.transitionDuration = `${halfDuration}ms`;
-            }
+            const finishEnter = () => {
+              main.removeEventListener('transitionend', finishEnter);
+              main.classList.remove('page-enter-active');
+              main.style.transition = '';
+              onComplete?.();
+            };
 
-            // Start enter transition
-            Object.assign(main!.style, animationStyles.enterTo);
-            Object.assign(main!.style, animationStyles.enterActive.transition);
+            main.addEventListener('transitionend', finishEnter);
+          });
+        }, 100); // Minimal delay for route update
+      };
 
-            // Clean up enter animation after delay
-            setTimeout(() => {
-              main?.classList.remove('page-enter-active');
-              if (onComplete) {
-                onComplete();
-              }
-            }, halfDuration);
-          }, effectiveDelay);
-        }, 0); // Small delay to ensure new page is ready
-      }, effectiveDelay);
-    }, halfDuration);
+      main.addEventListener('transitionend', finishLeave);
+    });
   };
 }
