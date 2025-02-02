@@ -1,379 +1,172 @@
+export interface Transition {
+  enterFrom: {
+    opacity: number;
+    transform: string;
+    filter: string;
+  },
+  enterTo: {
+    opacity: number;
+    transform: string;
+    filter: string;
+  },
+  enterActive: {
+    transition: {
+      type: string;
+      ease: [number, number, number, number];
+      duration: number;
+    };
+  };
+  leaveFrom: {
+    opacity: number;
+    transform: string;
+    filter: string;
+  },
+  leaveTo: {
+    opacity: number;
+    transform: string;
+    filter: string;
+  },
+  leaveActive: {
+    transition: {
+      type: string;
+      ease: [number, number, number, number];
+      duration: number;
+    };
+  };
+}
+
+export interface TransitionBundle {
+  normal: Transition;
+  reverse: Transition;
+}
+
+const reverseTransition = (transition: Transition) => ({
+  ...transition,
+  enterFrom: transition.leaveTo,
+  enterTo: transition.leaveFrom,
+  enterActive: transition.enterActive,
+  leaveFrom: transition.enterTo,
+  leaveTo: transition.enterFrom,
+  leaveActive: transition.leaveActive,
+});
+
+// --------------------------------------------------------
+// --- Easing Functions -----------------------------------
+// --------------------------------------------------------
+
+export const easeInQuad: [number, number, number, number] = [0.11, 0, 0.5, 0];
+export const easeOutQuad: [number, number, number, number] = [0.5, 1, 0.89, 1];
+export const easeInOutQuad: [number, number, number, number] = [0.45, 0, 0.55, 1];
+
+export const easeInCubic: [number, number, number, number] = [0.32, 0, 0.67, 0];
+export const easeOutCubic: [number, number, number, number] = [0.33, 1, 0.68, 1];
+export const easeInOutCubic: [number, number, number, number] = [0.65, 0, 0.35, 1];
+
+export const easeInQuart: [number, number, number, number] = [0.5, 0, 0.75, 0];
+export const easeOutQuart: [number, number, number, number] = [0.25, 1, 0.5, 1];
+export const easeInOutQuart: [number, number, number, number] = [0.76, 0, 0.24, 1];
+
+export const easeInQuint: [number, number, number, number] = [0.64, 0, 0.78, 0];
+export const easeOutQuint: [number, number, number, number] = [0.22, 1, 0.36, 1];
+export const easeInOutQuint: [number, number, number, number] = [0.83, 0, 0.17, 1];
+
+export const easeInExpo: [number, number, number, number] = [0.7, 0, 0.84, 0];
+export const easeOutExpo: [number, number, number, number] = [0.16, 1, 0.3, 1];
+export const easeInOutExpo: [number, number, number, number] = [0.87, 0, 0.13, 1];
+
+export const easeInCirc: [number, number, number, number] = [0.55, 0, 1, 0.45];
+export const easeOutCirc: [number, number, number, number] = [0, 0.55, 0.45, 1];
+export const easeInOutCirc: [number, number, number, number] = [0.85, 0, 0.15, 1];
+
+type EasingOption = 'quad' | 'cubic' | 'quart' | 'quint' | 'expo' | 'circ' | [number, number, number, number];
+
+const getEasing = (easing: EasingOption, type: 'in' | 'out' | 'inOut'): [number, number, number, number] => {
+  if (Array.isArray(easing)) {
+    return easing;
+  }
+
+  const easingMap = {
+    quad: {
+      in: easeInQuad,
+      out: easeOutQuad,
+      inOut: easeInOutQuad,
+    },
+    cubic: {
+      in: easeInCubic,
+      out: easeOutCubic,
+      inOut: easeInOutCubic,
+    },
+    quart: {
+      in: easeInQuart,
+      out: easeOutQuart,
+      inOut: easeInOutQuart,
+    },
+    quint: {
+      in: easeInQuint,
+      out: easeOutQuint,
+      inOut: easeInOutQuint,
+    },
+    expo: {
+      in: easeInExpo,
+      out: easeOutExpo,
+      inOut: easeInOutExpo,
+    },
+    circ: {
+      in: easeInCirc,
+      out: easeOutCirc,
+      inOut: easeInOutCirc,
+    },
+  };
+
+  return easingMap[easing][type];
+};
+
 // --------------------------------------------------------
 // --- Normal Transitions ---------------------------------
 // --------------------------------------------------------
 
-export const centerPop = (duration = 1000) => ({
+export const centerPop = (duration = 750, easing: EasingOption = 'cubic'): Transition => ({
   enterFrom: {
-    scale: 0.5,
     opacity: 0,
     transform: 'scale(0.95)',
-    filter: 'blur(2px)',
+    filter: 'blur(2px)'
   },
   enterTo: {
     transform: 'scale(1)',
     opacity: 1,
-    filter: 'blur(0)',
-    transition: {
-      duration: duration / 1000,
-      ease: [0.23, 1, 0.32, 1],
-    },
+    filter: 'blur(0)'
   },
   enterActive: {
     transition: {
       type: 'tween',
-      ease: [0.23, 1, 0.32, 1],
-      duration: duration / 1000,
+      ease: getEasing(easing, 'out'),
+      duration: duration / 2000,
     },
   },
   leaveFrom: {
     transform: 'scale(1)',
     opacity: 1,
-    filter: 'blur(0)',
+    filter: 'blur(0)'
   },
   leaveTo: {
     opacity: 0,
-    transform: 'scale(0.95)',
-    filter: 'blur(2px)',
-    transition: {
-      duration: duration / 1000,
-      ease: [0.755, 0.05, 0.855, 0.06],
-    },
+    transform: 'scale(1.05)',
+    filter: 'blur(2px)'
   },
   leaveActive: {
     transition: {
       type: 'tween',
-      ease: [0.755, 0.05, 0.855, 0.06],
-      duration: duration / 1000,
+      ease: getEasing(easing, 'in'),
+      duration: duration / 2000,
     },
   },
 });
 
-export const defaultCenterPop = centerPop();
+export const centerPopReverse = (duration = 750, easing: EasingOption = 'cubic'): Transition => reverseTransition(centerPop(duration, easing));
 
-export const scaleDown = (duration = 1000) => ({
-  enterFrom: {
-    scale: 1.25,
-    opacity: 0,
-    filter: 'blur(8px)',
-  },
-  enterTo: {
-    scale: 1,
-    opacity: 1,
-    filter: 'blur(0)',
-  },
-  enterActive: {
-    transition: {
-      type: 'tween',
-      ease: [0, 0.55, 0.45, 1],
-      duration: duration / 2 / 1000,
-    },
-  },
-  leaveFrom: {
-    scale: 1,
-    opacity: 1,
-    filter: 'blur(0)',
-  },
-  leaveTo: {
-    scale: 0.75,
-    opacity: 0,
-    filter: 'blur(8px)',
-  },
-  leaveActive: {
-    transition: {
-      type: 'tween',
-      ease: [0.4, 0, 0.6, 1],
-      duration: duration / 2 / 1000,
-    },
-  },
-});
-
-export const defaultScaleDown = scaleDown();
-
-export const scaleUp = (duration = 1000) => ({
-  enterFrom: {
-    scale: 0.75,
-    opacity: 0,
-    filter: 'blur(8px)',
-  },
-  enterTo: {
-    scale: 1,
-    opacity: 1,
-    filter: 'blur(0)',
-  },
-  enterActive: {
-    transition: {
-      type: 'tween',
-      ease: [0, 0.55, 0.45, 1],
-      duration: duration / 2 / 1000,
-    },
-  },
-  leaveFrom: {
-    scale: 1,
-    opacity: 1,
-    filter: 'blur(0)',
-  },
-  leaveTo: {
-    scale: 1.25,
-    opacity: 0,
-    filter: 'blur(8px)',
-  },
-  leaveActive: {
-    transition: {
-      type: 'tween',
-      ease: [0.4, 0, 0.6, 1],
-      duration: duration / 2 / 1000,
-    },
-  },
-});
-
-export const defaultScaleUp = scaleUp();
-
-export const slideDown = (duration = 1000) => ({
-  enterFrom: {
-    translateY: '-6rem',
-    opacity: 0,
-    filter: 'blur(8px)',
-  },
-  enterTo: {
-    translateY: '0',
-    opacity: 1,
-    filter: 'blur(0)',
-  },
-  enterActive: {
-    transition: {
-      type: 'tween',
-      ease: [0.22, 1, 0.36, 1],
-      duration: duration / 2 / 1000,
-    },
-  },
-  leaveFrom: {
-    translateY: '0',
-    opacity: 1,
-    filter: 'blur(0)',
-  },
-  leaveTo: {
-    translateY: '10rem',
-    opacity: 0,
-    filter: 'blur(8px)',
-  },
-  leaveActive: {
-    transition: {
-      type: 'tween',
-      ease: [0.64, 0, 0.78, 0],
-      duration: duration / 2 / 1000,
-    },
-  },
-});
-
-export const defaultSlideDown = slideDown();
-
-export const slideUp = (duration = 1000) => ({
-  enterFrom: {
-    translateY: '10rem',
-    opacity: 0,
-    filter: 'blur(8px)',
-  },
-  enterTo: {
-    translateY: '0',
-    opacity: 1,
-    filter: 'blur(0)',
-  },
-  enterActive: {
-    transition: {
-      type: 'tween',
-      ease: [0.22, 1, 0.36, 1],
-      duration: duration / 2 / 1000,
-    },
-  },
-  leaveFrom: {
-    translateY: '0',
-    opacity: 1,
-    filter: 'blur(0)',
-  },
-  leaveTo: {
-    translateY: '-10rem',
-    opacity: 0,
-    filter: 'blur(8px)',
-  },
-  leaveActive: {
-    transition: {
-      type: 'tween',
-      ease: [0.64, 0, 0.78, 0],
-      duration: duration / 2 / 1000,
-    },
-  },
-});
-
-export const defaultSlideUp = slideUp();
-
-export const slideDownScaleUp = (duration = 1000) => ({
-  enterFrom: {
-    scale: 1.25,
-    opacity: 0,
-    filter: 'blur(8px)',
-    translateY: '-16rem',
-  },
-  enterTo: {
-    scale: 1,
-    opacity: 1,
-    filter: 'blur(0)',
-    translateY: '0',
-  },
-  enterActive: {
-    transition: {
-      type: 'tween',
-      ease: [0, 0.55, 0.45, 1],
-      duration: duration / 2 / 1000,
-    },
-  },
-  leaveFrom: {
-    scale: 1,
-    opacity: 1,
-    filter: 'blur(0)',
-    translateY: '0',
-  },
-  leaveTo: {
-    scale: 1.25,
-    opacity: 0,
-    filter: 'blur(8px)',
-    translateY: '16rem',
-  },
-  leaveActive: {
-    transition: {
-      type: 'tween',
-      ease: [0.4, 0, 0.6, 1],
-      duration: duration / 2 / 1000,
-    },
-  },
-});
-
-export const defaultSlideDownScaleUp = slideDownScaleUp();
-
-export const slideDownScaleDown = (duration = 1000) => ({
-  enterFrom: {
-    scale: 0.75,
-    opacity: 0,
-    filter: 'blur(8px)',
-    translateY: '-16rem',
-  },
-  enterTo: {
-    scale: 1,
-    opacity: 1,
-    filter: 'blur(0)',
-    translateY: '0',
-  },
-  enterActive: {
-    transition: {
-      type: 'tween',
-      ease: [0, 0.55, 0.45, 1],
-      duration: duration / 2 / 1000,
-    },
-  },
-  leaveFrom: {
-    scale: 1,
-    opacity: 1,
-    filter: 'blur(0)',
-    translateY: '0',
-  },
-  leaveTo: {
-    scale: 0.75,
-    opacity: 0,
-    filter: 'blur(8px)',
-    translateY: '16rem',
-  },
-  leaveActive: {
-    transition: {
-      type: 'tween',
-      ease: [0.4, 0, 0.6, 1],
-      duration: duration / 2 / 1000,
-    },
-  },
-});
-
-export const defaultSlideDownScaleDown = slideDownScaleDown();
-
-export const slideUpScaleUp = (duration = 1000) => ({
-  enterFrom: {
-    scale: 1.25,
-    opacity: 0,
-    filter: 'blur(8px)',
-    translateY: '16rem',
-  },
-  enterTo: {
-    scale: 1,
-    opacity: 1,
-    filter: 'blur(0)',
-    translateY: '0',
-  },
-  enterActive: {
-    transition: {
-      type: 'tween',
-      ease: [0, 0.55, 0.45, 1],
-      duration: duration / 2 / 1000,
-    },
-  },
-  leaveFrom: {
-    scale: 1,
-    opacity: 1,
-    filter: 'blur(0)',
-    translateY: '0',
-  },
-  leaveTo: {
-    scale: 1.25,
-    opacity: 0,
-    filter: 'blur(8px)',
-    translateY: '-16rem',
-  },
-  leaveActive: {
-    transition: {
-      type: 'tween',
-      ease: [0.4, 0, 0.6, 1],
-      duration: duration / 2 / 1000,
-    },
-  },
-});
-
-export const defaultSlideUpScaleUp = slideUpScaleUp();
-
-export const slideUpScaleDown = (duration = 1000) => ({
-  enterFrom: {
-    scale: 0.75,
-    opacity: 0,
-    filter: 'blur(8px)',
-    translateY: '16rem',
-  },
-  enterTo: {
-    scale: 1,
-    opacity: 1,
-    filter: 'blur(0)',
-    translateY: '0',
-  },
-  enterActive: {
-    transition: {
-      type: 'tween',
-      ease: [0, 0.55, 0.45, 1],
-      duration: duration / 2 / 1000,
-    },
-  },
-  leaveFrom: {
-    scale: 1,
-    opacity: 1,
-    filter: 'blur(0)',
-    translateY: '0',
-  },
-  leaveTo: {
-    scale: 0.75,
-    opacity: 0,
-    filter: 'blur(8px)',
-    translateY: '-16rem',
-  },
-  leaveActive: {
-    transition: {
-      type: 'tween',
-      ease: [0.4, 0, 0.6, 1],
-      duration: duration / 2 / 1000,
-    },
-  },
+export const centerPopTransition = (duration = 750, easing: EasingOption = 'cubic'): TransitionBundle => ({
+  normal: centerPop(duration, easing),
+  reverse: centerPopReverse(duration, easing),
 });
 
 // --------------------------------------------------------
