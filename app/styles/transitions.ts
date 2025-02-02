@@ -125,6 +125,8 @@ const getEasing = (easing: EasingOption, type: 'in' | 'out' | 'inOut'): [number,
 // --- Normal Transitions ---------------------------------
 // --------------------------------------------------------
 
+// --- Center Pop -----------------------------------------
+
 export const centerPop = (duration = 750, easing: EasingOption = 'cubic'): Transition => ({
   enterFrom: {
     opacity: 0,
@@ -167,6 +169,282 @@ export const centerPopReverse = (duration = 750, easing: EasingOption = 'cubic')
 export const centerPopTransition = (duration = 750, easing: EasingOption = 'cubic'): TransitionBundle => ({
   normal: centerPop(duration, easing),
   reverse: centerPopReverse(duration, easing),
+});
+
+// --- Center Pop Down ------------------------------------
+
+export const centerPopDown = (duration = 750, easing: EasingOption = 'cubic'): Transition => ({
+  enterFrom: {
+    opacity: 0,
+    transform: 'scale(0.95)',
+    filter: 'blur(2px)'
+  },
+  enterTo: {
+    transform: 'scale(1)',
+    opacity: 1,
+    filter: 'blur(0)'
+  },
+  enterActive: {
+    transition: {
+      type: 'tween',
+      ease: getEasing(easing, 'out'),
+      duration: duration / 2000,
+    },
+  },
+  leaveFrom: {
+    transform: 'scale(1) translateY(0)',
+    opacity: 1,
+    filter: 'blur(0)'
+  },
+  leaveTo: {
+    opacity: 0,
+    transform: 'scale(0.95) translateY(4rem)',
+    filter: 'blur(2px)'
+  },
+  leaveActive: {
+    transition: {
+      type: 'tween',
+      ease: getEasing(easing, 'in'),
+      duration: duration / 2000,
+    },
+  },
+});
+
+export const centerPopDownReverse = (duration = 750, easing: EasingOption = 'cubic'): Transition => reverseTransition(centerPopDown(duration, easing));
+
+export const centerPopDownTransition = (duration = 750, easing: EasingOption = 'cubic'): TransitionBundle => ({
+  normal: centerPopDown(duration, easing),
+  reverse: centerPopDownReverse(duration, easing),
+});
+
+// --- Center Pop Up --------------------------------------
+
+export const centerPopUp = (duration = 750, easing: EasingOption = 'cubic'): Transition => ({
+  enterFrom: {
+    opacity: 0,
+    transform: 'scale(0.95)',
+    filter: 'blur(2px)'
+  },
+  enterTo: {
+    transform: 'scale(1)',
+    opacity: 1,
+    filter: 'blur(0)'
+  },
+  enterActive: {
+    transition: {
+      type: 'tween',
+      ease: getEasing(easing, 'out'),
+      duration: duration / 2000,
+    },
+  },
+  leaveFrom: {
+    transform: 'scale(1) translateY(0)',
+    opacity: 1,
+    filter: 'blur(0)'
+  },
+  leaveTo: {
+    opacity: 0,
+    transform: 'scale(0.95) translateY(-4rem)',
+    filter: 'blur(2px)'
+  },
+  leaveActive: {
+    transition: {
+      type: 'tween',
+      ease: getEasing(easing, 'in'),
+      duration: duration / 2000,
+    },
+  },
+});
+
+export const centerPopUpReverse = (duration = 750, easing: EasingOption = 'cubic'): Transition => reverseTransition(centerPopUp(duration, easing));
+
+export const centerPopUpTransition = (duration = 750, easing: EasingOption = 'cubic'): TransitionBundle => ({
+  normal: centerPopUp(duration, easing),
+  reverse: centerPopUpReverse(duration, easing),
+});
+
+// --- Slide From Top -------------------------------------
+
+export const slideFromTop = (duration = 750, easing: EasingOption = 'cubic'): Transition => ({
+  enterFrom: {
+    opacity: 0,
+    transform: 'translateY(-4rem) scale(0.98)',
+    filter: 'blur(2px)'
+  },
+  enterTo: {
+    opacity: 1,
+    transform: 'translateY(0)',
+    filter: 'blur(0)'
+  },
+  enterActive: {
+    transition: {
+      type: 'tween',
+      ease: getEasing(easing, 'out'),
+      duration: duration / 2000,
+    },
+  },
+  leaveFrom: {
+    opacity: 1,
+    transform: 'translateY(0)',
+    filter: 'blur(0)'
+  },
+  leaveTo: {
+    opacity: 0,
+    transform: 'translateY(4rem) scale(0.98)',
+    filter: 'blur(2px)'
+  },
+  leaveActive: {
+    transition: {
+      type: 'tween',
+      ease: getEasing(easing, 'in'),
+      duration: duration / 2000,
+    },
+  },
+});
+
+export const slideFromTopReverse = (duration = 750, easing: EasingOption = 'cubic'): Transition => reverseTransition(slideFromTop(duration, easing));
+
+export const slideFromTopTransition = (duration = 750, easing: EasingOption = 'cubic'): TransitionBundle => ({
+  normal: slideFromTop(duration, easing),
+  reverse: slideFromTopReverse(duration, easing),
+});
+
+// --- Slide From Bottom ----------------------------------
+
+export const slideFromBottom = (duration = 750, easing: EasingOption = 'cubic'): Transition => ({
+  enterFrom: {
+    opacity: 0,
+    transform: 'translateY(4rem) scale(0.98)',
+    filter: 'blur(2px)'
+  },
+  enterTo: {
+    opacity: 1,
+    transform: 'translateY(0)',
+    filter: 'blur(0)'
+  },
+  enterActive: {
+    transition: {
+      type: 'tween',
+      ease: getEasing(easing, 'out'),
+      duration: duration / 2000,
+    },
+  },
+  leaveFrom: {
+    opacity: 1,
+    transform: 'translateY(0)',
+    filter: 'blur(0)'
+  },
+  leaveTo: {
+    opacity: 0,
+    transform: 'translateY(-4rem) scale(0.98)',
+    filter: 'blur(2px)'
+  },
+  leaveActive: {
+    transition: {
+      type: 'tween',
+      ease: getEasing(easing, 'in'),
+      duration: duration / 2000,
+    },
+  },
+});
+
+export const slideFromBottomReverse = (duration = 750, easing: EasingOption = 'cubic'): Transition => reverseTransition(slideFromBottom(duration, easing));
+
+export const slideFromBottomTransition = (duration = 750, easing: EasingOption = 'cubic'): TransitionBundle => ({
+  normal: slideFromBottom(duration, easing),
+  reverse: slideFromBottomReverse(duration, easing),
+});
+
+// --- Slide From Left ------------------------------------
+
+export const slideFromLeft = (duration = 750, easing: EasingOption = 'cubic'): Transition => ({
+  enterFrom: {
+    opacity: 0,
+    transform: 'translateX(4rem) ',
+    filter: 'blur(2px)'
+  },
+  enterTo: {
+    opacity: 1,
+    transform: 'translateX(0)',
+    filter: 'blur(0)'
+  },
+  enterActive: {
+    transition: {
+      type: 'tween',
+      ease: getEasing(easing, 'out'),
+      duration: duration / 2000,
+    },
+  },
+  leaveFrom: {
+    opacity: 1,
+    transform: 'translateX(0)',
+    filter: 'blur(0)'
+  },
+  leaveTo: {
+    opacity: 0,
+    transform: 'translateX(-4rem)',
+    filter: 'blur(2px)'
+  },
+  leaveActive: {
+    transition: {
+      type: 'tween',
+      ease: getEasing(easing, 'in'),
+      duration: duration / 2000,
+    },
+  },
+});
+
+export const slideFromLeftReverse = (duration = 750, easing: EasingOption = 'cubic'): Transition => reverseTransition(slideFromLeft(duration, easing));
+
+export const slideFromLeftTransition = (duration = 750, easing: EasingOption = 'cubic'): TransitionBundle => ({
+  normal: slideFromLeft(duration, easing),
+  reverse: slideFromLeftReverse(duration, easing),
+});
+
+// --- Slide From Right -----------------------------------
+
+export const slideFromRight = (duration = 750, easing: EasingOption = 'cubic'): Transition => ({
+  enterFrom: {
+    opacity: 0,
+    transform: 'translateX(-4rem)',
+    filter: 'blur(2px)'
+  },
+  enterTo: {
+    opacity: 1,
+    transform: 'translateX(0)',
+    filter: 'blur(0)'
+  },
+  enterActive: {
+    transition: {
+      type: 'tween',
+      ease: getEasing(easing, 'out'),
+      duration: duration / 2000,
+    },
+  },
+  leaveFrom: {
+    opacity: 1,
+    transform: 'translateX(0)',
+    filter: 'blur(0)'
+  },
+  leaveTo: {
+    opacity: 0,
+    transform: 'translateX(4rem)',
+    filter: 'blur(2px)'
+  },
+  leaveActive: {
+    transition: {
+      type: 'tween',
+      ease: getEasing(easing, 'in'),
+      duration: duration / 2000,
+    },
+  },
+});
+
+export const slideFromRightReverse = (duration = 750, easing: EasingOption = 'cubic'): Transition => reverseTransition(slideFromRight(duration, easing));
+
+export const slideFromRightTransition = (duration = 750, easing: EasingOption = 'cubic'): TransitionBundle => ({
+  normal: slideFromRight(duration, easing),
+  reverse: slideFromRightReverse(duration, easing),
 });
 
 // --------------------------------------------------------
