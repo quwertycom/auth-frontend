@@ -360,12 +360,12 @@ export const slideFromBottomTransition = (duration = 750, easing: EasingOption =
 export const slideFromLeft = (duration = 750, easing: EasingOption = 'cubic'): Transition => ({
   enterFrom: {
     opacity: 0,
-    transform: 'translateX(4rem) ',
+    transform: 'translateX(4rem) scale(0.98)',
     filter: 'blur(2px)'
   },
   enterTo: {
     opacity: 1,
-    transform: 'translateX(0)',
+    transform: 'translateX(0) scale(1)',
     filter: 'blur(0)'
   },
   enterActive: {
@@ -377,12 +377,12 @@ export const slideFromLeft = (duration = 750, easing: EasingOption = 'cubic'): T
   },
   leaveFrom: {
     opacity: 1,
-    transform: 'translateX(0)',
+    transform: 'translateX(0) scale(1)',
     filter: 'blur(0)'
   },
   leaveTo: {
     opacity: 0,
-    transform: 'translateX(-4rem)',
+    transform: 'translateX(-4rem) scale(0.98)',
     filter: 'blur(2px)'
   },
   leaveActive: {
@@ -406,12 +406,12 @@ export const slideFromLeftTransition = (duration = 750, easing: EasingOption = '
 export const slideFromRight = (duration = 750, easing: EasingOption = 'cubic'): Transition => ({
   enterFrom: {
     opacity: 0,
-    transform: 'translateX(-4rem)',
+    transform: 'translateX(-4rem) scale(0.98)',
     filter: 'blur(2px)'
   },
   enterTo: {
     opacity: 1,
-    transform: 'translateX(0)',
+    transform: 'translateX(0) scale(1)',
     filter: 'blur(0)'
   },
   enterActive: {
@@ -423,12 +423,12 @@ export const slideFromRight = (duration = 750, easing: EasingOption = 'cubic'): 
   },
   leaveFrom: {
     opacity: 1,
-    transform: 'translateX(0)',
+    transform: 'translateX(0) scale(1)',
     filter: 'blur(0)'
   },
   leaveTo: {
     opacity: 0,
-    transform: 'translateX(4rem)',
+    transform: 'translateX(4rem) scale(0.98)',
     filter: 'blur(2px)'
   },
   leaveActive: {
