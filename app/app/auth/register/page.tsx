@@ -461,8 +461,9 @@ export default function RegisterPage() {
                           We&apos;re Almost Done!
                         </h1>
                         <p className="mt-2 text-gray-600">
-                          Just one more step! We&apos;ll send a verification code to your
-                          email to complete your account setup and ensure it&apos;s secure.
+                          Just one more step! We&apos;ll send a verification
+                          code to your email to complete your account setup and
+                          ensure it&apos;s secure.
                         </p>
                       </div>
                     </div>
