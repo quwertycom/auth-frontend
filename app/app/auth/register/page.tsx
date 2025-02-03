@@ -19,7 +19,7 @@ import {
   slideFromLeftTransition,
 } from '@/app/styles/transitions';
 import TransitionLink from '@/app/components/transitionLink';
-import {parseDate} from '@internationalized/date';
+import { parseDate } from '@internationalized/date';
 
 export default function RegisterPage() {
   const [step, setStep] = useState(0);
@@ -32,8 +32,9 @@ export default function RegisterPage() {
   const [lastName, setLastName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [phone, setPhone] = useState<string>('');
+  const [username, setUsername] = useState<string>('');
   const [dateOfBirth, setDateOfBirth] = useState<CalendarDate>(
-    parseDate("2000-01-01") as CalendarDate
+    parseDate('2000-01-01') as CalendarDate,
   );
   const [gender, setGender] = useState<string>('');
   const [password, setPassword] = useState<string>('');
@@ -56,12 +57,13 @@ export default function RegisterPage() {
       setStep(step - 1);
     });
   };
+
   return (
     <div className="flex h-screen flex-col items-center justify-center p-4">
       <div className="w-full">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
-            key={step === 0 || step > 5 ? 'register' : 'login'}
+            key={step === 0 || step > 6 ? 'register' : 'login'}
             initial={{
               ...transition[reverseTransition ? 'reverse' : 'normal'].enterFrom,
             }}
@@ -92,7 +94,7 @@ export default function RegisterPage() {
                       />
                       <div className="text-center">
                         <h1 className="text-3xl font-bold">Create Your qID</h1>
-                        <p className="mt-2 text-gray-600">
+                        <p className="mt-2 text-neutral-600">
                           Don&apos;t have a qID yet? No worries!
                           <br />
                           Create your account now to access all our services.
@@ -124,7 +126,7 @@ export default function RegisterPage() {
                 </div>
               </div>
             )}
-            {step >= 1 && step <= 5 && (
+            {step >= 1 && step <= 6 && (
               <div className="flex h-[450px] w-full flex-col items-center justify-center gap-6">
                 {/* Top Row - Form and Info Cards */}
                 <div className="flex h-full w-full max-w-4xl gap-6">
@@ -268,6 +270,45 @@ export default function RegisterPage() {
                               <div className="flex h-full w-full flex-col items-stretch justify-evenly gap-6">
                                 <div className="flex flex-col items-center justify-center gap-2">
                                   <h2 className="text-2xl font-bold text-foreground">
+                                    Select your username
+                                  </h2>
+                                  <p className="text-sm text-neutral-500">
+                                    Choose a username that suits you best
+                                  </p>
+                                </div>
+                                <div className="flex flex-col items-stretch justify-center gap-4">
+                                  <Input
+                                    label="Username"
+                                    variant="bordered"
+                                    classNames={{ input: 'text-md' }}
+                                    value={username}
+                                    onChange={(e) =>
+                                      setUsername(e.target.value)
+                                    }
+                                    isRequired
+                                  />
+                                  <div className="flex h-12 w-full flex-row items-start justify-start">
+                                    <div className="flex flex-row items-center justify-start gap-2">
+                                      <MaterialSymbol
+                                        symbol="info"
+                                        type="rounded"
+                                        size={24}
+                                        className="text-neutral-500"
+                                        fill
+                                      />
+                                      <p className="text-sm text-neutral-500">
+                                        Username must be between 3 and 20
+                                        characters
+                                      </p>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                            {step === 5 && (
+                              <div className="flex h-full w-full flex-col items-stretch justify-evenly gap-6">
+                                <div className="flex flex-col items-center justify-center gap-2">
+                                  <h2 className="text-2xl font-bold text-foreground">
                                     Some more details
                                   </h2>
                                   <p className="text-sm text-neutral-500">
@@ -307,7 +348,7 @@ export default function RegisterPage() {
                                 </div>
                               </div>
                             )}
-                            {step === 5 && (
+                            {step === 6 && (
                               <div className="flex h-full w-full flex-col items-stretch justify-evenly gap-6">
                                 <div className="flex flex-col items-center justify-center gap-2">
                                   <h2 className="text-2xl font-bold text-foreground">
@@ -442,6 +483,24 @@ export default function RegisterPage() {
                           {step === 4 && (
                             <div className="flex flex-col items-center justify-between gap-6 text-center">
                               <h3 className="text-xl font-semibold text-foreground">
+                                Select your username
+                              </h3>
+                              <MaterialSymbol
+                                symbol="alternate_email"
+                                type="rounded"
+                                size={128}
+                                className="text-primary-600"
+                              />
+                              <div className="space-y-4">
+                                You will use it to login and other will be able
+                                to find you by it. It is visible publicly, do
+                                not include any personal information here
+                              </div>
+                            </div>
+                          )}
+                          {step === 5 && (
+                            <div className="flex flex-col items-center justify-between gap-6 text-center">
+                              <h3 className="text-xl font-semibold text-foreground">
                                 Personalize your experience
                               </h3>
                               <MaterialSymbol
@@ -458,7 +517,7 @@ export default function RegisterPage() {
                               </div>
                             </div>
                           )}
-                          {step === 5 && (
+                          {step === 6 && (
                             <div className="flex flex-col items-center justify-between gap-6 text-center">
                               <h3 className="text-xl font-semibold text-foreground">
                                 Stay secure
@@ -510,7 +569,7 @@ export default function RegisterPage() {
                 </Card>
               </div>
             )}
-            {step === 6 && (
+            {step === 7 && (
               <div className="flex h-full w-full flex-col items-center justify-center gap-6">
                 <Card className="w-full max-w-md" radius="lg">
                   <CardBody className="flex flex-col items-center gap-6 p-8">
@@ -525,7 +584,7 @@ export default function RegisterPage() {
                         <h1 className="text-3xl font-bold">
                           We&apos;re Almost Done!
                         </h1>
-                        <p className="mt-2 text-gray-600">
+                        <p className="mt-2 text-neutral-600">
                           Just one more step! We&apos;ll send a verification
                           code to your email to complete your account setup and
                           ensure it&apos;s secure.
