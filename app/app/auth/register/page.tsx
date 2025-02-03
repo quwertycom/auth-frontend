@@ -4,6 +4,7 @@ import { startTransition, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   Button,
+  CalendarDate,
   Card,
   CardBody,
   Checkbox,
@@ -25,6 +26,19 @@ export default function RegisterPage() {
 
   const transition = centerPopTransition();
   const insideTransition = slideFromLeftTransition();
+
+  const [firstName, setFirstName] = useState<string>('');
+  const [lastName, setLastName] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
+  const [phone, setPhone] = useState<string>('');
+  const [dateOfBirth, setDateOfBirth] = useState<Date>(new Date());
+  const [gender, setGender] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [confirmPassword, setConfirmPassword] = useState<string>('');
+
+  const [termsAndConditions, setTermsConditions] = useState<boolean>(false);
+  const [emailNewsletter, setEmailNewsletter] = useState<boolean>(false);
+  const [phoneNewsletter, setPhoneNewsletter] = useState<boolean>(false);
 
   const handleNext = () => {
     setReverseTransition(false);
@@ -158,12 +172,20 @@ export default function RegisterPage() {
                                     label="First name"
                                     variant="bordered"
                                     classNames={{ input: 'text-md' }}
+                                    value={firstName}
+                                    onChange={(e) =>
+                                      setFirstName(e.target.value)
+                                    }
                                     isRequired
                                   />
                                   <Input
                                     label="Last name"
                                     variant="bordered"
                                     classNames={{ input: 'text-md' }}
+                                    value={lastName}
+                                    onChange={(e) =>
+                                      setLastName(e.target.value)
+                                    }
                                     isRequired
                                   />
                                 </div>
@@ -184,12 +206,16 @@ export default function RegisterPage() {
                                     label="Email"
                                     variant="bordered"
                                     classNames={{ input: 'text-md' }}
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
                                     isRequired
                                   />
                                   <Input
                                     label="Phone number"
                                     variant="bordered"
                                     classNames={{ input: 'text-md' }}
+                                    value={phone}
+                                    onChange={(e) => setPhone(e.target.value)}
                                   />
                                 </div>
                               </div>
@@ -206,14 +232,30 @@ export default function RegisterPage() {
                                   </p>
                                 </div>
                                 <div className="flex flex-col items-stretch justify-center gap-4">
-                                  <Checkbox isRequired>
+                                  <Checkbox
+                                    isRequired
+                                    onChange={(e) =>
+                                      setTermsConditions(e.target.checked)
+                                    }
+                                    checked={termsAndConditions}
+                                  >
                                     I agree to the terms, conditions and privacy
                                     policy
                                   </Checkbox>
-                                  <Checkbox>
+                                  <Checkbox
+                                    onChange={(e) =>
+                                      setEmailNewsletter(e.target.checked)
+                                    }
+                                    checked={emailNewsletter}
+                                  >
                                     I want to receive updates and news on mail
                                   </Checkbox>
-                                  <Checkbox>
+                                  <Checkbox
+                                    onChange={(e) =>
+                                      setPhoneNewsletter(e.target.checked)
+                                    }
+                                    checked={phoneNewsletter}
+                                  >
                                     I want to receive updates and news on phone
                                   </Checkbox>
                                 </div>
@@ -236,8 +278,33 @@ export default function RegisterPage() {
                                     variant="bordered"
                                     showMonthAndYearPickers
                                     classNames={{ input: 'text-md' }}
+                                    value={
+                                      dateOfBirth
+                                        ? new CalendarDate(
+                                            dateOfBirth.getFullYear(),
+                                            dateOfBirth.getMonth() + 1,
+                                            dateOfBirth.getDate(),
+                                          )
+                                        : null
+                                    }
+                                    onChange={(value) => {
+                                      if (value) {
+                                        setDateOfBirth(
+                                          new Date(
+                                            value.year,
+                                            value.month - 1,
+                                            value.day,
+                                          ),
+                                        );
+                                      }
+                                    }}
                                   />
-                                  <Select label="Gender" variant="bordered">
+                                  <Select
+                                    label="Gender"
+                                    variant="bordered"
+                                    value={gender}
+                                    onChange={(e) => setGender(e.target.value)}
+                                  >
                                     <SelectItem value="male">Male</SelectItem>
                                     <SelectItem value="female">
                                       Female
@@ -265,11 +332,19 @@ export default function RegisterPage() {
                                     label="Password"
                                     variant="bordered"
                                     classNames={{ input: 'text-md' }}
+                                    value={password}
+                                    onChange={(e) =>
+                                      setPassword(e.target.value)
+                                    }
                                   />
                                   <Input
                                     label="Confirm password"
                                     variant="bordered"
                                     classNames={{ input: 'text-md' }}
+                                    value={confirmPassword}
+                                    onChange={(e) =>
+                                      setConfirmPassword(e.target.value)
+                                    }
                                   />
                                 </div>
                               </div>
