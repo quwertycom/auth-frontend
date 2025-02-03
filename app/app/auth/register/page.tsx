@@ -287,8 +287,8 @@ export default function RegisterPage() {
                                         setDateOfBirth(date);
                                       }
                                     }}
+                                    isRequired
                                   />
-                                  {dateOfBirth.toString()}
                                   <Select
                                     label="Gender"
                                     variant="bordered"
