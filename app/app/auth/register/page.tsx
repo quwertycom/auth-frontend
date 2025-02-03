@@ -19,6 +19,7 @@ import {
   slideFromLeftTransition,
 } from '@/app/styles/transitions';
 import TransitionLink from '@/app/components/transitionLink';
+import {parseDate} from '@internationalized/date';
 
 export default function RegisterPage() {
   const [step, setStep] = useState(0);
@@ -31,7 +32,9 @@ export default function RegisterPage() {
   const [lastName, setLastName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [phone, setPhone] = useState<string>('');
-  const [dateOfBirth, setDateOfBirth] = useState<Date>(new Date());
+  const [dateOfBirth, setDateOfBirth] = useState<CalendarDate>(
+    parseDate("2000-01-01") as CalendarDate
+  );
   const [gender, setGender] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
@@ -278,27 +281,14 @@ export default function RegisterPage() {
                                     variant="bordered"
                                     showMonthAndYearPickers
                                     classNames={{ input: 'text-md' }}
-                                    value={
-                                      dateOfBirth
-                                        ? new CalendarDate(
-                                            dateOfBirth.getFullYear(),
-                                            dateOfBirth.getMonth() + 1,
-                                            dateOfBirth.getDate(),
-                                          )
-                                        : null
-                                    }
-                                    onChange={(value) => {
-                                      if (value) {
-                                        setDateOfBirth(
-                                          new Date(
-                                            value.year,
-                                            value.month - 1,
-                                            value.day,
-                                          ),
-                                        );
+                                    value={dateOfBirth}
+                                    onChange={(date) => {
+                                      if (date) {
+                                        setDateOfBirth(date);
                                       }
                                     }}
                                   />
+                                  {dateOfBirth.toString()}
                                   <Select
                                     label="Gender"
                                     variant="bordered"
