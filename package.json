@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "@heroui/react": "^2.6.14",
-    "@internationalized/date": "^3.7.0",
+    "@internationalized/date": "3.6.0",
     "@reduxjs/toolkit": "^2.5.0",
     "@tailwindcss/postcss": "^4.0.0",
     "framer-motion": "^12.0.6",
@@ -70,5 +70,10 @@
     "typescript": "^5",
     "vitest": "^3.0.3",
     "wait-on": "^8.0.2"
+  },
+  "overrides": {
+    "@heroui/system": {
+      "@internationalized/date": "3.6.0"
+    }
   }
 }

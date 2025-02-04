@@ -34,7 +34,7 @@ export default function RegisterPage() {
   const [phone, setPhone] = useState<string>('');
   const [username, setUsername] = useState<string>('');
   const [dateOfBirth, setDateOfBirth] = useState<CalendarDate>(
-    parseDate(new Date().toISOString().split('T')[0]) as CalendarDate,
+    parseDate(new Date().toISOString().split('T')[0])
   );
   const [gender, setGender] = useState<string>('');
   const [password, setPassword] = useState<string>('');
