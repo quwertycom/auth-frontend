@@ -24,9 +24,8 @@ import {
   setStep, 
   updateFormData, 
   setErrors,
-  submitRegistration
+  validateStep
 } from '@/app/store/features/registerSlice';
-import { setCredentials } from '@/app/store/features/authSlice';
 
 export default function RegisterPage() {
   const dispatch = useAppDispatch();
@@ -53,234 +52,8 @@ export default function RegisterPage() {
     { key: 'prefer_not_to_say', label: 'Prefer not to say' },
   ];
 
-  const validate = () => {
-    dispatch(setErrors([]));
-
-    const localErrors: {
-      input: string;
-      message: string;
-    }[] = [];
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const phoneRegex = /^\+?[1-9]\d{1,14}$/;
-    const usernameRegex = /^[a-z0-9_.]{3,20}$/;
-
-    switch (step) {
-      case 1:
-        if (formData.firstName === '' || !formData.firstName)
-          localErrors.push({
-            input: 'firstName',
-            message: 'First name is required',
-          });
-        else if (formData.firstName.length > 128)
-          localErrors.push({
-            input: 'firstName',
-            message: 'First name must be less than 128 characters',
-          });
-        if (formData.lastName === '' || !formData.lastName)
-          localErrors.push({
-            input: 'lastName',
-            message: 'Last name is required',
-          });
-        else if (formData.lastName.length > 128)
-          localErrors.push({
-            input: 'lastName',
-            message: 'Last name must be less than 128 characters',
-          });
-        console.warn(localErrors);
-        break;
-      case 2:
-        if (formData.email === '' || !formData.email)
-          localErrors.push({
-            input: 'email',
-            message: 'Email is required',
-          });
-        else if (formData.email.length > 128)
-          localErrors.push({
-            input: 'email',
-            message: 'Email must be less than 128 characters',
-          });
-        else if (!formData.email.includes('@') || !formData.email.includes('.'))
-          localErrors.push({
-            input: 'email',
-            message: 'Invalid email address, missing @ or .',
-          });
-        else if (!emailRegex.test(formData.email))
-          localErrors.push({
-            input: 'email',
-            message: 'Invalid email address',
-          });
-
-        if (formData.phone !== '') {
-          if (!phoneRegex.test(formData.phone))
-            localErrors.push({
-              input: 'phone',
-              message:
-                'Invalid phone number, remember to include country code like +1, +7, +41 etc.',
-            });
-          else if (formData.phone.length > 15)
-            localErrors.push({
-              input: 'phone',
-              message: 'Phone number must be less than 15 characters',
-            });
-          else if (formData.phone.length < 10)
-            localErrors.push({
-              input: 'phone',
-              message:
-                'Phone number must be at least 10 characters, remember to include country code like +1, +7, +41 etc.',
-            });
-          else if (formData.phone.length > 15)
-            localErrors.push({
-              input: 'phone',
-              message: 'Phone number must be less than 15 characters',
-            });
-        }
-        break;
-      case 3:
-        if (!formData.termsAndConditions)
-          localErrors.push({
-            input: 'termsAndConditions',
-            message: 'You must agree to the terms and conditions',
-          });
-        break;
-      case 4:
-        if (formData.username === '' || !formData.username)
-          localErrors.push({
-            input: 'username',
-            message: 'You need to choose username',
-          });
-        else if (formData.username.length > 20)
-          localErrors.push({
-            input: 'username',
-            message: 'Username must be less than 20 characters',
-          });
-        else if (formData.username.length < 3)
-          localErrors.push({
-            input: 'username',
-            message: 'Username must be at least 3 characters',
-          });
-        else if (!usernameRegex.test(formData.username))
-          localErrors.push({
-            input: 'username',
-            message:
-              'Username must contain only letters, numbers, underscores and dots',
-          });
-        break;
-      case 5:
-        const parsedDate = formData.dateOfBirth ? parseDate(formData.dateOfBirth) : null;
-        const today = new Date();
-        const isToday = parsedDate && 
-          parsedDate.year === today.getFullYear() &&
-          parsedDate.month === today.getMonth() + 1 &&
-          parsedDate.day === today.getDate();
-
-        if (!parsedDate || isToday) {
-          localErrors.push({
-            input: 'dateOfBirth',
-            message: 'Date of birth is required',
-          });
-        } else {
-          const birthYear = parsedDate.year;
-          const birthMonth = parsedDate.month;
-          const birthDay = parsedDate.day;
-
-          // Check if year is before 1900
-          if (birthYear < 1900) {
-            localErrors.push({
-              input: 'dateOfBirth',
-              message: 'Year must be set to 1900 or later',
-            });
-          }
-
-          // Calculate age
-          let age = today.getFullYear() - birthYear;
-          const monthDiff = today.getMonth() + 1 - birthMonth;
-          if (
-            monthDiff < 0 ||
-            (monthDiff === 0 && today.getDate() < birthDay)
-          ) {
-            age--;
-          }
-
-          // Check if at least 16 years old
-          if (age < 16) {
-            localErrors.push({
-              input: 'dateOfBirth',
-              message: 'You must be at least 16 years old to register',
-            });
-          }
-        }
-
-        if (formData.gender === '') {
-          localErrors.push({
-            input: 'gender',
-            message: 'You must select your gender',
-          });
-        } else if (
-          formData.gender !== 'male' &&
-          formData.gender !== 'female' &&
-          formData.gender !== 'other' &&
-          formData.gender !== 'prefer_not_to_say'
-        ) {
-          localErrors.push({
-            input: 'gender',
-            message: 'Invalid gender',
-          });
-        }
-        break;
-      case 6:
-        if (formData.password === '' || !formData.password)
-          localErrors.push({
-            input: 'password',
-            message: 'Password is required',
-          });
-        else if (formData.password.length < 8)
-          localErrors.push({
-            input: 'password',
-            message: 'Password must be at least 8 characters',
-          });
-        else if (formData.confirmPassword === '' || !formData.confirmPassword)
-          localErrors.push({
-            input: 'confirmPassword',
-            message: 'Confirm password is required',
-          });
-        else if (formData.password !== formData.confirmPassword)
-          localErrors.push({
-            input: 'confirmPassword',
-            message: 'Passwords do not match',
-          });
-        else if (formData.password.length > 128)
-          localErrors.push({
-            input: 'password',
-            message: 'Password must be less than 128 characters',
-          });
-        else if (formData.confirmPassword.length > 128)
-          localErrors.push({
-            input: 'confirmPassword',
-            message: 'Confirm password must be less than 128 characters',
-          });
-        break;
-    }
-
-    if (localErrors.length > 0) {
-      setErrors(localErrors);
-      return localErrors;
-    }
-  
-    return null;
-  };
-
   const handleNext = () => {
-    // Get validation result immediately
-    const hasErrors = validate();
-
-    // Use the direct validation result instead of state
-    if (hasErrors) {
-      return;
-    } else {
-      setErrors([]);
-    }
-
+    setErrors([]);
     setReverseTransition(false);
     startTransition(() => {
       dispatch(setStep(step + 1));
@@ -295,22 +68,27 @@ export default function RegisterPage() {
     });
   };
 
-  const handleNextStep = () => {
-    // Your validation logic here
-    const validationErrors = validate();
+  const handleNextStep = async () => {
+    const validationResult = await dispatch(validateStep()).unwrap();
     
-    if (validationErrors) {
-      dispatch(setErrors(validationErrors));
-    } else {
+    if (!validationResult.isValid) return;
+
+    // Always progress to next step after validation
+    setReverseTransition(false);
+    startTransition(() => {
       dispatch(setStep(step + 1));
-      if (step === 6) {
-        dispatch(submitRegistration())
-          .unwrap()
-          .then(({ user, tokens }) => {
-            dispatch(setCredentials({ user, tokens }));
-          });
-      }
-    }
+    });
+
+    // // Only submit when reaching step 7 (final step)
+    // if (step + 1 === 7) {
+    //   try {
+    //     const result = await dispatch(submitRegistration()).unwrap();
+    //     dispatch(setCredentials(result));
+    //     router.push('/dashboard');
+    //   } catch (error) {
+    //     console.error('Registration failed:', error);
+    //   }
+    // }
   };
 
   return (
@@ -655,9 +433,16 @@ export default function RegisterPage() {
                                     className={`${errors.find((error) => error.input === 'dateOfBirth') ? 'mb-0' : 'mb-6'}`}
                                     classNames={{ input: 'text-md' }}
                                     value={formData.dateOfBirth ? parseDate(formData.dateOfBirth) : null}
-                                    onChange={(date) => 
-                                      dispatch(updateFormData({ dateOfBirth: date?.toString() }))
-                                    }
+                                    onChange={(date) => {
+                                      if (date) {
+                                        const year = String(date.year).padStart(4, '0');
+                                        const month = String(date.month).padStart(2, '0');
+                                        const day = String(date.day).padStart(2, '0');
+                                        dispatch(updateFormData({ dateOfBirth: `${year}-${month}-${day}` }));
+                                      } else {
+                                        dispatch(updateFormData({ dateOfBirth: '' }));
+                                      }
+                                    }}
                                     isRequired
                                     isInvalid={
                                       errors.find(
