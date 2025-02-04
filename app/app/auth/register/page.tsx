@@ -33,7 +33,9 @@ export default function RegisterPage() {
   const [email, setEmail] = useState<string>('');
   const [phone, setPhone] = useState<string>('');
   const [username, setUsername] = useState<string>('');
-  const [dateOfBirth, setDateOfBirth] = useState<DateValue | null>(parseDate("2024-04-04") as DateValue);
+  const [dateOfBirth, setDateOfBirth] = useState<DateValue | null>(
+    parseDate('2024-04-04') as DateValue,
+  );
   const [gender, setGender] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
@@ -59,7 +61,6 @@ export default function RegisterPage() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
 
   const validate = () => {
     setErrors(null);
@@ -717,14 +718,16 @@ export default function RegisterPage() {
                                     isRequired
                                     isInvalid={
                                       errors?.find(
-                                        (error) => error.input === 'dateOfBirth'
+                                        (error) =>
+                                          error.input === 'dateOfBirth',
                                       )
                                         ? true
                                         : false
                                     }
                                     errorMessage={
                                       errors?.find(
-                                        (error) => error.input === 'dateOfBirth'
+                                        (error) =>
+                                          error.input === 'dateOfBirth',
                                       )?.message
                                     }
                                   />
