@@ -45,10 +45,10 @@ export default function RegisterPage() {
   const [phoneNewsletter, setPhoneNewsletter] = useState<boolean>(false);
 
   const genders = [
-    {key: "male", label: "Male"},
-    {key: "female", label: "Female"},
-    {key: "other", label: "Other"},
-    {key: "prefer_not_to_say", label: "Prefer not to say"},
+    { key: 'male', label: 'Male' },
+    { key: 'female', label: 'Female' },
+    { key: 'other', label: 'Other' },
+    { key: 'prefer_not_to_say', label: 'Prefer not to say' },
   ];
 
   const [errors, setErrors] = useState<
@@ -96,7 +96,7 @@ export default function RegisterPage() {
             input: 'lastName',
             message: 'Last name must be less than 128 characters',
           });
-          console.warn(localErrors)
+        console.warn(localErrors);
         break;
       case 2:
         if (email === '' || !email)
@@ -177,10 +177,11 @@ export default function RegisterPage() {
         break;
       case 5:
         const today = new Date();
-        const isToday = dateOfBirth && 
-                       dateOfBirth.year === today.getFullYear() &&
-                       dateOfBirth.month === today.getMonth() + 1 &&
-                       dateOfBirth.day === today.getDate();
+        const isToday =
+          dateOfBirth &&
+          dateOfBirth.year === today.getFullYear() &&
+          dateOfBirth.month === today.getMonth() + 1 &&
+          dateOfBirth.day === today.getDate();
 
         if (dateOfBirth.toString() === '' || !dateOfBirth || isToday) {
           localErrors.push({
@@ -224,7 +225,12 @@ export default function RegisterPage() {
             input: 'gender',
             message: 'You must select your gender',
           });
-        } else if (gender !== 'male' && gender !== 'female' && gender !== 'other' && gender !== 'prefer_not_to_say') {
+        } else if (
+          gender !== 'male' &&
+          gender !== 'female' &&
+          gender !== 'other' &&
+          gender !== 'prefer_not_to_say'
+        ) {
           localErrors.push({
             input: 'gender',
             message: 'Invalid gender',
@@ -276,14 +282,14 @@ export default function RegisterPage() {
   const handleNext = () => {
     // Get validation result immediately
     const hasErrors = validate();
-  
+
     // Use the direct validation result instead of state
     if (hasErrors) {
       return;
     } else {
       setErrors(null);
     }
-  
+
     setReverseTransition(false);
     startTransition(() => {
       setStep(step + 1);
@@ -421,11 +427,28 @@ export default function RegisterPage() {
                                     value={firstName}
                                     onChange={(e) => {
                                       setFirstName(e.target.value);
-                                      setErrors(prev => prev ? prev.filter(error => error.input !== 'firstName') : null);
+                                      setErrors((prev) =>
+                                        prev
+                                          ? prev.filter(
+                                              (error) =>
+                                                error.input !== 'firstName',
+                                            )
+                                          : null,
+                                      );
                                     }}
                                     isRequired
-                                    isInvalid={errors?.find((error) => error.input === 'firstName') ? true : false}
-                                    errorMessage={errors?.find((error) => error.input === 'firstName')?.message}
+                                    isInvalid={
+                                      errors?.find(
+                                        (error) => error.input === 'firstName',
+                                      )
+                                        ? true
+                                        : false
+                                    }
+                                    errorMessage={
+                                      errors?.find(
+                                        (error) => error.input === 'firstName',
+                                      )?.message
+                                    }
                                   />
                                   <Input
                                     label="Last name"
@@ -435,11 +458,28 @@ export default function RegisterPage() {
                                     value={lastName}
                                     onChange={(e) => {
                                       setLastName(e.target.value);
-                                      setErrors(prev => prev ? prev.filter(error => error.input !== 'lastName') : null);
+                                      setErrors((prev) =>
+                                        prev
+                                          ? prev.filter(
+                                              (error) =>
+                                                error.input !== 'lastName',
+                                            )
+                                          : null,
+                                      );
                                     }}
-                                      isRequired
-                                    isInvalid={errors?.find((error) => error.input === 'lastName') ? true : false}
-                                    errorMessage={errors?.find((error) => error.input === 'lastName')?.message}
+                                    isRequired
+                                    isInvalid={
+                                      errors?.find(
+                                        (error) => error.input === 'lastName',
+                                      )
+                                        ? true
+                                        : false
+                                    }
+                                    errorMessage={
+                                      errors?.find(
+                                        (error) => error.input === 'lastName',
+                                      )?.message
+                                    }
                                   />
                                 </div>
                               </div>
@@ -463,11 +503,28 @@ export default function RegisterPage() {
                                     value={email}
                                     onChange={(e) => {
                                       setEmail(e.target.value);
-                                      setErrors(prev => prev ? prev.filter(error => error.input !== 'email') : null);
+                                      setErrors((prev) =>
+                                        prev
+                                          ? prev.filter(
+                                              (error) =>
+                                                error.input !== 'email',
+                                            )
+                                          : null,
+                                      );
                                     }}
                                     isRequired
-                                    isInvalid={errors?.find((error) => error.input === 'email') ? true : false}
-                                    errorMessage={errors?.find((error) => error.input === 'email')?.message}
+                                    isInvalid={
+                                      errors?.find(
+                                        (error) => error.input === 'email',
+                                      )
+                                        ? true
+                                        : false
+                                    }
+                                    errorMessage={
+                                      errors?.find(
+                                        (error) => error.input === 'email',
+                                      )?.message
+                                    }
                                   />
                                   <Input
                                     label="Phone number"
@@ -477,10 +534,27 @@ export default function RegisterPage() {
                                     value={phone}
                                     onChange={(e) => {
                                       setPhone(e.target.value);
-                                      setErrors(prev => prev ? prev.filter(error => error.input !== 'phone') : null);
+                                      setErrors((prev) =>
+                                        prev
+                                          ? prev.filter(
+                                              (error) =>
+                                                error.input !== 'phone',
+                                            )
+                                          : null,
+                                      );
                                     }}
-                                    isInvalid={errors?.find((error) => error.input === 'phone') ? true : false}
-                                    errorMessage={errors?.find((error) => error.input === 'phone')?.message}
+                                    isInvalid={
+                                      errors?.find(
+                                        (error) => error.input === 'phone',
+                                      )
+                                        ? true
+                                        : false
+                                    }
+                                    errorMessage={
+                                      errors?.find(
+                                        (error) => error.input === 'phone',
+                                      )?.message
+                                    }
                                   />
                                 </div>
                               </div>
@@ -499,10 +573,25 @@ export default function RegisterPage() {
                                 <div className="flex flex-col items-stretch justify-center gap-4">
                                   <Checkbox
                                     isRequired
-                                    isInvalid={errors?.find((error) => error.input === 'termsAndConditions') ? true : false}
+                                    isInvalid={
+                                      errors?.find(
+                                        (error) =>
+                                          error.input === 'termsAndConditions',
+                                      )
+                                        ? true
+                                        : false
+                                    }
                                     onChange={(e) => {
                                       setTermsConditions(e.target.checked);
-                                      setErrors(prev => prev ? prev.filter(error => error.input !== 'termsAndConditions') : null);
+                                      setErrors((prev) =>
+                                        prev
+                                          ? prev.filter(
+                                              (error) =>
+                                                error.input !==
+                                                'termsAndConditions',
+                                            )
+                                          : null,
+                                      );
                                     }}
                                     isSelected={termsAndConditions}
                                   >
@@ -512,7 +601,15 @@ export default function RegisterPage() {
                                   <Checkbox
                                     onChange={(e) => {
                                       setEmailNewsletter(e.target.checked);
-                                      setErrors(prev => prev ? prev.filter(error => error.input !== 'emailNewsletter') : null);
+                                      setErrors((prev) =>
+                                        prev
+                                          ? prev.filter(
+                                              (error) =>
+                                                error.input !==
+                                                'emailNewsletter',
+                                            )
+                                          : null,
+                                      );
                                     }}
                                     isSelected={emailNewsletter}
                                   >
@@ -521,7 +618,15 @@ export default function RegisterPage() {
                                   <Checkbox
                                     onChange={(e) => {
                                       setPhoneNewsletter(e.target.checked);
-                                      setErrors(prev => prev ? prev.filter(error => error.input !== 'phoneNewsletter') : null);
+                                      setErrors((prev) =>
+                                        prev
+                                          ? prev.filter(
+                                              (error) =>
+                                                error.input !==
+                                                'phoneNewsletter',
+                                            )
+                                          : null,
+                                      );
                                     }}
                                     isSelected={phoneNewsletter}
                                   >
@@ -549,11 +654,28 @@ export default function RegisterPage() {
                                     value={username}
                                     onChange={(e) => {
                                       setUsername(e.target.value);
-                                      setErrors(prev => prev ? prev.filter(error => error.input !== 'username') : null);
+                                      setErrors((prev) =>
+                                        prev
+                                          ? prev.filter(
+                                              (error) =>
+                                                error.input !== 'username',
+                                            )
+                                          : null,
+                                      );
                                     }}
                                     isRequired
-                                    isInvalid={errors?.find((error) => error.input === 'username') ? true : false}
-                                    errorMessage={errors?.find((error) => error.input === 'username')?.message}
+                                    isInvalid={
+                                      errors?.find(
+                                        (error) => error.input === 'username',
+                                      )
+                                        ? true
+                                        : false
+                                    }
+                                    errorMessage={
+                                      errors?.find(
+                                        (error) => error.input === 'username',
+                                      )?.message
+                                    }
                                   />
                                   <div className="flex h-12 w-full flex-row items-start justify-start">
                                     <div className="flex flex-row items-center justify-start gap-2">
@@ -595,12 +717,31 @@ export default function RegisterPage() {
                                     onChange={(date) => {
                                       if (date) {
                                         setDateOfBirth(date);
-                                        setErrors(prev => prev ? prev.filter(error => error.input !== 'dateOfBirth') : null);
+                                        setErrors((prev) =>
+                                          prev
+                                            ? prev.filter(
+                                                (error) =>
+                                                  error.input !== 'dateOfBirth',
+                                              )
+                                            : null,
+                                        );
                                       }
                                     }}
                                     isRequired
-                                    isInvalid={errors?.find((error) => error.input === 'dateOfBirth') ? true : false}
-                                    errorMessage={errors?.find((error) => error.input === 'dateOfBirth')?.message}
+                                    isInvalid={
+                                      errors?.find(
+                                        (error) =>
+                                          error.input === 'dateOfBirth',
+                                      )
+                                        ? true
+                                        : false
+                                    }
+                                    errorMessage={
+                                      errors?.find(
+                                        (error) =>
+                                          error.input === 'dateOfBirth',
+                                      )?.message
+                                    }
                                   />
                                   <Select
                                     label="Gender"
@@ -609,20 +750,40 @@ export default function RegisterPage() {
                                     selectedKeys={[gender]}
                                     onSelectionChange={(keys) => {
                                       setGender(Array.from(keys)[0] as string);
-                                      setErrors(prev => prev ? prev.filter(error => error.input !== 'gender') : null);
+                                      setErrors((prev) =>
+                                        prev
+                                          ? prev.filter(
+                                              (error) =>
+                                                error.input !== 'gender',
+                                            )
+                                          : null,
+                                      );
                                     }}
-                                    isInvalid={errors?.find((error) => error.input === 'gender') ? true : false}
-                                    errorMessage={errors?.find((error) => error.input === 'gender')?.message}
+                                    isInvalid={
+                                      errors?.find(
+                                        (error) => error.input === 'gender',
+                                      )
+                                        ? true
+                                        : false
+                                    }
+                                    errorMessage={
+                                      errors?.find(
+                                        (error) => error.input === 'gender',
+                                      )?.message
+                                    }
                                   >
                                     {genders.map((genderOption) => (
-                                      <SelectItem key={genderOption.key} value={genderOption.key}>
+                                      <SelectItem
+                                        key={genderOption.key}
+                                        value={genderOption.key}
+                                      >
                                         {genderOption.label}
                                       </SelectItem>
                                     ))}
                                   </Select>
                                 </div>
                               </div>
-                            )} 
+                            )}
                             {step === 6 && (
                               <div className="flex h-full w-full flex-col items-stretch justify-evenly gap-6">
                                 <div className="flex flex-col items-center justify-center gap-2">
@@ -637,25 +798,48 @@ export default function RegisterPage() {
                                   <Input
                                     label="Password"
                                     variant="bordered"
-                                    type={showPassword ? "text" : "password"}
+                                    type={showPassword ? 'text' : 'password'}
                                     className={`${errors?.find((error) => error.input === 'password') ? 'mb-0' : 'mb-6'}`}
                                     classNames={{ input: 'text-md' }}
                                     value={password}
                                     onChange={(e) => {
                                       setPassword(e.target.value);
-                                      setErrors(prev => prev ? prev.filter(error => error.input !== 'password') : null);
+                                      setErrors((prev) =>
+                                        prev
+                                          ? prev.filter(
+                                              (error) =>
+                                                error.input !== 'password',
+                                            )
+                                          : null,
+                                      );
                                     }}
                                     isRequired
-                                    isInvalid={errors?.find((error) => error.input === 'password') ? true : false}
-                                    errorMessage={errors?.find((error) => error.input === 'password')?.message}
+                                    isInvalid={
+                                      errors?.find(
+                                        (error) => error.input === 'password',
+                                      )
+                                        ? true
+                                        : false
+                                    }
+                                    errorMessage={
+                                      errors?.find(
+                                        (error) => error.input === 'password',
+                                      )?.message
+                                    }
                                     endContent={
                                       <button
                                         type="button"
-                                        onClick={() => setShowPassword(!showPassword)}
+                                        onClick={() =>
+                                          setShowPassword(!showPassword)
+                                        }
                                         className="focus:outline-none"
                                       >
                                         <MaterialSymbol
-                                          symbol={showPassword ? "visibility_off" : "visibility"}
+                                          symbol={
+                                            showPassword
+                                              ? 'visibility_off'
+                                              : 'visibility'
+                                          }
                                           size={20}
                                           className="text-neutral-500"
                                         />
@@ -665,25 +849,55 @@ export default function RegisterPage() {
                                   <Input
                                     label="Confirm password"
                                     variant="bordered"
-                                    type={showConfirmPassword ? "text" : "password"}
+                                    type={
+                                      showConfirmPassword ? 'text' : 'password'
+                                    }
                                     className={`${errors?.find((error) => error.input === 'confirmPassword') ? 'mb-0' : 'mb-6'}`}
                                     classNames={{ input: 'text-md' }}
                                     value={confirmPassword}
                                     onChange={(e) => {
                                       setConfirmPassword(e.target.value);
-                                      setErrors(prev => prev ? prev.filter(error => error.input !== 'confirmPassword') : null);
+                                      setErrors((prev) =>
+                                        prev
+                                          ? prev.filter(
+                                              (error) =>
+                                                error.input !==
+                                                'confirmPassword',
+                                            )
+                                          : null,
+                                      );
                                     }}
                                     isRequired
-                                    isInvalid={errors?.find((error) => error.input === 'confirmPassword') ? true : false}
-                                    errorMessage={errors?.find((error) => error.input === 'confirmPassword')?.message}
+                                    isInvalid={
+                                      errors?.find(
+                                        (error) =>
+                                          error.input === 'confirmPassword',
+                                      )
+                                        ? true
+                                        : false
+                                    }
+                                    errorMessage={
+                                      errors?.find(
+                                        (error) =>
+                                          error.input === 'confirmPassword',
+                                      )?.message
+                                    }
                                     endContent={
                                       <button
                                         type="button"
-                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                        onClick={() =>
+                                          setShowConfirmPassword(
+                                            !showConfirmPassword,
+                                          )
+                                        }
                                         className="focus:outline-none"
                                       >
                                         <MaterialSymbol
-                                          symbol={showConfirmPassword ? "visibility_off" : "visibility"}
+                                          symbol={
+                                            showConfirmPassword
+                                              ? 'visibility_off'
+                                              : 'visibility'
+                                          }
                                           size={20}
                                           className="text-neutral-500"
                                         />
