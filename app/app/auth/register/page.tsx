@@ -419,16 +419,13 @@ export default function RegisterPage() {
                                     className={`${errors?.find((error) => error.input === 'firstName') ? 'mb-0' : 'mb-6'}`}
                                     classNames={{ input: 'text-md' }}
                                     value={firstName}
-                                    onChange={(e) =>
-                                      setFirstName(e.target.value)
-                                    }
+                                    onChange={(e) => {
+                                      setFirstName(e.target.value);
+                                      setErrors(prev => prev ? prev.filter(error => error.input !== 'firstName') : null);
+                                    }}
                                     isRequired
                                     isInvalid={errors?.find((error) => error.input === 'firstName') ? true : false}
-                                    errorMessage={
-                                      errors?.find(
-                                        (error) => error.input === 'firstName'
-                                      )?.message
-                                    }
+                                    errorMessage={errors?.find((error) => error.input === 'firstName')?.message}
                                   />
                                   <Input
                                     label="Last name"
@@ -436,16 +433,13 @@ export default function RegisterPage() {
                                     className={`${errors?.find((error) => error.input === 'lastName') ? 'mb-0' : 'mb-6'}`}
                                     classNames={{ input: 'text-md' }}
                                     value={lastName}
-                                    onChange={(e) =>
-                                      setLastName(e.target.value)
-                                    }
+                                    onChange={(e) => {
+                                      setLastName(e.target.value);
+                                      setErrors(prev => prev ? prev.filter(error => error.input !== 'lastName') : null);
+                                    }}
                                       isRequired
                                     isInvalid={errors?.find((error) => error.input === 'lastName') ? true : false}
-                                    errorMessage={
-                                      errors?.find(
-                                        (error) => error.input === 'lastName'
-                                      )?.message
-                                    }
+                                    errorMessage={errors?.find((error) => error.input === 'lastName')?.message}
                                   />
                                 </div>
                               </div>
@@ -467,14 +461,13 @@ export default function RegisterPage() {
                                     className={`${errors?.find((error) => error.input === 'email') ? 'mb-0' : 'mb-6'}`}
                                     classNames={{ input: 'text-md' }}
                                     value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
+                                    onChange={(e) => {
+                                      setEmail(e.target.value);
+                                      setErrors(prev => prev ? prev.filter(error => error.input !== 'email') : null);
+                                    }}
                                     isRequired
                                     isInvalid={errors?.find((error) => error.input === 'email') ? true : false}
-                                    errorMessage={
-                                      errors?.find(
-                                        (error) => error.input === 'email'
-                                      )?.message
-                                    }
+                                    errorMessage={errors?.find((error) => error.input === 'email')?.message}
                                   />
                                   <Input
                                     label="Phone number"
@@ -482,13 +475,12 @@ export default function RegisterPage() {
                                     className={`${errors?.find((error) => error.input === 'phone') ? 'mb-0' : 'mb-6'}`}
                                     classNames={{ input: 'text-md' }}
                                     value={phone}
-                                    onChange={(e) => setPhone(e.target.value)}
+                                    onChange={(e) => {
+                                      setPhone(e.target.value);
+                                      setErrors(prev => prev ? prev.filter(error => error.input !== 'phone') : null);
+                                    }}
                                     isInvalid={errors?.find((error) => error.input === 'phone') ? true : false}
-                                    errorMessage={
-                                      errors?.find(
-                                        (error) => error.input === 'phone'
-                                      )?.message
-                                    }
+                                    errorMessage={errors?.find((error) => error.input === 'phone')?.message}
                                   />
                                 </div>
                               </div>
@@ -508,26 +500,29 @@ export default function RegisterPage() {
                                   <Checkbox
                                     isRequired
                                     isInvalid={errors?.find((error) => error.input === 'termsAndConditions') ? true : false}
-                                    onChange={(e) =>
-                                      setTermsConditions(e.target.checked)
-                                    }
+                                    onChange={(e) => {
+                                      setTermsConditions(e.target.checked);
+                                      setErrors(prev => prev ? prev.filter(error => error.input !== 'termsAndConditions') : null);
+                                    }}
                                     isSelected={termsAndConditions}
                                   >
                                     I agree to the terms, conditions and privacy
                                     policy
                                   </Checkbox>
                                   <Checkbox
-                                    onChange={(e) =>
-                                      setEmailNewsletter(e.target.checked)
-                                    }
+                                    onChange={(e) => {
+                                      setEmailNewsletter(e.target.checked);
+                                      setErrors(prev => prev ? prev.filter(error => error.input !== 'emailNewsletter') : null);
+                                    }}
                                     isSelected={emailNewsletter}
                                   >
                                     I want to receive updates and news on mail
                                   </Checkbox>
                                   <Checkbox
-                                    onChange={(e) =>
-                                      setPhoneNewsletter(e.target.checked)
-                                    }
+                                    onChange={(e) => {
+                                      setPhoneNewsletter(e.target.checked);
+                                      setErrors(prev => prev ? prev.filter(error => error.input !== 'phoneNewsletter') : null);
+                                    }}
                                     isSelected={phoneNewsletter}
                                   >
                                     I want to receive updates and news on phone
@@ -552,16 +547,13 @@ export default function RegisterPage() {
                                     className={`${errors?.find((error) => error.input === 'username') ? 'mb-0' : 'mb-6'}`}
                                     classNames={{ input: 'text-md' }}
                                     value={username}
-                                    onChange={(e) =>
-                                      setUsername(e.target.value)
-                                    }
+                                    onChange={(e) => {
+                                      setUsername(e.target.value);
+                                      setErrors(prev => prev ? prev.filter(error => error.input !== 'username') : null);
+                                    }}
                                     isRequired
                                     isInvalid={errors?.find((error) => error.input === 'username') ? true : false}
-                                    errorMessage={
-                                      errors?.find(
-                                        (error) => error.input === 'username'
-                                      )?.message
-                                    }
+                                    errorMessage={errors?.find((error) => error.input === 'username')?.message}
                                   />
                                   <div className="flex h-12 w-full flex-row items-start justify-start">
                                     <div className="flex flex-row items-center justify-start gap-2">
@@ -603,28 +595,24 @@ export default function RegisterPage() {
                                     onChange={(date) => {
                                       if (date) {
                                         setDateOfBirth(date);
+                                        setErrors(prev => prev ? prev.filter(error => error.input !== 'dateOfBirth') : null);
                                       }
                                     }}
                                     isRequired
                                     isInvalid={errors?.find((error) => error.input === 'dateOfBirth') ? true : false}
-                                    errorMessage={
-                                      errors?.find(
-                                        (error) => error.input === 'dateOfBirth'
-                                      )?.message
-                                    }
+                                    errorMessage={errors?.find((error) => error.input === 'dateOfBirth')?.message}
                                   />
                                   <Select
                                     label="Gender"
                                     className={`${errors?.find((error) => error.input === 'gender') ? 'mb-0' : 'mb-6'}`}
                                     variant="bordered"
                                     selectedKeys={[gender]}
-                                    onSelectionChange={(keys) => setGender(Array.from(keys)[0] as string)}
+                                    onSelectionChange={(keys) => {
+                                      setGender(Array.from(keys)[0] as string);
+                                      setErrors(prev => prev ? prev.filter(error => error.input !== 'gender') : null);
+                                    }}
                                     isInvalid={errors?.find((error) => error.input === 'gender') ? true : false}
-                                    errorMessage={
-                                      errors?.find(
-                                        (error) => error.input === 'gender'
-                                      )?.message
-                                    }
+                                    errorMessage={errors?.find((error) => error.input === 'gender')?.message}
                                   >
                                     {genders.map((genderOption) => (
                                       <SelectItem key={genderOption.key} value={genderOption.key}>
@@ -653,9 +641,10 @@ export default function RegisterPage() {
                                     className={`${errors?.find((error) => error.input === 'password') ? 'mb-0' : 'mb-6'}`}
                                     classNames={{ input: 'text-md' }}
                                     value={password}
-                                    onChange={(e) =>
-                                      setPassword(e.target.value)
-                                    }
+                                    onChange={(e) => {
+                                      setPassword(e.target.value);
+                                      setErrors(prev => prev ? prev.filter(error => error.input !== 'password') : null);
+                                    }}
                                     isRequired
                                     isInvalid={errors?.find((error) => error.input === 'password') ? true : false}
                                     errorMessage={errors?.find((error) => error.input === 'password')?.message}
@@ -680,9 +669,10 @@ export default function RegisterPage() {
                                     className={`${errors?.find((error) => error.input === 'confirmPassword') ? 'mb-0' : 'mb-6'}`}
                                     classNames={{ input: 'text-md' }}
                                     value={confirmPassword}
-                                    onChange={(e) =>
-                                      setConfirmPassword(e.target.value)
-                                    }
+                                    onChange={(e) => {
+                                      setConfirmPassword(e.target.value);
+                                      setErrors(prev => prev ? prev.filter(error => error.input !== 'confirmPassword') : null);
+                                    }}
                                     isRequired
                                     isInvalid={errors?.find((error) => error.input === 'confirmPassword') ? true : false}
                                     errorMessage={errors?.find((error) => error.input === 'confirmPassword')?.message}
