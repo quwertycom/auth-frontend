@@ -4,7 +4,6 @@ import { startTransition, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   Button,
-  CalendarDate,
   Card,
   CardBody,
   Checkbox,
@@ -12,6 +11,7 @@ import {
   Input,
   Select,
   SelectItem,
+  type DateValue,
 } from '@heroui/react';
 import MaterialSymbol from '@/app/components/materialSymbol';
 import {
@@ -33,9 +33,7 @@ export default function RegisterPage() {
   const [email, setEmail] = useState<string>('');
   const [phone, setPhone] = useState<string>('');
   const [username, setUsername] = useState<string>('');
-  const [dateOfBirth, setDateOfBirth] = useState<CalendarDate>(
-    parseDate(new Date().toISOString().split('T')[0])
-  );
+  const [dateOfBirth, setDateOfBirth] = useState<DateValue | null>(parseDate("2024-04-04") as DateValue);
   const [gender, setGender] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
@@ -61,6 +59,7 @@ export default function RegisterPage() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
 
   const validate = () => {
     setErrors(null);
@@ -183,7 +182,7 @@ export default function RegisterPage() {
           dateOfBirth.month === today.getMonth() + 1 &&
           dateOfBirth.day === today.getDate();
 
-        if (dateOfBirth.toString() === '' || !dateOfBirth || isToday) {
+        if (!dateOfBirth || dateOfBirth.toString() === '' || isToday) {
           localErrors.push({
             input: 'dateOfBirth',
             message: 'Date of birth is required',
@@ -699,11 +698,11 @@ export default function RegisterPage() {
                               <div className="flex h-full w-full flex-col items-stretch justify-evenly gap-6">
                                 <div className="flex flex-col items-center justify-center gap-2">
                                   <h2 className="text-2xl font-bold text-foreground">
-                                    Some more details
+                                    Personalize your experience
                                   </h2>
                                   <p className="text-sm text-neutral-500">
-                                    Give us some more details for more
-                                    personalized experience!
+                                    Give us some more details about you to know
+                                    you better and make your life even easier!
                                   </p>
                                 </div>
                                 <div className="flex flex-col items-stretch justify-center gap-4">
@@ -714,32 +713,18 @@ export default function RegisterPage() {
                                     className={`${errors?.find((error) => error.input === 'dateOfBirth') ? 'mb-0' : 'mb-6'}`}
                                     classNames={{ input: 'text-md' }}
                                     value={dateOfBirth}
-                                    onChange={(date) => {
-                                      if (date) {
-                                        setDateOfBirth(date);
-                                        setErrors((prev) =>
-                                          prev
-                                            ? prev.filter(
-                                                (error) =>
-                                                  error.input !== 'dateOfBirth',
-                                              )
-                                            : null,
-                                        );
-                                      }
-                                    }}
+                                    onChange={setDateOfBirth}
                                     isRequired
                                     isInvalid={
                                       errors?.find(
-                                        (error) =>
-                                          error.input === 'dateOfBirth',
+                                        (error) => error.input === 'dateOfBirth'
                                       )
                                         ? true
                                         : false
                                     }
                                     errorMessage={
                                       errors?.find(
-                                        (error) =>
-                                          error.input === 'dateOfBirth',
+                                        (error) => error.input === 'dateOfBirth'
                                       )?.message
                                     }
                                   />
