@@ -34,7 +34,7 @@ export default function RegisterPage() {
   const [phone, setPhone] = useState<string>('');
   const [username, setUsername] = useState<string>('');
   const [dateOfBirth, setDateOfBirth] = useState<CalendarDate>(
-    parseDate('2000-01-01') as CalendarDate,
+    parseDate(new Date().toISOString().split('T')[0]) as CalendarDate,
   );
   const [gender, setGender] = useState<string>('');
   const [password, setPassword] = useState<string>('');
@@ -44,7 +44,246 @@ export default function RegisterPage() {
   const [emailNewsletter, setEmailNewsletter] = useState<boolean>(false);
   const [phoneNewsletter, setPhoneNewsletter] = useState<boolean>(false);
 
+  const genders = [
+    {key: "male", label: "Male"},
+    {key: "female", label: "Female"},
+    {key: "other", label: "Other"},
+    {key: "prefer_not_to_say", label: "Prefer not to say"},
+  ];
+
+  const [errors, setErrors] = useState<
+    | {
+        input: string;
+        message: string;
+      }[]
+    | null
+  >(null);
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const validate = () => {
+    setErrors(null);
+
+    const localErrors: {
+      input: string;
+      message: string;
+    }[] = [];
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phoneRegex = /^\+?[1-9]\d{1,14}$/;
+    const usernameRegex = /^[a-z0-9_.]{3,20}$/;
+
+    switch (step) {
+      case 1:
+        if (firstName === '' || !firstName)
+          localErrors.push({
+            input: 'firstName',
+            message: 'First name is required',
+          });
+        else if (firstName.length > 128)
+          localErrors.push({
+            input: 'firstName',
+            message: 'First name must be less than 128 characters',
+          });
+        if (lastName === '' || !lastName)
+          localErrors.push({
+            input: 'lastName',
+            message: 'Last name is required',
+          });
+        else if (lastName.length > 128)
+          localErrors.push({
+            input: 'lastName',
+            message: 'Last name must be less than 128 characters',
+          });
+          console.warn(localErrors)
+        break;
+      case 2:
+        if (email === '' || !email)
+          localErrors.push({
+            input: 'email',
+            message: 'Email is required',
+          });
+        else if (email.length > 128)
+          localErrors.push({
+            input: 'email',
+            message: 'Email must be less than 128 characters',
+          });
+        else if (!email.includes('@') || !email.includes('.'))
+          localErrors.push({
+            input: 'email',
+            message: 'Invalid email address, missing @ or .',
+          });
+        else if (!emailRegex.test(email))
+          localErrors.push({
+            input: 'email',
+            message: 'Invalid email address',
+          });
+
+        if (phone !== '') {
+          if (!phoneRegex.test(phone))
+            localErrors.push({
+              input: 'phone',
+              message:
+                'Invalid phone number, remember to include country code like +1, +7, +41 etc.',
+            });
+          else if (phone.length > 15)
+            localErrors.push({
+              input: 'phone',
+              message: 'Phone number must be less than 15 characters',
+            });
+          else if (phone.length < 10)
+            localErrors.push({
+              input: 'phone',
+              message:
+                'Phone number must be at least 10 characters, remember to include country code like +1, +7, +41 etc.',
+            });
+          else if (phone.length > 15)
+            localErrors.push({
+              input: 'phone',
+              message: 'Phone number must be less than 15 characters',
+            });
+        }
+        break;
+      case 3:
+        if (!termsAndConditions)
+          localErrors.push({
+            input: 'termsAndConditions',
+            message: 'You must agree to the terms and conditions',
+          });
+        break;
+      case 4:
+        if (username === '' || !username)
+          localErrors.push({
+            input: 'username',
+            message: 'You need to choose username',
+          });
+        else if (username.length > 20)
+          localErrors.push({
+            input: 'username',
+            message: 'Username must be less than 20 characters',
+          });
+        else if (username.length < 3)
+          localErrors.push({
+            input: 'username',
+            message: 'Username must be at least 3 characters',
+          });
+        else if (!usernameRegex.test(username))
+          localErrors.push({
+            input: 'username',
+            message:
+              'Username must contain only letters, numbers, underscores and dots',
+          });
+        break;
+      case 5:
+        const today = new Date();
+        const isToday = dateOfBirth && 
+                       dateOfBirth.year === today.getFullYear() &&
+                       dateOfBirth.month === today.getMonth() + 1 &&
+                       dateOfBirth.day === today.getDate();
+
+        if (dateOfBirth.toString() === '' || !dateOfBirth || isToday) {
+          localErrors.push({
+            input: 'dateOfBirth',
+            message: 'Date of birth is required',
+          });
+        } else {
+          const birthYear = dateOfBirth.year;
+          const birthMonth = dateOfBirth.month;
+          const birthDay = dateOfBirth.day;
+
+          // Check if year is before 1900
+          if (birthYear < 1900) {
+            localErrors.push({
+              input: 'dateOfBirth',
+              message: 'Year must be set to 1900 or later',
+            });
+          }
+
+          // Calculate age
+          let age = today.getFullYear() - birthYear;
+          const monthDiff = today.getMonth() + 1 - birthMonth;
+          if (
+            monthDiff < 0 ||
+            (monthDiff === 0 && today.getDate() < birthDay)
+          ) {
+            age--;
+          }
+
+          // Check if at least 16 years old
+          if (age < 16) {
+            localErrors.push({
+              input: 'dateOfBirth',
+              message: 'You must be at least 16 years old to register',
+            });
+          }
+        }
+
+        if (gender === '') {
+          localErrors.push({
+            input: 'gender',
+            message: 'You must select your gender',
+          });
+        } else if (gender !== 'male' && gender !== 'female' && gender !== 'other' && gender !== 'prefer_not_to_say') {
+          localErrors.push({
+            input: 'gender',
+            message: 'Invalid gender',
+          });
+        }
+        break;
+      case 6:
+        if (password === '' || !password)
+          localErrors.push({
+            input: 'password',
+            message: 'Password is required',
+          });
+        else if (password.length < 8)
+          localErrors.push({
+            input: 'password',
+            message: 'Password must be at least 8 characters',
+          });
+        else if (confirmPassword === '' || !confirmPassword)
+          localErrors.push({
+            input: 'confirmPassword',
+            message: 'Confirm password is required',
+          });
+        else if (password !== confirmPassword)
+          localErrors.push({
+            input: 'confirmPassword',
+            message: 'Passwords do not match',
+          });
+        else if (password.length > 128)
+          localErrors.push({
+            input: 'password',
+            message: 'Password must be less than 128 characters',
+          });
+        else if (confirmPassword.length > 128)
+          localErrors.push({
+            input: 'confirmPassword',
+            message: 'Confirm password must be less than 128 characters',
+          });
+        break;
+    }
+
+    if (localErrors.length > 0) {
+      setErrors(localErrors);
+      return true;
+    }
+
+    return false;
+  };
+
   const handleNext = () => {
+    // Get validation result immediately
+    const hasErrors = validate();
+  
+    // Use the direct validation result instead of state
+    if (hasErrors) {
+      return;
+    } else {
+      setErrors(null);
+    }
+  
     setReverseTransition(false);
     startTransition(() => {
       setStep(step + 1);
@@ -52,6 +291,7 @@ export default function RegisterPage() {
   };
 
   const handleBack = () => {
+    setErrors(null);
     setReverseTransition(true);
     startTransition(() => {
       setStep(step - 1);
@@ -176,22 +416,36 @@ export default function RegisterPage() {
                                   <Input
                                     label="First name"
                                     variant="bordered"
+                                    className={`${errors?.find((error) => error.input === 'firstName') ? 'mb-0' : 'mb-6'}`}
                                     classNames={{ input: 'text-md' }}
                                     value={firstName}
                                     onChange={(e) =>
                                       setFirstName(e.target.value)
                                     }
                                     isRequired
+                                    isInvalid={errors?.find((error) => error.input === 'firstName') ? true : false}
+                                    errorMessage={
+                                      errors?.find(
+                                        (error) => error.input === 'firstName'
+                                      )?.message
+                                    }
                                   />
                                   <Input
                                     label="Last name"
                                     variant="bordered"
+                                    className={`${errors?.find((error) => error.input === 'lastName') ? 'mb-0' : 'mb-6'}`}
                                     classNames={{ input: 'text-md' }}
                                     value={lastName}
                                     onChange={(e) =>
                                       setLastName(e.target.value)
                                     }
-                                    isRequired
+                                      isRequired
+                                    isInvalid={errors?.find((error) => error.input === 'lastName') ? true : false}
+                                    errorMessage={
+                                      errors?.find(
+                                        (error) => error.input === 'lastName'
+                                      )?.message
+                                    }
                                   />
                                 </div>
                               </div>
@@ -210,17 +464,31 @@ export default function RegisterPage() {
                                   <Input
                                     label="Email"
                                     variant="bordered"
+                                    className={`${errors?.find((error) => error.input === 'email') ? 'mb-0' : 'mb-6'}`}
                                     classNames={{ input: 'text-md' }}
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     isRequired
+                                    isInvalid={errors?.find((error) => error.input === 'email') ? true : false}
+                                    errorMessage={
+                                      errors?.find(
+                                        (error) => error.input === 'email'
+                                      )?.message
+                                    }
                                   />
                                   <Input
                                     label="Phone number"
                                     variant="bordered"
+                                    className={`${errors?.find((error) => error.input === 'phone') ? 'mb-0' : 'mb-6'}`}
                                     classNames={{ input: 'text-md' }}
                                     value={phone}
                                     onChange={(e) => setPhone(e.target.value)}
+                                    isInvalid={errors?.find((error) => error.input === 'phone') ? true : false}
+                                    errorMessage={
+                                      errors?.find(
+                                        (error) => error.input === 'phone'
+                                      )?.message
+                                    }
                                   />
                                 </div>
                               </div>
@@ -239,10 +507,11 @@ export default function RegisterPage() {
                                 <div className="flex flex-col items-stretch justify-center gap-4">
                                   <Checkbox
                                     isRequired
+                                    isInvalid={errors?.find((error) => error.input === 'termsAndConditions') ? true : false}
                                     onChange={(e) =>
                                       setTermsConditions(e.target.checked)
                                     }
-                                    checked={termsAndConditions}
+                                    isSelected={termsAndConditions}
                                   >
                                     I agree to the terms, conditions and privacy
                                     policy
@@ -251,7 +520,7 @@ export default function RegisterPage() {
                                     onChange={(e) =>
                                       setEmailNewsletter(e.target.checked)
                                     }
-                                    checked={emailNewsletter}
+                                    isSelected={emailNewsletter}
                                   >
                                     I want to receive updates and news on mail
                                   </Checkbox>
@@ -259,7 +528,7 @@ export default function RegisterPage() {
                                     onChange={(e) =>
                                       setPhoneNewsletter(e.target.checked)
                                     }
-                                    checked={phoneNewsletter}
+                                    isSelected={phoneNewsletter}
                                   >
                                     I want to receive updates and news on phone
                                   </Checkbox>
@@ -280,12 +549,19 @@ export default function RegisterPage() {
                                   <Input
                                     label="Username"
                                     variant="bordered"
+                                    className={`${errors?.find((error) => error.input === 'username') ? 'mb-0' : 'mb-6'}`}
                                     classNames={{ input: 'text-md' }}
                                     value={username}
                                     onChange={(e) =>
                                       setUsername(e.target.value)
                                     }
                                     isRequired
+                                    isInvalid={errors?.find((error) => error.input === 'username') ? true : false}
+                                    errorMessage={
+                                      errors?.find(
+                                        (error) => error.input === 'username'
+                                      )?.message
+                                    }
                                   />
                                   <div className="flex h-12 w-full flex-row items-start justify-start">
                                     <div className="flex flex-row items-center justify-start gap-2">
@@ -321,6 +597,7 @@ export default function RegisterPage() {
                                     label="Date of birth"
                                     variant="bordered"
                                     showMonthAndYearPickers
+                                    className={`${errors?.find((error) => error.input === 'dateOfBirth') ? 'mb-0' : 'mb-6'}`}
                                     classNames={{ input: 'text-md' }}
                                     value={dateOfBirth}
                                     onChange={(date) => {
@@ -329,25 +606,35 @@ export default function RegisterPage() {
                                       }
                                     }}
                                     isRequired
+                                    isInvalid={errors?.find((error) => error.input === 'dateOfBirth') ? true : false}
+                                    errorMessage={
+                                      errors?.find(
+                                        (error) => error.input === 'dateOfBirth'
+                                      )?.message
+                                    }
                                   />
                                   <Select
                                     label="Gender"
+                                    className={`${errors?.find((error) => error.input === 'gender') ? 'mb-0' : 'mb-6'}`}
                                     variant="bordered"
-                                    value={gender}
-                                    onChange={(e) => setGender(e.target.value)}
+                                    selectedKeys={[gender]}
+                                    onSelectionChange={(keys) => setGender(Array.from(keys)[0] as string)}
+                                    isInvalid={errors?.find((error) => error.input === 'gender') ? true : false}
+                                    errorMessage={
+                                      errors?.find(
+                                        (error) => error.input === 'gender'
+                                      )?.message
+                                    }
                                   >
-                                    <SelectItem value="male">Male</SelectItem>
-                                    <SelectItem value="female">
-                                      Female
-                                    </SelectItem>
-                                    <SelectItem value="other">Other</SelectItem>
-                                    <SelectItem value="prefer_not_to_say">
-                                      Prefer not to say
-                                    </SelectItem>
+                                    {genders.map((genderOption) => (
+                                      <SelectItem key={genderOption.key} value={genderOption.key}>
+                                        {genderOption.label}
+                                      </SelectItem>
+                                    ))}
                                   </Select>
                                 </div>
                               </div>
-                            )}
+                            )} 
                             {step === 6 && (
                               <div className="flex h-full w-full flex-col items-stretch justify-evenly gap-6">
                                 <div className="flex flex-col items-center justify-center gap-2">
@@ -362,19 +649,55 @@ export default function RegisterPage() {
                                   <Input
                                     label="Password"
                                     variant="bordered"
+                                    type={showPassword ? "text" : "password"}
+                                    className={`${errors?.find((error) => error.input === 'password') ? 'mb-0' : 'mb-6'}`}
                                     classNames={{ input: 'text-md' }}
                                     value={password}
                                     onChange={(e) =>
                                       setPassword(e.target.value)
                                     }
+                                    isRequired
+                                    isInvalid={errors?.find((error) => error.input === 'password') ? true : false}
+                                    errorMessage={errors?.find((error) => error.input === 'password')?.message}
+                                    endContent={
+                                      <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="focus:outline-none"
+                                      >
+                                        <MaterialSymbol
+                                          symbol={showPassword ? "visibility_off" : "visibility"}
+                                          size={20}
+                                          className="text-neutral-500"
+                                        />
+                                      </button>
+                                    }
                                   />
                                   <Input
                                     label="Confirm password"
                                     variant="bordered"
+                                    type={showConfirmPassword ? "text" : "password"}
+                                    className={`${errors?.find((error) => error.input === 'confirmPassword') ? 'mb-0' : 'mb-6'}`}
                                     classNames={{ input: 'text-md' }}
                                     value={confirmPassword}
                                     onChange={(e) =>
                                       setConfirmPassword(e.target.value)
+                                    }
+                                    isRequired
+                                    isInvalid={errors?.find((error) => error.input === 'confirmPassword') ? true : false}
+                                    errorMessage={errors?.find((error) => error.input === 'confirmPassword')?.message}
+                                    endContent={
+                                      <button
+                                        type="button"
+                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                        className="focus:outline-none"
+                                      >
+                                        <MaterialSymbol
+                                          symbol={showConfirmPassword ? "visibility_off" : "visibility"}
+                                          size={20}
+                                          className="text-neutral-500"
+                                        />
+                                      </button>
                                     }
                                   />
                                 </div>
