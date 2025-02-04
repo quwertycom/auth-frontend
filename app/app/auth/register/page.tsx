@@ -11,7 +11,6 @@ import {
   Input,
   Select,
   SelectItem,
-  type DateValue,
 } from '@heroui/react';
 import MaterialSymbol from '@/app/components/materialSymbol';
 import {
@@ -20,29 +19,32 @@ import {
 } from '@/app/styles/transitions';
 import TransitionLink from '@/app/components/transitionLink';
 import { parseDate } from '@internationalized/date';
+import { useAppDispatch, useAppSelector } from '@/app/store/hooks';
+import { 
+  setStep, 
+  updateFormData, 
+  setErrors,
+  submitRegistration
+} from '@/app/store/features/registerSlice';
+import { setCredentials } from '@/app/store/features/authSlice';
 
 export default function RegisterPage() {
-  const [step, setStep] = useState(0);
+  const dispatch = useAppDispatch();
+  const { step, formData, errors } = useAppSelector((state) => ({
+    step: state.register.step,
+    formData: state.register.formData,
+    errors: Array.isArray(state.register.errors) 
+      ? state.register.errors 
+      : []
+  }));
+
   const [reverseTransition, setReverseTransition] = useState(false);
 
   const transition = centerPopTransition();
   const insideTransition = slideFromLeftTransition();
 
-  const [firstName, setFirstName] = useState<string>('');
-  const [lastName, setLastName] = useState<string>('');
-  const [email, setEmail] = useState<string>('');
-  const [phone, setPhone] = useState<string>('');
-  const [username, setUsername] = useState<string>('');
-  const [dateOfBirth, setDateOfBirth] = useState<DateValue | null>(
-    parseDate('2024-04-04') as DateValue,
-  );
-  const [gender, setGender] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [confirmPassword, setConfirmPassword] = useState<string>('');
-
-  const [termsAndConditions, setTermsConditions] = useState<boolean>(false);
-  const [emailNewsletter, setEmailNewsletter] = useState<boolean>(false);
-  const [phoneNewsletter, setPhoneNewsletter] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const genders = [
     { key: 'male', label: 'Male' },
@@ -51,19 +53,8 @@ export default function RegisterPage() {
     { key: 'prefer_not_to_say', label: 'Prefer not to say' },
   ];
 
-  const [errors, setErrors] = useState<
-    | {
-        input: string;
-        message: string;
-      }[]
-    | null
-  >(null);
-
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
   const validate = () => {
-    setErrors(null);
+    dispatch(setErrors([]));
 
     const localErrors: {
       input: string;
@@ -76,22 +67,22 @@ export default function RegisterPage() {
 
     switch (step) {
       case 1:
-        if (firstName === '' || !firstName)
+        if (formData.firstName === '' || !formData.firstName)
           localErrors.push({
             input: 'firstName',
             message: 'First name is required',
           });
-        else if (firstName.length > 128)
+        else if (formData.firstName.length > 128)
           localErrors.push({
             input: 'firstName',
             message: 'First name must be less than 128 characters',
           });
-        if (lastName === '' || !lastName)
+        if (formData.lastName === '' || !formData.lastName)
           localErrors.push({
             input: 'lastName',
             message: 'Last name is required',
           });
-        else if (lastName.length > 128)
+        else if (formData.lastName.length > 128)
           localErrors.push({
             input: 'lastName',
             message: 'Last name must be less than 128 characters',
@@ -99,46 +90,46 @@ export default function RegisterPage() {
         console.warn(localErrors);
         break;
       case 2:
-        if (email === '' || !email)
+        if (formData.email === '' || !formData.email)
           localErrors.push({
             input: 'email',
             message: 'Email is required',
           });
-        else if (email.length > 128)
+        else if (formData.email.length > 128)
           localErrors.push({
             input: 'email',
             message: 'Email must be less than 128 characters',
           });
-        else if (!email.includes('@') || !email.includes('.'))
+        else if (!formData.email.includes('@') || !formData.email.includes('.'))
           localErrors.push({
             input: 'email',
             message: 'Invalid email address, missing @ or .',
           });
-        else if (!emailRegex.test(email))
+        else if (!emailRegex.test(formData.email))
           localErrors.push({
             input: 'email',
             message: 'Invalid email address',
           });
 
-        if (phone !== '') {
-          if (!phoneRegex.test(phone))
+        if (formData.phone !== '') {
+          if (!phoneRegex.test(formData.phone))
             localErrors.push({
               input: 'phone',
               message:
                 'Invalid phone number, remember to include country code like +1, +7, +41 etc.',
             });
-          else if (phone.length > 15)
+          else if (formData.phone.length > 15)
             localErrors.push({
               input: 'phone',
               message: 'Phone number must be less than 15 characters',
             });
-          else if (phone.length < 10)
+          else if (formData.phone.length < 10)
             localErrors.push({
               input: 'phone',
               message:
                 'Phone number must be at least 10 characters, remember to include country code like +1, +7, +41 etc.',
             });
-          else if (phone.length > 15)
+          else if (formData.phone.length > 15)
             localErrors.push({
               input: 'phone',
               message: 'Phone number must be less than 15 characters',
@@ -146,29 +137,29 @@ export default function RegisterPage() {
         }
         break;
       case 3:
-        if (!termsAndConditions)
+        if (!formData.termsAndConditions)
           localErrors.push({
             input: 'termsAndConditions',
             message: 'You must agree to the terms and conditions',
           });
         break;
       case 4:
-        if (username === '' || !username)
+        if (formData.username === '' || !formData.username)
           localErrors.push({
             input: 'username',
             message: 'You need to choose username',
           });
-        else if (username.length > 20)
+        else if (formData.username.length > 20)
           localErrors.push({
             input: 'username',
             message: 'Username must be less than 20 characters',
           });
-        else if (username.length < 3)
+        else if (formData.username.length < 3)
           localErrors.push({
             input: 'username',
             message: 'Username must be at least 3 characters',
           });
-        else if (!usernameRegex.test(username))
+        else if (!usernameRegex.test(formData.username))
           localErrors.push({
             input: 'username',
             message:
@@ -176,22 +167,22 @@ export default function RegisterPage() {
           });
         break;
       case 5:
+        const parsedDate = formData.dateOfBirth ? parseDate(formData.dateOfBirth) : null;
         const today = new Date();
-        const isToday =
-          dateOfBirth &&
-          dateOfBirth.year === today.getFullYear() &&
-          dateOfBirth.month === today.getMonth() + 1 &&
-          dateOfBirth.day === today.getDate();
+        const isToday = parsedDate && 
+          parsedDate.year === today.getFullYear() &&
+          parsedDate.month === today.getMonth() + 1 &&
+          parsedDate.day === today.getDate();
 
-        if (!dateOfBirth || dateOfBirth.toString() === '' || isToday) {
+        if (!parsedDate || isToday) {
           localErrors.push({
             input: 'dateOfBirth',
             message: 'Date of birth is required',
           });
         } else {
-          const birthYear = dateOfBirth.year;
-          const birthMonth = dateOfBirth.month;
-          const birthDay = dateOfBirth.day;
+          const birthYear = parsedDate.year;
+          const birthMonth = parsedDate.month;
+          const birthDay = parsedDate.day;
 
           // Check if year is before 1900
           if (birthYear < 1900) {
@@ -220,16 +211,16 @@ export default function RegisterPage() {
           }
         }
 
-        if (gender === '') {
+        if (formData.gender === '') {
           localErrors.push({
             input: 'gender',
             message: 'You must select your gender',
           });
         } else if (
-          gender !== 'male' &&
-          gender !== 'female' &&
-          gender !== 'other' &&
-          gender !== 'prefer_not_to_say'
+          formData.gender !== 'male' &&
+          formData.gender !== 'female' &&
+          formData.gender !== 'other' &&
+          formData.gender !== 'prefer_not_to_say'
         ) {
           localErrors.push({
             input: 'gender',
@@ -238,32 +229,32 @@ export default function RegisterPage() {
         }
         break;
       case 6:
-        if (password === '' || !password)
+        if (formData.password === '' || !formData.password)
           localErrors.push({
             input: 'password',
             message: 'Password is required',
           });
-        else if (password.length < 8)
+        else if (formData.password.length < 8)
           localErrors.push({
             input: 'password',
             message: 'Password must be at least 8 characters',
           });
-        else if (confirmPassword === '' || !confirmPassword)
+        else if (formData.confirmPassword === '' || !formData.confirmPassword)
           localErrors.push({
             input: 'confirmPassword',
             message: 'Confirm password is required',
           });
-        else if (password !== confirmPassword)
+        else if (formData.password !== formData.confirmPassword)
           localErrors.push({
             input: 'confirmPassword',
             message: 'Passwords do not match',
           });
-        else if (password.length > 128)
+        else if (formData.password.length > 128)
           localErrors.push({
             input: 'password',
             message: 'Password must be less than 128 characters',
           });
-        else if (confirmPassword.length > 128)
+        else if (formData.confirmPassword.length > 128)
           localErrors.push({
             input: 'confirmPassword',
             message: 'Confirm password must be less than 128 characters',
@@ -273,10 +264,10 @@ export default function RegisterPage() {
 
     if (localErrors.length > 0) {
       setErrors(localErrors);
-      return true;
+      return localErrors;
     }
-
-    return false;
+  
+    return null;
   };
 
   const handleNext = () => {
@@ -287,21 +278,39 @@ export default function RegisterPage() {
     if (hasErrors) {
       return;
     } else {
-      setErrors(null);
+      setErrors([]);
     }
 
     setReverseTransition(false);
     startTransition(() => {
-      setStep(step + 1);
+      dispatch(setStep(step + 1));
     });
   };
 
   const handleBack = () => {
-    setErrors(null);
+    setErrors([]);
     setReverseTransition(true);
     startTransition(() => {
-      setStep(step - 1);
+      dispatch(setStep(step - 1));
     });
+  };
+
+  const handleNextStep = () => {
+    // Your validation logic here
+    const validationErrors = validate();
+    
+    if (validationErrors) {
+      dispatch(setErrors(validationErrors));
+    } else {
+      dispatch(setStep(step + 1));
+      if (step === 6) {
+        dispatch(submitRegistration())
+          .unwrap()
+          .then(({ user, tokens }) => {
+            dispatch(setCredentials({ user, tokens }));
+          });
+      }
+    }
   };
 
   return (
@@ -422,62 +431,46 @@ export default function RegisterPage() {
                                   <Input
                                     label="First name"
                                     variant="bordered"
-                                    className={`${errors?.find((error) => error.input === 'firstName') ? 'mb-0' : 'mb-6'}`}
+                                    className={`${errors.find((error) => error.input === 'firstName') ? 'mb-0' : 'mb-6'}`}
                                     classNames={{ input: 'text-md' }}
-                                    value={firstName}
+                                    value={formData.firstName}
                                     onChange={(e) => {
-                                      setFirstName(e.target.value);
-                                      setErrors((prev) =>
-                                        prev
-                                          ? prev.filter(
-                                              (error) =>
-                                                error.input !== 'firstName',
-                                            )
-                                          : null,
-                                      );
+                                      dispatch(updateFormData({ firstName: e.target.value }));
                                     }}
                                     isRequired
                                     isInvalid={
-                                      errors?.find(
-                                        (error) => error.input === 'firstName',
+                                      errors.find(
+                                        (error: { input: string; message: string }) => error.input === 'firstName',
                                       )
                                         ? true
                                         : false
                                     }
                                     errorMessage={
-                                      errors?.find(
-                                        (error) => error.input === 'firstName',
+                                      errors.find(
+                                        (error: { input: string; message: string }) => error.input === 'firstName',
                                       )?.message
                                     }
                                   />
                                   <Input
                                     label="Last name"
                                     variant="bordered"
-                                    className={`${errors?.find((error) => error.input === 'lastName') ? 'mb-0' : 'mb-6'}`}
+                                    className={`${errors.find((error) => error.input === 'lastName') ? 'mb-0' : 'mb-6'}`}
                                     classNames={{ input: 'text-md' }}
-                                    value={lastName}
+                                    value={formData.lastName}
                                     onChange={(e) => {
-                                      setLastName(e.target.value);
-                                      setErrors((prev) =>
-                                        prev
-                                          ? prev.filter(
-                                              (error) =>
-                                                error.input !== 'lastName',
-                                            )
-                                          : null,
-                                      );
+                                      dispatch(updateFormData({ lastName: e.target.value }));
                                     }}
                                     isRequired
                                     isInvalid={
-                                      errors?.find(
-                                        (error) => error.input === 'lastName',
+                                      errors.find(
+                                        (error: { input: string; message: string }) => error.input === 'lastName',
                                       )
                                         ? true
                                         : false
                                     }
                                     errorMessage={
-                                      errors?.find(
-                                        (error) => error.input === 'lastName',
+                                      errors.find(
+                                        (error: { input: string; message: string }) => error.input === 'lastName',
                                       )?.message
                                     }
                                   />
@@ -498,61 +491,45 @@ export default function RegisterPage() {
                                   <Input
                                     label="Email"
                                     variant="bordered"
-                                    className={`${errors?.find((error) => error.input === 'email') ? 'mb-0' : 'mb-6'}`}
+                                    className={`${errors.find((error) => error.input === 'email') ? 'mb-0' : 'mb-6'}`}
                                     classNames={{ input: 'text-md' }}
-                                    value={email}
+                                    value={formData.email}
                                     onChange={(e) => {
-                                      setEmail(e.target.value);
-                                      setErrors((prev) =>
-                                        prev
-                                          ? prev.filter(
-                                              (error) =>
-                                                error.input !== 'email',
-                                            )
-                                          : null,
-                                      );
+                                      dispatch(updateFormData({ email: e.target.value }));
                                     }}
                                     isRequired
                                     isInvalid={
-                                      errors?.find(
-                                        (error) => error.input === 'email',
+                                      errors.find(
+                                        (error: { input: string; message: string }) => error.input === 'email',
                                       )
                                         ? true
                                         : false
                                     }
                                     errorMessage={
-                                      errors?.find(
-                                        (error) => error.input === 'email',
+                                      errors.find(
+                                        (error: { input: string; message: string }) => error.input === 'email',
                                       )?.message
                                     }
                                   />
                                   <Input
                                     label="Phone number"
                                     variant="bordered"
-                                    className={`${errors?.find((error) => error.input === 'phone') ? 'mb-0' : 'mb-6'}`}
+                                    className={`${errors.find((error) => error.input === 'phone') ? 'mb-0' : 'mb-6'}`}
                                     classNames={{ input: 'text-md' }}
-                                    value={phone}
+                                    value={formData.phone}
                                     onChange={(e) => {
-                                      setPhone(e.target.value);
-                                      setErrors((prev) =>
-                                        prev
-                                          ? prev.filter(
-                                              (error) =>
-                                                error.input !== 'phone',
-                                            )
-                                          : null,
-                                      );
+                                      dispatch(updateFormData({ phone: e.target.value }));
                                     }}
                                     isInvalid={
-                                      errors?.find(
-                                        (error) => error.input === 'phone',
+                                      errors.find(
+                                        (error: { input: string; message: string }) => error.input === 'phone',
                                       )
                                         ? true
                                         : false
                                     }
                                     errorMessage={
-                                      errors?.find(
-                                        (error) => error.input === 'phone',
+                                      errors.find(
+                                        (error: { input: string; message: string }) => error.input === 'phone',
                                       )?.message
                                     }
                                   />
@@ -574,61 +551,33 @@ export default function RegisterPage() {
                                   <Checkbox
                                     isRequired
                                     isInvalid={
-                                      errors?.find(
-                                        (error) =>
-                                          error.input === 'termsAndConditions',
+                                      errors.find(
+                                        (error: { input: string; message: string }) => error.input === 'termsAndConditions',
                                       )
                                         ? true
                                         : false
                                     }
                                     onChange={(e) => {
-                                      setTermsConditions(e.target.checked);
-                                      setErrors((prev) =>
-                                        prev
-                                          ? prev.filter(
-                                              (error) =>
-                                                error.input !==
-                                                'termsAndConditions',
-                                            )
-                                          : null,
-                                      );
+                                      dispatch(updateFormData({ termsAndConditions: e.target.checked }));
                                     }}
-                                    isSelected={termsAndConditions}
+                                    isSelected={formData.termsAndConditions}
                                   >
                                     I agree to the terms, conditions and privacy
                                     policy
                                   </Checkbox>
                                   <Checkbox
                                     onChange={(e) => {
-                                      setEmailNewsletter(e.target.checked);
-                                      setErrors((prev) =>
-                                        prev
-                                          ? prev.filter(
-                                              (error) =>
-                                                error.input !==
-                                                'emailNewsletter',
-                                            )
-                                          : null,
-                                      );
+                                      dispatch(updateFormData({ emailNewsletter: e.target.checked }));
                                     }}
-                                    isSelected={emailNewsletter}
+                                    isSelected={formData.emailNewsletter}
                                   >
                                     I want to receive updates and news on mail
                                   </Checkbox>
                                   <Checkbox
                                     onChange={(e) => {
-                                      setPhoneNewsletter(e.target.checked);
-                                      setErrors((prev) =>
-                                        prev
-                                          ? prev.filter(
-                                              (error) =>
-                                                error.input !==
-                                                'phoneNewsletter',
-                                            )
-                                          : null,
-                                      );
+                                      dispatch(updateFormData({ phoneNewsletter: e.target.checked }));
                                     }}
-                                    isSelected={phoneNewsletter}
+                                    isSelected={formData.phoneNewsletter}
                                   >
                                     I want to receive updates and news on phone
                                   </Checkbox>
@@ -649,30 +598,22 @@ export default function RegisterPage() {
                                   <Input
                                     label="Username"
                                     variant="bordered"
-                                    className={`${errors?.find((error) => error.input === 'username') ? 'mb-0' : 'mb-6'}`}
+                                    className={`${errors.find((error) => error.input === 'username') ? 'mb-0' : 'mb-6'}`}
                                     classNames={{ input: 'text-md' }}
-                                    value={username}
+                                    value={formData.username}
                                     onChange={(e) => {
-                                      setUsername(e.target.value);
-                                      setErrors((prev) =>
-                                        prev
-                                          ? prev.filter(
-                                              (error) =>
-                                                error.input !== 'username',
-                                            )
-                                          : null,
-                                      );
+                                      dispatch(updateFormData({ username: e.target.value }));
                                     }}
                                     isRequired
                                     isInvalid={
-                                      errors?.find(
+                                      errors.find(
                                         (error) => error.input === 'username',
                                       )
                                         ? true
                                         : false
                                     }
                                     errorMessage={
-                                      errors?.find(
+                                      errors.find(
                                         (error) => error.input === 'username',
                                       )?.message
                                     }
@@ -711,13 +652,15 @@ export default function RegisterPage() {
                                     label="Date of birth"
                                     variant="bordered"
                                     showMonthAndYearPickers
-                                    className={`${errors?.find((error) => error.input === 'dateOfBirth') ? 'mb-0' : 'mb-6'}`}
+                                    className={`${errors.find((error) => error.input === 'dateOfBirth') ? 'mb-0' : 'mb-6'}`}
                                     classNames={{ input: 'text-md' }}
-                                    value={dateOfBirth}
-                                    onChange={setDateOfBirth}
+                                    value={formData.dateOfBirth ? parseDate(formData.dateOfBirth) : null}
+                                    onChange={(date) => 
+                                      dispatch(updateFormData({ dateOfBirth: date?.toString() }))
+                                    }
                                     isRequired
                                     isInvalid={
-                                      errors?.find(
+                                      errors.find(
                                         (error) =>
                                           error.input === 'dateOfBirth',
                                       )
@@ -725,7 +668,7 @@ export default function RegisterPage() {
                                         : false
                                     }
                                     errorMessage={
-                                      errors?.find(
+                                      errors.find(
                                         (error) =>
                                           error.input === 'dateOfBirth',
                                       )?.message
@@ -733,29 +676,21 @@ export default function RegisterPage() {
                                   />
                                   <Select
                                     label="Gender"
-                                    className={`${errors?.find((error) => error.input === 'gender') ? 'mb-0' : 'mb-6'}`}
+                                    className={`${errors.find((error) => error.input === 'gender') ? 'mb-0' : 'mb-6'}`}
                                     variant="bordered"
-                                    selectedKeys={[gender]}
-                                    onSelectionChange={(keys) => {
-                                      setGender(Array.from(keys)[0] as string);
-                                      setErrors((prev) =>
-                                        prev
-                                          ? prev.filter(
-                                              (error) =>
-                                                error.input !== 'gender',
-                                            )
-                                          : null,
-                                      );
-                                    }}
+                                    selectedKeys={[formData.gender]}
+                                    onSelectionChange={(keys) => 
+                                      dispatch(updateFormData({ gender: Array.from(keys)[0] as string }))
+                                    }
                                     isInvalid={
-                                      errors?.find(
+                                      errors.find(
                                         (error) => error.input === 'gender',
                                       )
                                         ? true
                                         : false
                                     }
                                     errorMessage={
-                                      errors?.find(
+                                      errors.find(
                                         (error) => error.input === 'gender',
                                       )?.message
                                     }
@@ -787,30 +722,22 @@ export default function RegisterPage() {
                                     label="Password"
                                     variant="bordered"
                                     type={showPassword ? 'text' : 'password'}
-                                    className={`${errors?.find((error) => error.input === 'password') ? 'mb-0' : 'mb-6'}`}
+                                    className={`${errors.find((error) => error.input === 'password') ? 'mb-0' : 'mb-6'}`}
                                     classNames={{ input: 'text-md' }}
-                                    value={password}
+                                    value={formData.password}
                                     onChange={(e) => {
-                                      setPassword(e.target.value);
-                                      setErrors((prev) =>
-                                        prev
-                                          ? prev.filter(
-                                              (error) =>
-                                                error.input !== 'password',
-                                            )
-                                          : null,
-                                      );
+                                      dispatch(updateFormData({ password: e.target.value }));
                                     }}
                                     isRequired
                                     isInvalid={
-                                      errors?.find(
+                                      errors.find(
                                         (error) => error.input === 'password',
                                       )
                                         ? true
                                         : false
                                     }
                                     errorMessage={
-                                      errors?.find(
+                                      errors.find(
                                         (error) => error.input === 'password',
                                       )?.message
                                     }
@@ -840,24 +767,15 @@ export default function RegisterPage() {
                                     type={
                                       showConfirmPassword ? 'text' : 'password'
                                     }
-                                    className={`${errors?.find((error) => error.input === 'confirmPassword') ? 'mb-0' : 'mb-6'}`}
+                                    className={`${errors.find((error) => error.input === 'confirmPassword') ? 'mb-0' : 'mb-6'}`}
                                     classNames={{ input: 'text-md' }}
-                                    value={confirmPassword}
+                                    value={formData.confirmPassword}
                                     onChange={(e) => {
-                                      setConfirmPassword(e.target.value);
-                                      setErrors((prev) =>
-                                        prev
-                                          ? prev.filter(
-                                              (error) =>
-                                                error.input !==
-                                                'confirmPassword',
-                                            )
-                                          : null,
-                                      );
+                                      dispatch(updateFormData({ confirmPassword: e.target.value }));
                                     }}
                                     isRequired
                                     isInvalid={
-                                      errors?.find(
+                                      errors.find(
                                         (error) =>
                                           error.input === 'confirmPassword',
                                       )
@@ -865,7 +783,7 @@ export default function RegisterPage() {
                                         : false
                                     }
                                     errorMessage={
-                                      errors?.find(
+                                      errors.find(
                                         (error) =>
                                           error.input === 'confirmPassword',
                                       )?.message
@@ -1076,7 +994,7 @@ export default function RegisterPage() {
                       endContent={
                         <MaterialSymbol symbol="arrow_forward" size={18} />
                       }
-                      onPress={handleNext}
+                      onPress={handleNextStep}
                     >
                       Continue
                     </Button>
