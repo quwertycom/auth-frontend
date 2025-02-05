@@ -8,7 +8,7 @@ import registerReducer from './features/registerSlice';
 const authPersistConfig = {
   key: 'auth',
   storage,
-  whitelist: ['user', 'tokens']
+  whitelist: ['user', 'tokens'],
 };
 
 const rootReducer = combineReducers({
