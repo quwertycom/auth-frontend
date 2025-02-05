@@ -21,7 +21,6 @@ import TransitionLink from '@/app/components/transitionLink';
 import { parseDate } from '@internationalized/date';
 import { useAppDispatch, useAppSelector } from '@/app/store/hooks';
 import { 
-  setStep, 
   updateFormData, 
   setErrors,
   validateStep
@@ -29,8 +28,8 @@ import {
 
 export default function RegisterPage() {
   const dispatch = useAppDispatch();
-  const { step, formData, errors } = useAppSelector((state) => ({
-    step: state.register.step,
+  const [step, setStep] = useState(0);
+  const { formData, errors } = useAppSelector((state) => ({
     formData: state.register.formData,
     errors: Array.isArray(state.register.errors) 
       ? state.register.errors 
@@ -53,42 +52,30 @@ export default function RegisterPage() {
   ];
 
   const handleNext = () => {
-    setErrors([]);
     setReverseTransition(false);
+    dispatch(setErrors([]));
     startTransition(() => {
-      dispatch(setStep(step + 1));
+      setStep(prev => prev + 1);
     });
   };
 
   const handleBack = () => {
-    setErrors([]);
     setReverseTransition(true);
+    dispatch(setErrors([]));
     startTransition(() => {
-      dispatch(setStep(step - 1));
+      setStep(prev => prev - 1);
     });
   };
 
   const handleNextStep = async () => {
-    const validationResult = await dispatch(validateStep()).unwrap();
+    const validationResult = await dispatch(validateStep(step)).unwrap();
     
     if (!validationResult.isValid) return;
 
-    // Always progress to next step after validation
     setReverseTransition(false);
     startTransition(() => {
-      dispatch(setStep(step + 1));
+      setStep(prev => prev + 1);
     });
-
-    // // Only submit when reaching step 7 (final step)
-    // if (step + 1 === 7) {
-    //   try {
-    //     const result = await dispatch(submitRegistration()).unwrap();
-    //     dispatch(setCredentials(result));
-    //     router.push('/dashboard');
-    //   } catch (error) {
-    //     console.error('Registration failed:', error);
-    //   }
-    // }
   };
 
   return (

@@ -2,7 +2,6 @@ import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { parseDate } from '@internationalized/date';
 
 interface RegisterState {
-  step: number;
   formData: {
     firstName: string;
     lastName: string;
@@ -26,7 +25,6 @@ interface RegisterState {
 }
 
 const initialState: RegisterState = {
-  step: 0,
   formData: {
     firstName: '',
     lastName: '',
@@ -211,9 +209,9 @@ const validationRules: ValidationRules = {
 
 export const validateStep = createAsyncThunk(
   'register/validateStep',
-  (_, { getState }) => {
+  async (currentStep: number, { getState }) => {
     const state = getState() as { register: RegisterState };
-    const validator = validationRules[state.register.step];
+    const validator = validationRules[currentStep];
     
     if (validator) {
       const errors = validator(state.register.formData);
@@ -227,9 +225,6 @@ const registerSlice = createSlice({
   name: 'register',
   initialState,
   reducers: {
-    setStep: (state, action: PayloadAction<number>) => {
-      state.step = action.payload;
-    },
     updateFormData: (state, action: PayloadAction<Partial<RegisterState['formData']>>) => {
       state.formData = { ...state.formData, ...action.payload };
     },
@@ -264,7 +259,6 @@ const registerSlice = createSlice({
 });
 
 export const { 
-  setStep, 
   updateFormData, 
   setErrors, 
   clearErrors, 
