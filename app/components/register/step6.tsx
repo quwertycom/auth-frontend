@@ -16,6 +16,97 @@ export default function RegisterStep6() {
 
   const passwordStrength = getPasswordStrength(formData.password);
 
+  const requirements = [
+    {
+      id: 'lowercase',
+      text: 'Lowercase letter',
+      isMet: () => /[a-z]/.test(formData.password),
+    },
+    {
+      id: 'uppercase',
+      text: 'Uppercase letter',
+      isMet: () => /[A-Z]/.test(formData.password),
+    },
+    {
+      id: 'number',
+      text: 'Number',
+      isMet: () => /[0-9]/.test(formData.password),
+    },
+    {
+      id: 'length',
+      text: 'Characters',
+      isMet: () => formData.password.length >= 8,
+    },
+  ];
+
+  const getMissingRequirementsText = () => {
+    const missing = requirements.filter((req) => !req.isMet());
+
+    if (passwordStrength === 0) {
+      return 'Create a strong, unique, and easy-to-remember password.'; // Step 0 text
+    }
+
+    if (missing.length === 0) {
+      if (
+        formData.password.length < 12 &&
+        !/[^A-Za-z0-9]/.test(formData.password)
+      ) {
+        return 'Your password is okay, but can be enhanced.';
+      } else if (
+        formData.password.length >= 12 &&
+        !/[^A-Za-z0-9]/.test(formData.password)
+      ) {
+        return 'Your password strength is good.';
+      } else if (
+        formData.password.length < 12 &&
+        /[^A-Za-z0-9]/.test(formData.password)
+      ) {
+        return 'Your password strength is good.';
+      } else if (
+        formData.password.length >= 12 &&
+        /[^A-Za-z0-9]/.test(formData.password)
+      ) {
+        return 'Your password is great!';
+      }
+    }
+
+    if (missing.length === requirements.length) {
+      return 'Ensure your password includes 1 lowercase letter, 1 uppercase letter, 1 number, and is at least 8 characters.'; // Rephrased default text
+    }
+
+    const missingTexts = missing.map((req) => {
+      if (req.id === 'length') {
+        return `8 ${req.text.toLowerCase()}`; // For length, use "8 characters"
+      } else {
+        return `1 ${req.text.toLowerCase()}`; // For others, use "1 requirement"
+      }
+    });
+
+    if (missing.length === 1) {
+      return `You need: ${missingTexts[0]}.`; // Changed to "You need:" and used modified missing text
+    }
+
+    const lastMissing = missingTexts.pop();
+    return `You need: ${missingTexts.join(', ')}, and ${lastMissing}.`; // Changed to "You need:" and used modified missing texts
+  };
+
+  const getTextColor = () => {
+    switch (passwordStrength) {
+      case 0:
+        return 'text-neutral-400'; // Gray for empty/error
+      case 1:
+        return 'text-red-500'; // Very Weak
+      case 2:
+        return 'text-orange-500'; // Weak
+      case 3:
+        return 'text-yellow-500'; // Average
+      case 4:
+        return 'text-green-500'; // Strong
+      default:
+        return 'text-green-700'; // Very Strong (shouldn't happen with current logic)
+    }
+  };
+
   return (
     <div className="flex h-full w-full flex-col items-stretch justify-evenly gap-6">
       <div className="flex flex-col items-center justify-center gap-2">
@@ -25,13 +116,15 @@ export default function RegisterStep6() {
         </p>
       </div>
       <div className="flex w-full flex-col items-stretch justify-center gap-4">
-        <div className='w-full relative'>
+        <div className="relative w-full">
           <Input
             label="Password"
             variant="bordered"
             type={showPassword ? 'text' : 'password'}
             className={`relative ${
-              errors.find((error) => error.input === 'password') ? 'mb-0' : 'mb-2'
+              errors.find((error) => error.input === 'password')
+                ? 'mb-0'
+                : 'mb-2'
             }`}
             classNames={{
               input: 'text-md',
@@ -66,57 +159,35 @@ export default function RegisterStep6() {
               </button>
             }
           />
-          <Card className="absolute z-50 w-[calc(100%-2rem)] left-0 top-full mx-4">
-            <CardBody className="bg-white/5">
-              <div className="progress w-full h-2 rounded-full bg-white/10">
+          <Card className="absolute left-0 top-full z-50 mx-4 w-[calc(100%-2rem)]">
+            <CardBody className="bg-white/5 py-2">
+              <div className="progress h-2 w-full rounded-full bg-white/10">
                 <div
                   className={`h-full rounded-full transition-all duration-300 ease-in-out-quart ${
                     passwordStrength === 0
-                      ? 'bg-red-700'
+                      ? 'bg-red-700' // Level 0: Red (Error/Empty)
                       : passwordStrength === 1
-                      ? 'bg-red-500'
-                      : passwordStrength === 2
-                      ? 'bg-orange-500'
-                      : passwordStrength === 3
-                      ? 'bg-yellow-500'
-                      : passwordStrength === 4
-                      ? 'bg-green-500'
-                      : 'bg-green-700'
+                        ? 'bg-red-500' // Level 1: Very Weak
+                        : passwordStrength === 2
+                          ? 'bg-orange-500' // Level 2: Weak
+                          : passwordStrength === 3
+                            ? 'bg-yellow-500' // Level 3: Average/Correct
+                            : passwordStrength === 4
+                              ? 'bg-green-500' // Level 4: Strong
+                              : 'bg-green-700'
                   }`}
                   style={{ width: `${(passwordStrength / 5) * 100}%` }}
                 ></div>
               </div>
             </CardBody>
             <Divider />
-            <CardBody className="flex flex-col gap-2 bg-white/5">
-              {passwordStrength === 0 && (
-                <p className="text-sm text-neutral-500">
-                  Enter strong and easy to remember password...
-                </p>
-              )}
-              {passwordStrength === 1 && (
-                <p className="text-sm text-red-500">
-                  Very weak password. Needs more requirements.
-                </p>
-              )}
-              {passwordStrength === 2 && (
-                <p className="text-sm text-orange-500">
-                  Weak password. At least minimum requirements are needed.
-                </p>
-              )}
-              {passwordStrength === 3 && (
-                <p className="text-sm text-yellow-500">
-                  Correct password. Minimum requirements are satisfied.
-                </p>
-              )}
-              {passwordStrength === 4 && (
-                <p className="text-sm text-green-500">
-                  Strong password. Secure level 1.
-                </p>
-              )}
-              {passwordStrength === 5 && (
-                <p className="text-sm text-green-700">
-                  Very strong password! Secure level 2.
+            <CardBody className="flex flex-row items-center justify-between bg-white/5 py-2">
+              <p className={`text-sm ${getTextColor()}`}>
+                {getMissingRequirementsText()}
+              </p>
+              {formData.password.length < 8 && (
+                <p className="text-xs text-neutral-400">
+                  {formData.password.length} / 8
                 </p>
               )}
             </CardBody>

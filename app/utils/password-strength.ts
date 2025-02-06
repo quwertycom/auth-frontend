@@ -28,9 +28,10 @@ export const getPasswordStrength = (password: string): number => {
     // Level 3: Minimum requirements met
     const meetsLengthSecureRequirement = password.length >= 12;
     const meetsSymbolRequirement = criteria.specialChar;
-    const isMediumLengthWithSymbol = password.length >= 8 && password.length <= 11 && meetsSymbolRequirement;
-    const isLongLengthWithoutSymbol = password.length >= 12 && !meetsSymbolRequirement;
-
+    const isMediumLengthWithSymbol =
+      password.length >= 8 && password.length <= 11 && meetsSymbolRequirement;
+    const isLongLengthWithoutSymbol =
+      password.length >= 12 && !meetsSymbolRequirement;
 
     if (isLongLengthWithoutSymbol || isMediumLengthWithSymbol) {
       return 4; // Level 4: Secure password level 1
@@ -44,4 +45,4 @@ export const getPasswordStrength = (password: string): number => {
   return 0; // Default to level 0 if none of the above conditions are met (should not happen in normal flow)
 };
 
-export default getPasswordStrength; 
+export default getPasswordStrength;

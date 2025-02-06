@@ -2,9 +2,9 @@ import MaterialSymbol from '../materialSymbol';
 
 export default function SideInfo(props: { step: number }) {
   const { step } = props;
-  
+
   return (
-    <div className="flex flex-col items-center justify-between gap-6 text-center w-full">
+    <div className="flex w-full flex-col items-center justify-between gap-6 text-center">
       {step === 1 && (
         <div className="flex flex-col items-center justify-between gap-6 text-center">
           <h3 className="text-xl font-semibold text-foreground">
@@ -111,8 +111,8 @@ export default function SideInfo(props: { step: number }) {
           />
           <div className="space-y-4">
             <p className="text-sm text-white">
-              Set a secure password that you will use to login. Never share
-              your password with others.
+              Set a secure password that you will use to login. Never share your
+              password with others.
             </p>
           </div>
         </div>
