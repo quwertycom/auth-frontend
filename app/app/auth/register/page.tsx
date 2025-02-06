@@ -19,9 +19,11 @@ import RegisterStep5 from '@/app/components/register/step5';
 import RegisterStep6 from '@/app/components/register/step6';
 import RegisterStep7 from '@/app/components/register/step7';
 import SideInfo from '@/app/components/register/sideInfo';
+
 export default function RegisterPage() {
   const dispatch = useAppDispatch();
   const [step, setStep] = useState(0);
+  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
 
   const [reverseTransition, setReverseTransition] = useState(false);
 
@@ -127,7 +129,7 @@ export default function RegisterPage() {
                             {step === 3 && <RegisterStep3 />}
                             {step === 4 && <RegisterStep4 />}
                             {step === 5 && <RegisterStep5 />}
-                            {step === 6 && <RegisterStep6 />}
+                            {step === 6 && <RegisterStep6 onFocusChange={setIsPasswordFocused} />}
                           </motion.div>
                         </AnimatePresence>
                       </div>
@@ -145,7 +147,7 @@ export default function RegisterPage() {
                           exit={slideTransitionConfig.exit}
                           className="flex h-full w-full items-center justify-center"
                         >
-                          <SideInfo step={step} />
+                          <SideInfo step={step} isPasswordFocused={isPasswordFocused} />
                         </motion.div>
                       </AnimatePresence>
                     </CardBody>

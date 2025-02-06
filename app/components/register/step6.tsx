@@ -5,12 +5,13 @@ import { RootState } from '@/app/store/store';
 import { updateFormData } from '@/app/store/features/registerSlice';
 import { useState } from 'react';
 
-export default function RegisterStep6() {
+export default function RegisterStep6({ onFocusChange }: { onFocusChange: (isFocused: boolean) => void }) {
   const dispatch = useDispatch();
   const formData = useSelector((state: RootState) => state.register.formData);
   const errors = useSelector((state: RootState) => state.register.errors);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [, setIsFocused] = useState(false);
 
   return (
     <div className="flex h-full w-full flex-col items-stretch justify-evenly gap-6">
@@ -28,20 +29,20 @@ export default function RegisterStep6() {
           className={`${errors.find((error) => error.input === 'password') ? 'mb-0' : 'mb-6'}`}
           classNames={{ input: 'text-md' }}
           value={formData.password}
+          onFocus={() => {
+            setIsFocused(true);
+            onFocusChange(true);
+          }}
+          onBlur={() => {
+            setIsFocused(false);
+            onFocusChange(false);
+          }}
           onChange={(e) => {
-            dispatch(
-              updateFormData({
-                password: e.target.value,
-              }),
-            );
+            dispatch(updateFormData({ password: e.target.value }));
           }}
           isRequired
-          isInvalid={
-            errors.find((error) => error.input === 'password') ? true : false
-          }
-          errorMessage={
-            errors.find((error) => error.input === 'password')?.message
-          }
+          isInvalid={!!errors.find((error) => error.input === 'password')}
+          errorMessage={errors.find((error) => error.input === 'password')?.message}
           endContent={
             <button
               type="button"
@@ -56,6 +57,7 @@ export default function RegisterStep6() {
             </button>
           }
         />
+
         <Input
           label="Confirm password"
           variant="bordered"
