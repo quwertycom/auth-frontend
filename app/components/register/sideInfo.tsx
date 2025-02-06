@@ -5,32 +5,55 @@ import { useMemo } from 'react';
 import { centerPopTransition } from '@/app/styles/transitions';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// Add password strength checker function
+// Update the getPasswordStrength function
 const getPasswordStrength = (password: string) => {
-  let strength = 0;
   const criteria = {
-    length: password.length >= 8,
-    uppercase: /[A-Z]/.test(password),
     lowercase: /[a-z]/.test(password),
+    uppercase: /[A-Z]/.test(password),
     number: /[0-9]/.test(password),
+    length: password.length >= 8,
     specialChar: /[^A-Za-z0-9]/.test(password),
   };
 
-  strength += criteria.length ? 1 : 0;
-  strength += criteria.uppercase ? 1 : 0;
-  strength += criteria.lowercase ? 1 : 0;
-  strength += criteria.number ? 1 : 0;
-  strength += criteria.specialChar ? 1 : 0;
+  // NIST-inspired base requirements (12+ chars with mix)
+  const meetsMinimum = criteria.lowercase && criteria.uppercase && criteria.number && criteria.length;
+  
+  // Additional security factors
+  const isLong = password.length >= 12; // CIS recommends 14+ for password-only accounts
+  const hasSymbol = criteria.specialChar;
+  const isSuperLong = password.length >= 16;
 
-  const strengthLevels = [
-    { label: 'Very Weak', color: 'red', symbol: 'close' },
-    { label: 'Weak', color: 'red', symbol: 'close' },
-    { label: 'Moderate', color: 'yellow', symbol: 'warning' },
-    { label: 'Strong', color: 'green', symbol: 'check' },
-    { label: 'Very Strong', color: 'green', symbol: 'check' },
-  ];
+  let label = 'Doesn\'t meet requirements';
+  let color = 'red';
+  let symbol = 'close';
+  
+  if (meetsMinimum) {
+    if (isSuperLong && hasSymbol) {
+      label = 'Very Strong';
+      color = 'green';
+      symbol = 'check';
+    } else if (isLong && hasSymbol || isSuperLong && !hasSymbol) {
+      label = 'Strong';
+      color = 'green';
+      symbol = 'check';
+    } else if ((hasSymbol || isLong) && !(hasSymbol && isLong) && !isSuperLong) {
+      label = 'Good';
+      color = 'green';
+      symbol = 'check';
+    } else {
+      label = 'Ok';
+      color = 'yellow';
+      symbol = 'warning';
+    }
+  }
 
-  return strengthLevels[Math.min(strength, strengthLevels.length - 1)];
+  return {
+    label,
+    color: meetsMinimum ? color : 'red',
+    symbol: meetsMinimum ? symbol : 'close',
+    isValid: meetsMinimum,
+    criteria
+  };
 };
 
 export default function SideInfo(props: { step: number; isPasswordFocused: boolean }) {
@@ -183,41 +206,54 @@ export default function SideInfo(props: { step: number; isPasswordFocused: boole
                 <div className="h-2 w-full rounded-full bg-neutral-200 dark:bg-neutral-700">
                   <div
                     className={`bg-${passwordStrength.color}-500 h-full rounded-full transition-all duration-300`}
-                    style={{ width: `${(passwordStrength.label === 'Very Weak' ? 20 : passwordStrength.label === 'Weak' ? 40 : passwordStrength.label === 'Moderate' ? 60 : passwordStrength.label === 'Strong' ? 80 : 100)}%` }}
+                    style={{ 
+                      width: `${passwordStrength.isValid ? 
+                        (passwordStrength.label.includes('Very Strong') ? 100 :
+                         passwordStrength.label.includes('Strong') ? 85 :
+                         70) : 20}%` 
+                    }}
                   />
                 </div>
                 <div className="flex flex-col gap-2 pt-2 text-sm w-full">
                   <div className="flex items-center gap-1">
                     <MaterialSymbol
-                      symbol={formData.password.length >= 8 ? 'check' : 'close'}
+                      symbol={passwordStrength.criteria.lowercase ? 'check' : 'close'}
                       size={16}
-                      className={formData.password.length >= 8 ? 'text-green-500' : 'text-red-500'}
+                      className={passwordStrength.criteria.lowercase ? 'text-green-500' : 'text-red-500'}
                     />
-                    <span>8+ characters</span>
+                    <span>1 lowercase letter</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <MaterialSymbol
-                      symbol={/[A-Z]/.test(formData.password) ? 'check' : 'close'}
+                      symbol={passwordStrength.criteria.uppercase ? 'check' : 'close'}
                       size={16}
-                      className={/[A-Z]/.test(formData.password) ? 'text-green-500' : 'text-red-500'}
+                      className={passwordStrength.criteria.uppercase ? 'text-green-500' : 'text-red-500'}
                     />
-                    <span>Uppercase letter</span>
+                    <span>1 uppercase letter</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <MaterialSymbol
-                      symbol={/[0-9]/.test(formData.password) ? 'check' : 'close'}
+                      symbol={passwordStrength.criteria.number ? 'check' : 'close'}
                       size={16}
-                      className={/[0-9]/.test(formData.password) ? 'text-green-500' : 'text-red-500'}
+                      className={passwordStrength.criteria.number ? 'text-green-500' : 'text-red-500'}
                     />
-                    <span>Number</span>
+                    <span>1 number</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <MaterialSymbol
-                      symbol={/[^A-Za-z0-9]/.test(formData.password) ? 'check' : 'close'}
+                      symbol={passwordStrength.criteria.length ? 'check' : 'close'}
                       size={16}
-                      className={/[^A-Za-z0-9]/.test(formData.password) ? 'text-green-500' : 'text-red-500'}
+                      className={passwordStrength.criteria.length ? 'text-green-500' : 'text-red-500'}
                     />
-                    <span>Special character</span>
+                    <span>Minimum 12 characters</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <MaterialSymbol
+                      symbol={passwordStrength.criteria.specialChar ? 'check' : 'close'}
+                      size={16}
+                      className={passwordStrength.criteria.specialChar ? 'text-green-500' : 'text-gray-500'}
+                    />
+                    <span>Special character (optional, recommended)</span>
                   </div>
                 </div>
               </div>
@@ -239,18 +275,10 @@ export default function SideInfo(props: { step: number; isPasswordFocused: boole
                 <MaterialSymbol
                   symbol={passwordStrength.symbol}
                   size={20}
-                  className={
-                    passwordStrength.color === 'green' ? 'text-green-500' :
-                    passwordStrength.color === 'yellow' ? 'text-yellow-500' : 'text-red-500'
-                  }
+                  className={passwordStrength.isValid ? 'text-green-500' : 'text-red-500'}
                 />
-                <span className={
-                  passwordStrength.color === 'green' ? 'text-green-500' :
-                  passwordStrength.color === 'yellow' ? 'text-yellow-500' : 'text-red-500'
-                }>
-                  {passwordStrength.color === 'green' && 'Password meets security requirements'}
-                  {passwordStrength.color === 'yellow' && 'Password could be stronger'}
-                  {passwordStrength.color === 'red' && 'Password does not meet requirements'}
+                <span className={passwordStrength.isValid ? 'text-green-500' : 'text-red-500'}>
+                  {passwordStrength.label}
                 </span>
               </div>
             </div>

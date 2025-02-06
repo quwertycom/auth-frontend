@@ -22,7 +22,7 @@ import SideInfo from '@/app/components/register/sideInfo';
 
 export default function RegisterPage() {
   const dispatch = useAppDispatch();
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(6);
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
 
   const [reverseTransition, setReverseTransition] = useState(false);
