@@ -65,6 +65,7 @@ export default function RegisterStep6({ onFocusChange }: { onFocusChange: (isFoc
           className={`${errors.find((error) => error.input === 'confirmPassword') ? 'mb-0' : 'mb-6'}`}
           classNames={{ input: 'text-md' }}
           value={formData.confirmPassword}
+          isDisabled={formData.password.length < 8}
           onChange={(e) => {
             dispatch(
               updateFormData({
