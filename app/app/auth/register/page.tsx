@@ -23,7 +23,6 @@ import SideInfo from '@/app/components/register/sideInfo';
 export default function RegisterPage() {
   const dispatch = useAppDispatch();
   const [step, setStep] = useState(6);
-  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
 
   const [reverseTransition, setReverseTransition] = useState(false);
 
@@ -129,7 +128,7 @@ export default function RegisterPage() {
                             {step === 3 && <RegisterStep3 />}
                             {step === 4 && <RegisterStep4 />}
                             {step === 5 && <RegisterStep5 />}
-                            {step === 6 && <RegisterStep6 onFocusChange={setIsPasswordFocused} />}
+                            {step === 6 && <RegisterStep6 />}
                           </motion.div>
                         </AnimatePresence>
                       </div>
@@ -147,7 +146,7 @@ export default function RegisterPage() {
                           exit={slideTransitionConfig.exit}
                           className="flex h-full w-full items-center justify-center"
                         >
-                          <SideInfo step={step} isPasswordFocused={isPasswordFocused} />
+                          <SideInfo step={step} />
                         </motion.div>
                       </AnimatePresence>
                     </CardBody>
