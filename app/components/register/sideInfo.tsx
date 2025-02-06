@@ -2,6 +2,8 @@ import MaterialSymbol from '../materialSymbol';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/app/store/store';
 import { useMemo } from 'react';
+import { centerPopTransition } from '@/app/styles/transitions';
+import { motion, AnimatePresence } from 'framer-motion';
 
 // Add password strength checker function
 const getPasswordStrength = (password: string) => {
@@ -39,6 +41,24 @@ export default function SideInfo(props: { step: number; isPasswordFocused: boole
     () => getPasswordStrength(formData.password),
     [formData.password]
   );
+
+  const popTransition = centerPopTransition(500);
+
+  const getPopTransitionConfig = () => ({
+    initial: {
+      ...popTransition.normal.enterFrom,
+    },
+    animate: {
+      ...popTransition.normal.enterTo,
+      transition:
+        popTransition.normal.enterActive.transition,
+    },
+    exit: {
+      ...popTransition.normal.leaveTo,
+      transition:
+        popTransition.normal.leaveActive.transition,
+    },
+  });
 
   const showStatus = !isPasswordFocused && formData.password.length > 0;
 
@@ -141,8 +161,18 @@ export default function SideInfo(props: { step: number; isPasswordFocused: boole
       )}
       {step === 6 && (
         <div className="flex flex-col items-center justify-between gap-6 text-center w-full">
-          {isPasswordFocused && (
-            <div className="space-y-4 w-full">
+          <AnimatePresence mode='wait'>
+            <motion.div
+              key={isPasswordFocused ? 'password' : 'password-not-focused'}
+              initial={getPopTransitionConfig().initial}
+              animate={getPopTransitionConfig().animate}
+              exit={getPopTransitionConfig().exit}
+              className='w-full'
+            >
+              {isPasswordFocused && (
+                <div
+                  className="space-y-4 w-full"
+            >
               <div className="space-y-2 w-full">
                 <div className="flex items-center w-full justify-between text-sm">
                   <span>Password Strength:</span>
@@ -244,6 +274,8 @@ export default function SideInfo(props: { step: number; isPasswordFocused: boole
             </p>
           </div>
           )}
+          </motion.div>
+          </AnimatePresence>
         </div>
       )}
     </div>
