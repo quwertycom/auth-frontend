@@ -226,17 +226,41 @@ const validationRules: ValidationRules = {
 
     if (!formData.password.trim()) {
       errors.push({ input: 'password', message: 'Password is required' });
-    } else if (formData.password.length < 8) {
-      errors.push({
-        input: 'password',
-        message: 'Password must be at least 8 characters',
-      });
-    } else if (formData.password.length > 128) {
-      errors.push({
-        input: 'password',
-        message: 'Password must be less than 128 characters',
-      });
+    } else {
+      const password = formData.password;
+      const requirements = [
+        { id: 'lowercase', text: 'lowercase letter', isMet: () => /[a-z]/.test(password) },
+        { id: 'uppercase', text: 'uppercase letter', isMet: () => /[A-Z]/.test(password) },
+        { id: 'number', text: 'number', isMet: () => /[0-9]/.test(password) },
+        { id: 'length', text: 'characters', isMet: () => password.length >= 8 },
+      ];
+
+      const missingRequirements = requirements.filter(req => !req.isMet());
+
+      if (missingRequirements.length > 0) {
+        let message = 'Password must include at least ';
+        const missingText = missingRequirements.map(req => {
+          if (req.id === 'length') {
+            return `8 ${req.text}`;
+          } else {
+            return `1 ${req.text}`;
+          }
+        });
+        if (missingText.length === 1) {
+          message += missingText[0];
+        } else if (missingText.length > 1) {
+          const lastMissing = missingText.pop();
+          message += missingText.join(', ') + ', and ' + lastMissing;
+        }
+        errors.push({ input: 'password', message: message + '.' });
+      } else if (formData.password.length > 128) {
+        errors.push({
+          input: 'password',
+          message: 'Password must be less than 128 characters',
+        });
+      }
     }
+
 
     if (!formData.confirmPassword.trim()) {
       errors.push({
