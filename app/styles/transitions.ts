@@ -38,12 +38,23 @@ export interface Transition {
 export interface TransitionBundle {
   normal: Transition;
   reverse: Transition;
+  reflect: Transition;
 }
 
 const reverseTransition = (transition: Transition) => ({
   ...transition,
   enterFrom: transition.leaveTo,
   enterTo: transition.leaveFrom,
+  enterActive: transition.enterActive,
+  leaveFrom: transition.enterTo,
+  leaveTo: transition.enterFrom,
+  leaveActive: transition.leaveActive,
+});
+
+const reflectTransition = (transition: Transition) => ({
+  ...transition,
+  enterFrom: transition.enterFrom,
+  enterTo: transition.enterTo,
   enterActive: transition.enterActive,
   leaveFrom: transition.enterTo,
   leaveTo: transition.enterFrom,
@@ -198,12 +209,18 @@ export const centerPopReverse = (
   easing: EasingOption = 'cubic',
 ): Transition => reverseTransition(centerPop(duration, easing));
 
+export const centerPopReflect = (
+  duration = 750,
+  easing: EasingOption = 'cubic',
+): Transition => reflectTransition(centerPop(duration, easing));
+
 export const centerPopTransition = (
   duration = 750,
   easing: EasingOption = 'cubic',
 ): TransitionBundle => ({
   normal: centerPop(duration, easing),
   reverse: centerPopReverse(duration, easing),
+  reflect: centerPopReflect(duration, easing),
 });
 
 // --- Center Pop Down ------------------------------------
@@ -253,12 +270,18 @@ export const centerPopDownReverse = (
   easing: EasingOption = 'cubic',
 ): Transition => reverseTransition(centerPopDown(duration, easing));
 
+export const centerPopDownReflect = (
+  duration = 750,
+  easing: EasingOption = 'cubic',
+): Transition => reflectTransition(centerPopDown(duration, easing));
+
 export const centerPopDownTransition = (
   duration = 750,
   easing: EasingOption = 'cubic',
 ): TransitionBundle => ({
   normal: centerPopDown(duration, easing),
   reverse: centerPopDownReverse(duration, easing),
+  reflect: centerPopDownReflect(duration, easing),
 });
 
 // --- Center Pop Up --------------------------------------
@@ -308,12 +331,18 @@ export const centerPopUpReverse = (
   easing: EasingOption = 'cubic',
 ): Transition => reverseTransition(centerPopUp(duration, easing));
 
+export const centerPopUpReflect = (
+  duration = 750,
+  easing: EasingOption = 'cubic',
+): Transition => reflectTransition(centerPopUp(duration, easing));
+
 export const centerPopUpTransition = (
   duration = 750,
   easing: EasingOption = 'cubic',
 ): TransitionBundle => ({
   normal: centerPopUp(duration, easing),
   reverse: centerPopUpReverse(duration, easing),
+  reflect: centerPopUpReflect(duration, easing),
 });
 
 // --- Slide From Top -------------------------------------
@@ -363,12 +392,18 @@ export const slideFromTopReverse = (
   easing: EasingOption = 'cubic',
 ): Transition => reverseTransition(slideFromTop(duration, easing));
 
+export const slideFromTopReflect = (
+  duration = 750,
+  easing: EasingOption = 'cubic',
+): Transition => reflectTransition(slideFromTop(duration, easing));
+
 export const slideFromTopTransition = (
   duration = 750,
   easing: EasingOption = 'cubic',
 ): TransitionBundle => ({
   normal: slideFromTop(duration, easing),
   reverse: slideFromTopReverse(duration, easing),
+  reflect: slideFromTopReflect(duration, easing),
 });
 
 // --- Slide From Bottom ----------------------------------
@@ -418,12 +453,18 @@ export const slideFromBottomReverse = (
   easing: EasingOption = 'cubic',
 ): Transition => reverseTransition(slideFromBottom(duration, easing));
 
+export const slideFromBottomReflect = (
+  duration = 750,
+  easing: EasingOption = 'cubic',
+): Transition => reflectTransition(slideFromBottom(duration, easing));
+
 export const slideFromBottomTransition = (
   duration = 750,
   easing: EasingOption = 'cubic',
 ): TransitionBundle => ({
   normal: slideFromBottom(duration, easing),
   reverse: slideFromBottomReverse(duration, easing),
+  reflect: slideFromBottomReflect(duration, easing),
 });
 
 // --- Slide From Left ------------------------------------
@@ -473,12 +514,18 @@ export const slideFromLeftReverse = (
   easing: EasingOption = 'cubic',
 ): Transition => reverseTransition(slideFromLeft(duration, easing));
 
+export const slideFromLeftReflect = (
+  duration = 750,
+  easing: EasingOption = 'cubic',
+): Transition => reflectTransition(slideFromLeft(duration, easing));
+
 export const slideFromLeftTransition = (
   duration = 750,
   easing: EasingOption = 'cubic',
 ): TransitionBundle => ({
   normal: slideFromLeft(duration, easing),
   reverse: slideFromLeftReverse(duration, easing),
+  reflect: slideFromLeftReflect(duration, easing),
 });
 
 // --- Slide From Right -----------------------------------
@@ -528,12 +575,18 @@ export const slideFromRightReverse = (
   easing: EasingOption = 'cubic',
 ): Transition => reverseTransition(slideFromRight(duration, easing));
 
+export const slideFromRightReflect = (
+  duration = 750,
+  easing: EasingOption = 'cubic',
+): Transition => reflectTransition(slideFromRight(duration, easing));
+
 export const slideFromRightTransition = (
   duration = 750,
   easing: EasingOption = 'cubic',
 ): TransitionBundle => ({
   normal: slideFromRight(duration, easing),
   reverse: slideFromRightReverse(duration, easing),
+  reflect: slideFromRightReflect(duration, easing),
 });
 
 // --------------------------------------------------------
