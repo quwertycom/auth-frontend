@@ -125,30 +125,29 @@ export default function RegisterStep6() {
             label="Password"
             variant="bordered"
             type={showPassword ? 'text' : 'password'}
-            className={`relative ${
+            className={`${
               errors.find((error) => error.input === 'password')
                 ? 'mb-0'
-                : 'mb-2'
+                : 'mb-6'
             }`}
-            classNames={{
-              input: 'text-md',
-              inputWrapper: 'pb-4',
-            }}
+            classNames={{ input: 'text-md' }}
             value={formData.password}
-            onFocus={() => {
-              setIsFocused(true);
-            }}
-            onBlur={() => {
-              setIsFocused(false);
-            }}
             onChange={(e) => {
-              dispatch(updateFormData({ password: e.target.value }));
+              dispatch(
+                updateFormData({
+                  password: e.target.value,
+                }),
+              );
             }}
             isRequired
-            isInvalid={!!errors.find((error) => error.input === 'password')}
+            isInvalid={
+              errors.find((error) => error.input === 'password') ? true : false
+            }
             errorMessage={
               errors.find((error) => error.input === 'password')?.message
             }
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
             endContent={
               <button
                 type="button"
@@ -171,7 +170,7 @@ export default function RegisterStep6() {
                 animate={slideTransition.reflect.enterTo}
                 exit={slideTransition.reflect.leaveTo}
                 transition={slideTransition.reflect.enterActive.transition}
-                className="absolute left-0 top-full z-50 mx-4 w-[calc(100%-2rem)]"
+                className="absolute left-0 top-[calc(100%-1rem)] z-50 mx-4 w-[calc(100%-2rem)]"
               >
                 <Card>
                   <CardBody className="bg-white/5 py-2">
@@ -222,7 +221,6 @@ export default function RegisterStep6() {
           }`}
           classNames={{ input: 'text-md' }}
           value={formData.confirmPassword}
-          isDisabled={formData.password.length < 8}
           onChange={(e) => {
             dispatch(
               updateFormData({
