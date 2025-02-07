@@ -1,6 +1,6 @@
 'use client';
 
-import { startTransition, useState } from 'react';
+import { startTransition, useState, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Button, Card, CardBody } from '@heroui/react';
 import MaterialSymbol from '@/app/components/materialSymbol';
@@ -22,12 +22,15 @@ import SideInfo from '@/app/components/register/sideInfo';
 
 export default function RegisterPage() {
   const dispatch = useAppDispatch();
-  const [step, setStep] = useState(6);
+  const [step, setStep] = useState(0);
 
   const [reverseTransition, setReverseTransition] = useState(false);
 
   const transition = centerPopTransition();
   const slideTransition = slideFromLeftTransition();
+
+  const termsCheckboxRef = useRef<HTMLInputElement>(null);
+  const dateOfBirthInputRef = useRef<HTMLDivElement>(null);
 
   const handleNext = () => {
     setReverseTransition(false);
@@ -48,7 +51,35 @@ export default function RegisterPage() {
   const handleNextStep = async () => {
     const validationResult = await dispatch(validateStep(step)).unwrap();
 
-    if (!validationResult.isValid) return;
+    if (!validationResult.isValid) {
+      if (validationResult.errors && validationResult.errors.length > 0) {
+        const firstErrorInputName = validationResult.errors[0].input;
+
+        if (firstErrorInputName === 'termsAndConditions' && step === 3) {
+          termsCheckboxRef.current?.focus();
+        } else if (firstErrorInputName === 'dateOfBirth' && step === 5) {
+          // Try to focus the month input specifically using aria-label
+          const monthInput = dateOfBirthInputRef.current?.querySelector(
+            'input[aria-label="Month"]',
+          );
+          if (monthInput) {
+            if (monthInput instanceof HTMLElement) {
+              monthInput.focus();
+            }
+          } else {
+            dateOfBirthInputRef.current?.focus(); // Fallback to focusing the DatePicker container
+          }
+        } else {
+          const inputElement = document.querySelector(
+            `input[name="${firstErrorInputName}"]`,
+          ) as HTMLInputElement;
+          if (inputElement) {
+            inputElement.focus();
+          }
+        }
+      }
+      return;
+    }
 
     setReverseTransition(false);
     startTransition(() => {
@@ -125,9 +156,17 @@ export default function RegisterPage() {
                           >
                             {step === 1 && <RegisterStep1 />}
                             {step === 2 && <RegisterStep2 />}
-                            {step === 3 && <RegisterStep3 />}
+                            {step === 3 && (
+                              <RegisterStep3
+                                termsCheckboxRef={termsCheckboxRef as React.RefObject<HTMLInputElement>}
+                              />
+                            )}
                             {step === 4 && <RegisterStep4 />}
-                            {step === 5 && <RegisterStep5 />}
+                            {step === 5 && (
+                              <RegisterStep5
+                                dateOfBirthInputRef={dateOfBirthInputRef as React.RefObject<HTMLDivElement>}
+                              />
+                            )}
                             {step === 6 && <RegisterStep6 />}
                           </motion.div>
                         </AnimatePresence>
@@ -171,6 +210,7 @@ export default function RegisterPage() {
                         <MaterialSymbol symbol="arrow_forward" size={18} />
                       }
                       onPress={handleNextStep}
+                      id="next-step-button"
                     >
                       Continue
                     </Button>

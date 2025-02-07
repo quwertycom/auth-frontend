@@ -2,11 +2,19 @@ import { Input } from '@heroui/react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/app/store/store';
 import { updateFormData } from '@/app/store/features/registerSlice';
+import { useRef, useEffect } from 'react';
 
 export default function Step2() {
   const dispatch = useDispatch();
   const formData = useSelector((state: RootState) => state.register.formData);
   const errors = useSelector((state: RootState) => state.register.errors);
+
+  const emailInputRef = useRef<HTMLInputElement>(null);
+  const phoneInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    emailInputRef.current?.focus();
+  }, []);
 
   return (
     <div className="flex h-full w-full flex-col items-stretch justify-evenly gap-6">
@@ -47,6 +55,14 @@ export default function Step2() {
                 error.input === 'email',
             )?.message
           }
+          ref={emailInputRef}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              phoneInputRef.current?.focus();
+            }
+          }}
+          name="email"
         />
         <Input
           label="Phone number"
@@ -75,6 +91,14 @@ export default function Step2() {
                 error.input === 'phone',
             )?.message
           }
+          ref={phoneInputRef}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              document.getElementById('next-step-button')?.click();
+            }
+          }}
+          name="phone"
         />
       </div>
     </div>

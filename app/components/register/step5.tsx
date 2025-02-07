@@ -4,7 +4,10 @@ import { RootState } from '@/app/store/store';
 import { updateFormData } from '@/app/store/features/registerSlice';
 import { parseDate } from '@internationalized/date';
 
-export default function RegisterStep5() {
+export default function RegisterStep5(props: {
+  dateOfBirthInputRef: React.RefObject<HTMLDivElement>;
+}) {
+  const { dateOfBirthInputRef } = props;
   const dispatch = useDispatch();
   const formData = useSelector((state: RootState) => state.register.formData);
   const errors = useSelector((state: RootState) => state.register.errors);
@@ -56,6 +59,14 @@ export default function RegisterStep5() {
           errorMessage={
             errors.find((error) => error.input === 'dateOfBirth')?.message
           }
+          ref={dateOfBirthInputRef}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              document.getElementById('next-step-button')?.click();
+            }
+          }}
+          name="dateOfBirth"
         />
         <Select
           label="Gender"
@@ -75,6 +86,13 @@ export default function RegisterStep5() {
           errorMessage={
             errors.find((error) => error.input === 'gender')?.message
           }
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              document.getElementById('next-step-button')?.click();
+            }
+          }}
+          name="gender"
         >
           {genders.map((genderOption) => (
             <SelectItem key={genderOption.key} value={genderOption.key}>

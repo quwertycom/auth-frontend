@@ -2,11 +2,19 @@ import { RootState } from '@/app/store/store';
 import { useSelector, useDispatch } from 'react-redux';
 import { updateFormData } from '@/app/store/features/registerSlice';
 import { Input } from '@heroui/react';
+import { useEffect, useRef } from 'react';
 
 export default function Step1() {
   const dispatch = useDispatch();
   const formData = useSelector((state: RootState) => state.register.formData);
   const errors = useSelector((state: RootState) => state.register.errors);
+
+  const firstNameInputRef = useRef<HTMLInputElement>(null);
+  const lastNameInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    firstNameInputRef.current?.focus();
+  }, []);
 
   return (
     <div className="flex h-full w-full flex-col items-stretch justify-around gap-6">
@@ -43,6 +51,14 @@ export default function Step1() {
                 error.input === 'firstName',
             )?.message
           }
+          ref={firstNameInputRef}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              lastNameInputRef.current?.focus();
+            }
+          }}
+          name="firstName"
         />
         <Input
           label="Last name"
@@ -68,6 +84,14 @@ export default function Step1() {
                 error.input === 'lastName',
             )?.message
           }
+          ref={lastNameInputRef}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              document.getElementById('next-step-button')?.click();
+            }
+          }}
+          name="lastName"
         />
       </div>
     </div>

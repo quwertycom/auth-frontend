@@ -3,7 +3,7 @@ import MaterialSymbol from '../materialSymbol';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/app/store/store';
 import { updateFormData } from '@/app/store/features/registerSlice';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { getPasswordStrength } from '@/app/utils/password-strength';
 import { motion, AnimatePresence } from 'framer-motion';
 import { slideFromBottomTransition } from '@/app/styles/transitions';
@@ -15,8 +15,15 @@ export default function RegisterStep6() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
-  const [confirmPasswordError, setConfirmPasswordError] = useState<string | undefined>(undefined);
+  const [confirmPasswordError, setConfirmPasswordError] = useState<
+    string | undefined
+  >(undefined);
 
+  const passwordInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    passwordInputRef.current?.focus();
+  }, []);
 
   const passwordStrength = getPasswordStrength(formData.password);
 
@@ -148,6 +155,7 @@ export default function RegisterStep6() {
             errorMessage={
               errors.find((error) => error.input === 'password')?.message
             }
+            ref={passwordInputRef}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
             endContent={
@@ -163,6 +171,15 @@ export default function RegisterStep6() {
                 />
               </button>
             }
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                document
+                  .querySelector<HTMLInputElement>('input[name="confirmPassword"]')
+                  ?.focus();
+              }
+            }}
+            name="password"
           />
           <AnimatePresence mode="wait" initial={false}>
             {isFocused && (
@@ -216,11 +233,7 @@ export default function RegisterStep6() {
           label="Confirm password"
           variant="bordered"
           type={showConfirmPassword ? 'text' : 'password'}
-          className={`${
-            confirmPasswordError
-              ? 'mb-0'
-              : 'mb-6'
-          }`}
+          className={`${confirmPasswordError ? 'mb-0' : 'mb-6'}`}
           classNames={{ input: 'text-md' }}
           value={formData.confirmPassword}
           onChange={(e) => {
@@ -234,7 +247,10 @@ export default function RegisterStep6() {
           isInvalid={!!confirmPasswordError}
           errorMessage={confirmPasswordError}
           onBlur={() => {
-            if (formData.password.length > 0 && formData.password !== formData.confirmPassword) {
+            if (
+              formData.password.length > 0 &&
+              formData.password !== formData.confirmPassword
+            ) {
               setConfirmPasswordError('Passwords do not match');
             } else {
               setConfirmPasswordError(undefined);
@@ -253,6 +269,13 @@ export default function RegisterStep6() {
               />
             </button>
           }
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              document.getElementById('next-step-button')?.click();
+            }
+          }}
+          name="confirmPassword"
         />
       </div>
     </div>

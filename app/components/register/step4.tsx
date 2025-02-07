@@ -3,11 +3,18 @@ import { Input } from '@heroui/react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/app/store/store';
 import MaterialSymbol from '@/app/components/materialSymbol';
+import { useRef, useEffect } from 'react';
 
 export default function Step4() {
   const dispatch = useDispatch();
   const formData = useSelector((state: RootState) => state.register.formData);
   const errors = useSelector((state: RootState) => state.register.errors);
+
+  const usernameInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    usernameInputRef.current?.focus();
+  }, []);
 
   return (
     <div className="flex h-full w-full flex-col items-stretch justify-evenly gap-6">
@@ -40,6 +47,14 @@ export default function Step4() {
           errorMessage={
             errors.find((error) => error.input === 'username')?.message
           }
+          ref={usernameInputRef}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              document.getElementById('next-step-button')?.click();
+            }
+          }}
+          name="username"
         />
         <div className="flex h-12 w-full flex-row items-start justify-start">
           <div className="flex flex-row items-center justify-start gap-2">

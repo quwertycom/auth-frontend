@@ -3,7 +3,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/app/store/store';
 import { updateFormData } from '@/app/store/features/registerSlice';
 
-export default function Step3() {
+export default function Step3(props: {
+  termsCheckboxRef: React.RefObject<HTMLInputElement>;
+}) {
+  const { termsCheckboxRef } = props;
   const dispatch = useDispatch();
   const formData = useSelector((state: RootState) => state.register.formData);
   const errors = useSelector((state: RootState) => state.register.errors);
@@ -35,6 +38,14 @@ export default function Step3() {
             );
           }}
           isSelected={formData.termsAndConditions}
+          ref={termsCheckboxRef}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              document.getElementById('next-step-button')?.click();
+            }
+          }}
+          name="termsAndConditions"
         >
           I agree to the terms, conditions and privacy policy
         </Checkbox>
