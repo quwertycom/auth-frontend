@@ -15,6 +15,8 @@ export default function RegisterStep6() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  const [confirmPasswordError, setConfirmPasswordError] = useState<string | undefined>(undefined);
+
 
   const passwordStrength = getPasswordStrength(formData.password);
 
@@ -215,7 +217,7 @@ export default function RegisterStep6() {
           variant="bordered"
           type={showConfirmPassword ? 'text' : 'password'}
           className={`${
-            errors.find((error) => error.input === 'confirmPassword')
+            confirmPasswordError
               ? 'mb-0'
               : 'mb-6'
           }`}
@@ -229,14 +231,15 @@ export default function RegisterStep6() {
             );
           }}
           isRequired
-          isInvalid={
-            errors.find((error) => error.input === 'confirmPassword')
-              ? true
-              : false
-          }
-          errorMessage={
-            errors.find((error) => error.input === 'confirmPassword')?.message
-          }
+          isInvalid={!!confirmPasswordError}
+          errorMessage={confirmPasswordError}
+          onBlur={() => {
+            if (formData.password.length > 0 && formData.password !== formData.confirmPassword) {
+              setConfirmPasswordError('Passwords do not match');
+            } else {
+              setConfirmPasswordError(undefined);
+            }
+          }}
           endContent={
             <button
               type="button"
