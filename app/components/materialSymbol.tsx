@@ -6,7 +6,7 @@ interface MaterialSymbolProps {
   fill?: boolean;
   weight?: 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
   grade?: -25 | 0 | 200;
-  size?: 18 | 24 | 36 | 48 | number;
+  size?: number | string;
   color?: string;
   className?: string;
   style?: React.CSSProperties;
@@ -27,14 +27,14 @@ export default function MaterialSymbol({
     .filter(Boolean)
     .join(' ');
 
-  const styles = {
+  const styles: React.CSSProperties = {
     fontVariationSettings: `
             'FILL' ${fill ? 1 : 0},
             'wght' ${weight || 400},
             'GRAD' ${grade || 0},
-            'opsz' ${size || 24}
+            'opsz' ${typeof size === 'number' ? size : 24}
         `,
-    fontSize: size ? `${size}px` : undefined,
+    fontSize: typeof size === 'number' ? `${size}px` : size,
     color: color || undefined,
     ...style,
   };
