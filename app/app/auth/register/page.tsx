@@ -158,13 +158,17 @@ export default function RegisterPage() {
                             {step === 2 && <RegisterStep2 />}
                             {step === 3 && (
                               <RegisterStep3
-                                termsCheckboxRef={termsCheckboxRef as React.RefObject<HTMLInputElement>}
+                                termsCheckboxRef={
+                                  termsCheckboxRef as React.RefObject<HTMLInputElement>
+                                }
                               />
                             )}
                             {step === 4 && <RegisterStep4 />}
                             {step === 5 && (
                               <RegisterStep5
-                                dateOfBirthInputRef={dateOfBirthInputRef as React.RefObject<HTMLDivElement>}
+                                dateOfBirthInputRef={
+                                  dateOfBirthInputRef as React.RefObject<HTMLDivElement>
+                                }
                               />
                             )}
                             {step === 6 && <RegisterStep6 />}

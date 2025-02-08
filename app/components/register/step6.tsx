@@ -175,7 +175,9 @@ export default function RegisterStep6() {
               if (e.key === 'Enter') {
                 e.preventDefault();
                 document
-                  .querySelector<HTMLInputElement>('input[name="confirmPassword"]')
+                  .querySelector<HTMLInputElement>(
+                    'input[name="confirmPassword"]',
+                  )
                   ?.focus();
               }
             }}
