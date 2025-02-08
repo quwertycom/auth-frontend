@@ -12,7 +12,10 @@ import {
 import MaterialSymbol from '@/app/components/materialSymbol';
 import { useState } from 'react';
 import TransitionLink from '@/app/components/transitionLink';
+import { useNavigateWithAnimation } from '@/app/utils/NavigateWithAnimation';
 export default function ForgotPassword() {
+  const navigate = useNavigateWithAnimation();
+
   const [username, setUsername] = useState('');
 
   return (
@@ -32,7 +35,7 @@ export default function ForgotPassword() {
           />
         </CardBody>
         <CardFooter>
-          <Button color="primary" variant="flat" className="w-full">
+          <Button color="primary" variant="flat" className="w-full" onClick={() => navigate({href: '/app/auth/forgot-password/verify'})}>
             Send reset link
           </Button>
         </CardFooter>
