@@ -1,11 +1,19 @@
 'use client';
 
-import { Button, Card, CardBody, CardFooter, CardHeader, Divider, Input } from "@heroui/react";
-import MaterialSymbol from "@/app/components/materialSymbol";
-import { useState } from "react";
-import TransitionLink from "@/app/components/transitionLink";
+import {
+  Button,
+  Card,
+  CardBody,
+  CardFooter,
+  CardHeader,
+  Divider,
+  Input,
+} from '@heroui/react';
+import MaterialSymbol from '@/app/components/materialSymbol';
+import { useState } from 'react';
+import TransitionLink from '@/app/components/transitionLink';
 export default function ForgotPassword() {
-  const [username, setUsername] = useState("");
+  const [username, setUsername] = useState('');
 
   return (
     <div className="flex h-screen w-screen flex-col items-center justify-center gap-8">
@@ -29,11 +37,13 @@ export default function ForgotPassword() {
           </Button>
         </CardFooter>
       </Card>
-      
+
       <Card>
         <CardBody className="flex flex-row items-center gap-2">
           <span>Need more help?</span>
-          <TransitionLink href="/app/auth/login">Contact support</TransitionLink>
+          <TransitionLink href="/app/auth/login">
+            Contact support
+          </TransitionLink>
         </CardBody>
       </Card>
     </div>
