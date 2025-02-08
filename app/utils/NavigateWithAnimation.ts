@@ -1,90 +1,139 @@
 import { useRouter } from 'next/navigation';
+import {
+  pagePop,
+  pagePopDown,
+  pageSlideDown,
+  pageSlideUp,
+} from '@/app/styles/transitions';
 
 interface NavigateWithAnimationProps {
   href: string;
-  animation?: 'pop' | 'slide-down' | 'slide-up';
+  animation?: 'pop' | 'slide-down' | 'slide-up' | 'pop-down' | 'pop-up';
+  back?: boolean;
   duration?: number;
-  delayBetweenPages?: number;
   onComplete?: () => void;
 }
 
+interface TransitionStyle {
+  transition: {
+    duration: number;
+    ease: number[];
+    type?: string;
+  };
+}
 export function useNavigateWithAnimation() {
   const router = useRouter();
+  const controller = new AbortController();
 
   return ({
     href,
     animation = 'pop',
-    duration = 300,
-    delayBetweenPages = 100,
+    back = false,
+    duration = 600,
     onComplete,
   }: NavigateWithAnimationProps) => {
     const main = document.querySelector('main');
-    const halfDuration = duration / 2;
-    const animationPrefix = `page-${animation}`;
+    if (!main) return;
 
-    // Apply duration directly to the element's style
-    if (main) {
-      main.style.transitionDuration = `${halfDuration}ms`;
-    }
+    // Abort any ongoing transitions
+    if (controller.signal.aborted) return;
+    controller.abort();
 
-    // Start leave animation
-    main?.classList.add(`${animationPrefix}-leave-active`);
-    main?.classList.add(`${animationPrefix}-leave-from`);
+    // Create wrapper for the temporary container to handle stacking context
+    const tempWrapper = document.createElement('div');
+    tempWrapper.style.position = 'fixed';
+    tempWrapper.style.top = '0';
+    tempWrapper.style.left = '0';
+    tempWrapper.style.width = '100%';
+    tempWrapper.style.height = '100%';
+    tempWrapper.style.zIndex = '100';
+    tempWrapper.style.pointerEvents = 'none';
+    tempWrapper.style.isolation = 'isolate'; // Create new stacking context
 
-    // Force reflow to trigger animation
-    void main?.offsetHeight;
+    // Create temporary container for previous page
+    const tempContainer = document.createElement('div');
+    tempContainer.style.position = 'absolute';
+    tempContainer.style.top = '0';
+    tempContainer.style.left = '0';
+    tempContainer.style.width = '100%';
+    tempContainer.style.height = '100%';
+    tempContainer.style.backgroundColor = getComputedStyle(
+      document.body,
+    ).backgroundColor;
 
-    // Start leave transition
-    main?.classList.remove(`${animationPrefix}-leave-from`);
-    main?.classList.add(`${animationPrefix}-leave-to`);
+    // Get animation styles
+    const animationType =
+      animation === 'slide-down'
+        ? pageSlideDown(duration)
+        : animation === 'slide-up'
+          ? pageSlideUp(duration)
+          : animation === 'pop'
+            ? pagePop(duration)
+            : animation === 'pop-down'
+              ? pagePopDown(duration)
+              : pagePop(duration);
 
-    setTimeout(() => {
-      // Ensure minimum 50ms delay between pages
-      const effectiveDelay = delayBetweenPages < 50 ? 50 : delayBetweenPages;
+    const animationStyles = back ? animationType.reverse : animationType;
 
-      // Add delay before navigation
-      router.push(href);
-      setTimeout(() => {
-        // Remove transition duration before removing leave classes
-        if (main) {
-          main.style.transitionDuration = '0ms';
-        }
+    // Setup transition properties
+    const applyTransition = (element: HTMLElement, styles: TransitionStyle) => {
+      element.style.transition = `
+        all ${styles.transition.duration}s
+        cubic-bezier(${styles.transition.ease.join(', ')})
+      `;
+    };
 
-        // Wait for the new page to load before starting enter animation
-        setTimeout(() => {
-          // Add another delay before starting enter animation
-          setTimeout(() => {
-            main?.classList.add(`${animationPrefix}-enter-from`);
-            // Clean up leave animation
-            main?.classList.remove(`${animationPrefix}-leave-active`);
-            main?.classList.remove(`${animationPrefix}-leave-to`);
-            // Start enter animation
-            main?.classList.add(`${animationPrefix}-enter-active`);
+    // Clone current page content to temp container
+    tempContainer.appendChild(main.cloneNode(true));
+    tempWrapper.appendChild(tempContainer);
+    document.body.appendChild(tempWrapper);
 
-            // Force reflow to trigger animation
-            void main?.offsetHeight;
+    // Hide original main content immediately
+    Object.assign(main.style, animationStyles.enterFrom);
 
-            // add transition duration
-            if (main) {
-              main.style.transitionDuration = `${halfDuration}ms`;
-            }
+    // Navigate immediately after setting up temporary container
+    router.push(href);
 
-            // Start enter transition
-            main?.classList.remove(`${animationPrefix}-enter-from`);
-            main?.classList.add(`${animationPrefix}-enter-to`);
+    // Start leave animation for previous page (temp container)
+    Object.assign(tempContainer.style, animationStyles.leaveFrom);
 
-            // Clean up enter animation after delay
-            setTimeout(() => {
-              main?.classList.remove(`${animationPrefix}-enter-active`);
-              main?.classList.remove(`${animationPrefix}-enter-to`);
+    requestAnimationFrame(() => {
+      applyTransition(tempContainer, animationStyles.leaveActive);
+      Object.assign(tempContainer.style, animationStyles.leaveTo);
 
-              if (onComplete) {
-                onComplete();
-              }
-            }, halfDuration);
-          }, effectiveDelay);
-        }, 0); // Small delay to ensure new page is ready
-      }, effectiveDelay);
-    }, halfDuration);
+      const finishLeave = () => {
+        tempContainer.removeEventListener('transitionend', finishLeave);
+
+        // Wait for new page content to be loaded after leave animation completes
+        const checkContent = setInterval(() => {
+          if (main.children.length > 0) {
+            clearInterval(checkContent);
+
+            // Start enter animation for new page with slight delay
+            requestAnimationFrame(() => {
+              main.classList.add('page-enter-active');
+              applyTransition(main, animationStyles.enterActive);
+              Object.assign(main.style, animationStyles.enterTo);
+
+              const finishEnter = () => {
+                main.removeEventListener('transitionend', finishEnter);
+                main.classList.remove('page-enter-active');
+                main.style.transition = '';
+                main.style.position = '';
+                main.style.zIndex = '';
+                tempWrapper.remove();
+                onComplete?.();
+              };
+
+              main.addEventListener('transitionend', finishEnter);
+            });
+          }
+        }, 50);
+
+        setTimeout(() => clearInterval(checkContent), 5000);
+      };
+
+      tempContainer.addEventListener('transitionend', finishLeave);
+    });
   };
 }
