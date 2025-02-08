@@ -29,7 +29,7 @@ export function useNavigateWithAnimation() {
     href,
     animation = 'pop',
     back = false,
-    duration = 600,
+    duration = 300,
     onComplete,
   }: NavigateWithAnimationProps) => {
     const main = document.querySelector('main');
