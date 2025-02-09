@@ -14,7 +14,7 @@ import MaterialSymbol from '@/app/components/materialSymbol';
 import { useState, useRef } from 'react';
 import TransitionLink from '@/app/components/transitionLink';
 import { motion, AnimatePresence } from 'framer-motion';
-import { centerPopEmphasisTransition } from '@/app/styles/transitions';
+import { centerPopTransition } from '@/app/styles/transitions';
 import { useNavigateWithAnimation } from '@/app/utils/NavigateWithAnimation';
 
 export default function ForgotPassword() {
@@ -22,7 +22,7 @@ export default function ForgotPassword() {
 
   const [username, setUsername] = useState('');
 
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('error');
   const nodeRef = useRef(null);
 
   const handleSubmit = () => {
@@ -32,7 +32,7 @@ export default function ForgotPassword() {
     }, 3000);
   }
 
-  const transition = centerPopEmphasisTransition();
+  const transition = centerPopTransition();
 
   const transitionConfig = {
     initial: {
@@ -54,7 +54,7 @@ export default function ForgotPassword() {
 
   return (
     <div className="relative h-screen w-screen">
-      <div className={`relative flex h-screen w-screen flex-col items-center justify-center gap-8 ${status !== "idle" ? "scale-95 opacity-50 blur-sm" : "scale-100 opacity-100 blur-0"} transition-all duration-[350ms] ${status === "loading" ? "ease-out-cubic" : "ease-in-cubic"}`}>
+      <div className={`relative flex h-screen w-screen flex-col items-center justify-center gap-8 ${status !== "idle" ? "scale-95 opacity-50 blur-sm" : "scale-100 opacity-100 blur-0"} transition-all duration-[350ms] ease-in-out-cubic`}>
         <Card className="w-full max-w-md">
           <CardHeader className="flex flex-row items-center gap-2">
             <MaterialSymbol symbol="help_outline" size={32} />
@@ -130,10 +130,24 @@ export default function ForgotPassword() {
                   </CardFooter>
                 </Card>
               ) : status === 'error' ? (
-                <Card>
+                <Card className='w-full max-w-xs'>
+                  <CardHeader className='flex flex-col items-center gap-4 text-error pt-8 text-danger'>
+                    <MaterialSymbol symbol="error" size={128} fill/>
+                    <span className='text-3xl font-bold'>Error!</span>
+                  </CardHeader>
                   <CardBody>
-                    Error!
+                    <p className='text-center text-sm'>Something went wrong while trying to sent reset link, please try again later. if issue persists, please{' '}
+                      <TransitionLink href="/app/auth/login" className="text-sm">
+                        contact our support
+                      </TransitionLink>
+                      .
+                    </p>
                   </CardBody>
+                  <CardFooter>
+                    <Button color="primary" variant="flat" className="w-full" onPress={() => setStatus('idle')}>
+                      Close
+                    </Button>
+                  </CardFooter>
                 </Card>
               ) : null}
             </motion.div>
