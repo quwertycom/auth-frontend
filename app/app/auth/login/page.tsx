@@ -8,7 +8,6 @@ import {
   Input,
   Button,
   Divider,
-  Link,
   Spinner,
 } from '@heroui/react';
 import { useState, useRef } from 'react';
@@ -121,7 +120,9 @@ export default function LoginPage() {
               }}
               onChange={(e) => setPassword(e.target.value)}
             />
-            <Link href="/app/auth/forgot-password">Forgot Password?</Link>
+            <TransitionLink href="/app/auth/forgot-password">
+              Forgot Password?
+            </TransitionLink>
           </CardBody>
           <CardBody>
             <div className="relative flex w-full items-center justify-center">
