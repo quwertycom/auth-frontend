@@ -7,8 +7,8 @@ import {
   NavbarContent,
   NavbarItem,
 } from '@heroui/react';
-import MaterialSymbol from './components/materialSymbol';
-import TransitionLink from './components/transitionLink';
+import MaterialSymbol from './components/common/materialSymbol';
+import TransitionLink from './components/common/transitionLink';
 import { useNavigateWithAnimation } from './utils/NavigateWithAnimation';
 
 export default function Home() {

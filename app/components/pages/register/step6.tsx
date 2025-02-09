@@ -1,5 +1,5 @@
 import { Card, CardBody, Divider, Input } from '@heroui/react';
-import MaterialSymbol from '../materialSymbol';
+import MaterialSymbol from '../../common/materialSymbol';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/app/store/store';
 import { updateFormData } from '@/app/store/features/registerSlice';

@@ -13,7 +13,7 @@ import {
 import { useState, useRef } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import { useNavigateWithAnimation } from '@/app/utils/NavigateWithAnimation';
-import TransitionLink from '@/app/components/transitionLink';
+import TransitionLink from '@/app/components/common/transitionLink';
 export default function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');

@@ -3,22 +3,22 @@
 import { startTransition, useState, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Button, Card, CardBody } from '@heroui/react';
-import MaterialSymbol from '@/app/components/materialSymbol';
+import MaterialSymbol from '@/app/components/common/materialSymbol';
 import {
   centerPopTransition,
   slideFromLeftTransition,
 } from '@/app/styles/transitions';
 import { useAppDispatch } from '@/app/store/hooks';
 import { setErrors, validateStep } from '@/app/store/features/registerSlice';
-import RegisterStep0 from '@/app/components/register/step0';
-import RegisterStep1 from '@/app/components/register/step1';
-import RegisterStep2 from '@/app/components/register/step2';
-import RegisterStep3 from '@/app/components/register/step3';
-import RegisterStep4 from '@/app/components/register/step4';
-import RegisterStep5 from '@/app/components/register/step5';
-import RegisterStep6 from '@/app/components/register/step6';
-import RegisterStep7 from '@/app/components/register/step7';
-import SideInfo from '@/app/components/register/sideInfo';
+import RegisterStep0 from '@/app/components/pages/register/step0';
+import RegisterStep1 from '@/app/components/pages/register/step1';
+import RegisterStep2 from '@/app/components/pages/register/step2';
+import RegisterStep3 from '@/app/components/pages/register/step3';
+import RegisterStep4 from '@/app/components/pages/register/step4';
+import RegisterStep5 from '@/app/components/pages/register/step5';
+import RegisterStep6 from '@/app/components/pages/register/step6';
+import RegisterStep7 from '@/app/components/pages/register/step7';
+import SideInfo from '@/app/components/pages/register/sideInfo';
 
 export default function RegisterPage() {
   const dispatch = useAppDispatch();

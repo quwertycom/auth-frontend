@@ -1,4 +1,4 @@
-import MaterialSymbol from '../common/materialSymbol';
+import MaterialSymbol from '../../common/materialSymbol';
 
 export default function SideInfo(props: { step: number }) {
   const { step } = props;

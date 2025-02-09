@@ -10,9 +10,9 @@ import {
   Input,
   Spinner,
 } from '@heroui/react';
-import MaterialSymbol from '@/app/components/materialSymbol';
+import MaterialSymbol from '@/app/components/common/materialSymbol';
 import { useState, useRef } from 'react';
-import TransitionLink from '@/app/components/transitionLink';
+import TransitionLink from '@/app/components/common/transitionLink';
 import { motion, AnimatePresence } from 'framer-motion';
 import { centerPopTransition } from '@/app/styles/transitions';
 import { useNavigateWithAnimation } from '@/app/utils/NavigateWithAnimation';

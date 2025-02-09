@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '../../utils/test-utils';
-import MaterialSymbol from '@/app/components/materialSymbol';
+import MaterialSymbol from '@/app/components/common/materialSymbol';
 
 describe('MaterialSymbol Integration', () => {
   it('works within a button component', () => {

@@ -1,6 +1,6 @@
 import { Button, Card, CardBody } from '@heroui/react';
-import MaterialSymbol from '../materialSymbol';
-import TransitionLink from '../transitionLink';
+import MaterialSymbol from '../../common/materialSymbol';
+import TransitionLink from '../../common/transitionLink';
 
 export default function RegisterStep0(props: { handleNext: () => void }) {
   const { handleNext } = props;

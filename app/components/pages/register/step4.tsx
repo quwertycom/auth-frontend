@@ -2,7 +2,7 @@ import { updateFormData } from '@/app/store/features/registerSlice';
 import { Input } from '@heroui/react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/app/store/store';
-import MaterialSymbol from '@/app/components/materialSymbol';
+import MaterialSymbol from '@/app/components/common/materialSymbol';
 import { useRef, useEffect } from 'react';
 
 export default function Step4() {
