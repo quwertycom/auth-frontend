@@ -16,6 +16,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { centerPopTransition } from '@/app/styles/transitions';
 import TransitionLink from '@/app/components/common/transitionLink';
 import { useNavigateWithAnimation } from '@/app/utils/NavigateWithAnimation';
+import PasswordStrength from '@/app/components/features/passwordStrength/passwordStrength';
 
 export default function ForgotPasswordReset() {
   const [password, setPassword] = useState('');
@@ -25,6 +26,8 @@ export default function ForgotPasswordReset() {
   >('idle');
   const nodeRef = useRef(null);
   const navigate = useNavigateWithAnimation();
+  const [isFocused, setIsFocused] = useState(false);
+  const passwordInputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = () => {
     setStatus('loading');
@@ -67,12 +70,22 @@ export default function ForgotPasswordReset() {
                 Make it strong and easy to remember.
               </p>
             </div>
-            <Input
-              label="New password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+            <div className="relative w-full">
+              <Input
+                label="New password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
+                ref={passwordInputRef}
+              />
+              <PasswordStrength
+                isFocused={isFocused}
+                password={password}
+                hideCharacterCount
+              />
+            </div>
             <Input
               label="Confirm password"
               type="password"

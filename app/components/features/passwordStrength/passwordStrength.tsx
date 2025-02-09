@@ -6,11 +6,13 @@ import { getPasswordStrength } from '@/app/utils/password-strength';
 interface PasswordStrengthProps {
   password: string;
   isFocused: boolean;
+  hideCharacterCount?: boolean;
 }
 
 export default function PasswordStrength({
   password,
   isFocused,
+  hideCharacterCount = false,
 }: PasswordStrengthProps) {
   const slideTransition = slideFromBottomTransition(undefined, 'cubic');
   const passwordStrength = getPasswordStrength(password);
@@ -103,7 +105,7 @@ export default function PasswordStrength({
           animate={slideTransition.reflect.enterTo}
           exit={slideTransition.reflect.leaveTo}
           transition={slideTransition.reflect.enterActive.transition}
-          className="absolute left-0 top-[calc(100%-1rem)] z-50 mx-4 w-[calc(100%-2rem)]"
+          className="absolute left-0 top-[calc(100%+0.5rem)] z-50 w-full"
         >
           <Card>
             <CardBody className="bg-white/5 py-2">
@@ -131,7 +133,7 @@ export default function PasswordStrength({
               <p className={`text-sm ${getTextColor()}`}>
                 {getMissingRequirementsText()}
               </p>
-              {password.length < 8 && (
+              {!hideCharacterCount && (
                 <p className="text-xs text-neutral-400">
                   {password.length} / 8
                 </p>
