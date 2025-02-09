@@ -32,7 +32,10 @@ export default function RegisterStep6() {
         </p>
       </div>
       <div className="flex w-full flex-col items-stretch justify-center gap-4">
-        <div className="relative w-full">
+        <PasswordStrength
+          isFocused={isFocused}
+          password={formData.password}
+        >
           <Input
             label="Password"
             variant="bordered"
@@ -86,11 +89,7 @@ export default function RegisterStep6() {
             }}
             name="password"
           />
-          <PasswordStrength
-            isFocused={isFocused}
-            password={formData.password}
-          />
-        </div>
+        </PasswordStrength>
 
         <Input
           label="Confirm password"

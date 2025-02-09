@@ -2,17 +2,20 @@ import { Card, CardBody, Divider } from '@heroui/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { slideFromBottomTransition } from '@/app/styles/transitions';
 import { getPasswordStrength } from '@/app/utils/password-strength';
+import React, { ReactNode } from 'react';
 
 interface PasswordStrengthProps {
   password: string;
   isFocused: boolean;
   hideCharacterCount?: boolean;
+  children: ReactNode;
 }
 
 export default function PasswordStrength({
   password,
   isFocused,
   hideCharacterCount = false,
+  children,
 }: PasswordStrengthProps) {
   const slideTransition = slideFromBottomTransition(undefined, 'cubic');
   const passwordStrength = getPasswordStrength(password);
@@ -50,7 +53,7 @@ export default function PasswordStrength({
     if (missing.length === 0) {
       if (password.length < 12 && !/[^A-Za-z0-9]/.test(password)) {
         return 'Your password is okay, but can be enhanced.';
-      } else if (password.length >= 12 && !/[^A-Za-z0-9]/.test(password)) {
+      } else if (password.length >= 12 && !/[A-Za-z0-9]/.test(password)) {
         return 'Your password strength is good.';
       } else if (password.length < 12 && /[^A-Za-z0-9]/.test(password)) {
         return 'Your password strength is good.';
@@ -97,51 +100,54 @@ export default function PasswordStrength({
   };
 
   return (
-    <AnimatePresence mode="wait" initial={false}>
-      {isFocused && (
-        <motion.div
-          key="passwordStrengthCard"
-          initial={slideTransition.reflect.enterFrom}
-          animate={slideTransition.reflect.enterTo}
-          exit={slideTransition.reflect.leaveTo}
-          transition={slideTransition.reflect.enterActive.transition}
-          className="absolute left-0 top-[calc(100%+0.5rem)] z-50 w-full"
-        >
-          <Card>
-            <CardBody className="bg-white/5 py-2">
-              <div className="progress h-2 w-full rounded-full bg-white/10">
-                <div
-                  className={`h-full rounded-full transition-all duration-300 ease-in-out-quart ${
-                    passwordStrength === 0
-                      ? 'bg-red-700'
-                      : passwordStrength === 1
-                        ? 'bg-red-500'
-                        : passwordStrength === 2
-                          ? 'bg-orange-500'
-                          : passwordStrength === 3
-                            ? 'bg-yellow-500'
-                            : passwordStrength === 4
-                              ? 'bg-green-500'
-                              : 'bg-green-700'
-                  }`}
-                  style={{ width: `${(passwordStrength / 5) * 100}%` }}
-                ></div>
-              </div>
-            </CardBody>
-            <Divider />
-            <CardBody className="flex flex-row items-center justify-between bg-white/5 py-2">
-              <p className={`text-sm ${getTextColor()}`}>
-                {getMissingRequirementsText()}
-              </p>
-              {!hideCharacterCount && (
-                <p className="text-xs text-neutral-400">
-                  {password.length} / 8
+    <div className="relative w-full">
+      {children}
+      <AnimatePresence mode="wait" initial={false}>
+        {isFocused && (
+          <motion.div
+            key="passwordStrengthCard"
+            initial={slideTransition.reflect.enterFrom}
+            animate={slideTransition.reflect.enterTo}
+            exit={slideTransition.reflect.leaveTo}
+            transition={slideTransition.reflect.enterActive.transition}
+            className="z-50 w-full mt-2 absolute left-0"
+          >
+            <Card>
+              <CardBody className="bg-white/5 py-2">
+                <div className="progress h-2 w-full rounded-full bg-white/10">
+                  <div
+                    className={`h-full rounded-full transition-all duration-300 ease-in-out-quart ${
+                      passwordStrength === 0
+                        ? 'bg-red-700'
+                        : passwordStrength === 1
+                          ? 'bg-red-500'
+                          : passwordStrength === 2
+                            ? 'bg-orange-500'
+                            : passwordStrength === 3
+                              ? 'bg-yellow-500'
+                              : passwordStrength === 4
+                                ? 'bg-green-500'
+                                : 'bg-green-700'
+                    }`}
+                    style={{ width: `${(passwordStrength / 5) * 100}%` }}
+                  ></div>
+                </div>
+              </CardBody>
+              <Divider />
+              <CardBody className="flex flex-row items-center justify-between bg-white/5 py-2">
+                <p className={`text-sm ${getTextColor()}`}>
+                  {getMissingRequirementsText()}
                 </p>
-              )}
-            </CardBody>
-          </Card>
-        </motion.div>
-      )}
-    </AnimatePresence>
+                {!hideCharacterCount && (
+                  <p className="text-xs text-neutral-400">
+                    {password.length} / 8
+                  </p>
+                )}
+              </CardBody>
+            </Card>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }

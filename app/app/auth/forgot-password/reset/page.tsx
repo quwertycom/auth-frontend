@@ -63,14 +63,18 @@ export default function ForgotPasswordReset() {
             <span className="text-2xl font-bold">Reset password</span>
           </CardHeader>
           <Divider />
-          <CardBody className="flex flex-col gap-4">
+          <CardBody className="flex flex-col gap-4 overflow-hidden">
             <div className="flex flex-col">
               <p>Please enter new password below.</p>
               <p className="text-sm text-neutral-500">
                 Make it strong and easy to remember.
               </p>
             </div>
-            <div className="relative w-full">
+            <PasswordStrength
+              isFocused={isFocused}
+              password={password}
+              hideCharacterCount
+            >
               <Input
                 label="New password"
                 type="password"
@@ -80,12 +84,7 @@ export default function ForgotPasswordReset() {
                 onBlur={() => setIsFocused(false)}
                 ref={passwordInputRef}
               />
-              <PasswordStrength
-                isFocused={isFocused}
-                password={password}
-                hideCharacterCount
-              />
-            </div>
+            </PasswordStrength>
             <Input
               label="Confirm password"
               type="password"
