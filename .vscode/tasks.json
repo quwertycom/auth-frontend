@@ -2,7 +2,7 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "🚀 Run Development (Docker)",
+      "label": "🚀 Run Dev (Docker)",
       "type": "shell",
       "command": "if [ -f .env ]; then docker compose -f docker-compose.dev.yml --env-file .env up dev --build; else docker compose -f docker-compose.dev.yml up dev --build; fi",
       "problemMatcher": [],
@@ -12,7 +12,7 @@
       }
     },
     {
-      "label": "🚀 Run Development (Local)",
+      "label": "🚀 Run Dev (Local)",
       "type": "shell",
       "command": "npm run dev",
       "problemMatcher": [],
@@ -253,6 +253,28 @@
       "label": "🔍 Lint Code (Fix)",
       "type": "shell",
       "command": "npm run lint:fix",
+      "problemMatcher": ["$eslint-stylish"],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "✨ Run Lint & Format",
+      "type": "shell",
+      "command": "npm run lint && npm run format",
+      "problemMatcher": ["$eslint-stylish"],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "✨ Run Lint & Format (Fix)",
+      "type": "shell",
+      "command": "npm run lint:fix && npm run format:fix",
       "problemMatcher": ["$eslint-stylish"],
       "presentation": {
         "reveal": "always",

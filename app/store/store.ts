@@ -1,40 +1,32 @@
 import { configureStore } from '@reduxjs/toolkit';
-import authReducer, { AuthState } from './features/authSlice';
+import { combineReducers } from 'redux';
+import { persistReducer, persistStore } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
+import authReducer from './features/authSlice';
+import registerReducer from './features/registerSlice';
 
-// Load state from localStorage
-const loadState = () => {
-  try {
-    const serializedState = localStorage.getItem('reduxState');
-    if (serializedState === null) {
-      return undefined;
-    }
-    return JSON.parse(serializedState);
-  } catch {
-    return undefined;
-  }
+const authPersistConfig = {
+  key: 'auth',
+  storage,
+  whitelist: ['user', 'tokens'],
 };
 
-// Save state to localStorage
-const saveState = (state: RootState) => {
-  try {
-    const serializedState = JSON.stringify(state);
-    localStorage.setItem('reduxState', serializedState);
-  } catch {
-    // Ignore write errors
-  }
-};
-
-export const store = configureStore<{ auth: AuthState }>({
-  reducer: {
-    auth: authReducer,
-  },
-  preloadedState: loadState(),
+const rootReducer = combineReducers({
+  auth: persistReducer(authPersistConfig, authReducer),
+  register: registerReducer,
+  // Add loginSlice later
 });
 
-// Subscribe to store changes
-store.subscribe(() => {
-  saveState(store.getState());
+export const store = configureStore({
+  reducer: rootReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: ['persist/PERSIST'],
+      },
+    }),
 });
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
+export const persistor = persistStore(store);
