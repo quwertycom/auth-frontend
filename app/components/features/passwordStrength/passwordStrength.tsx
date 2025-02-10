@@ -104,6 +104,11 @@ export default function PasswordStrength({
     }
 
     const lastMissing = missingTexts.pop();
+
+    if (!lastMissing) {
+      return 'Your password strength is good.';
+    }
+
     return `You need: ${missingTexts.join(', ')}, and ${lastMissing}.`; // Changed to "You need:" and used modified missing texts
   };
 
