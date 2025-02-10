@@ -1,6 +1,9 @@
-import { Card, Divider } from '@heroui/react';
+import { Card, CardBody, Divider } from '@heroui/react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { slideFromTopTransition } from '@/app/styles/transitions';
+import {
+  slideFromBottomTransition,
+  slideFromLeftTransition,
+} from '@/app/styles/transitions';
 import { getPasswordStrength } from '@/app/utils/password-strength';
 import React, { ReactNode, useRef, useState, useLayoutEffect } from 'react';
 
@@ -17,7 +20,11 @@ export default function PasswordStrength({
   hideCharacterCount = false,
   children,
 }: PasswordStrengthProps) {
-  const slideTransition = slideFromTopTransition(600, 'quint');
+  const slideFromBottomReflect = slideFromBottomTransition(
+    600,
+    'quint',
+  ).reflect;
+  const slideFromLeftReflect = slideFromLeftTransition(600, 'quint').reflect;
   const passwordStrength = getPasswordStrength(password);
   const [contentHeight, setContentHeight] = useState(0);
   const [childrenHeight, setChildrenHeight] = useState(0);
@@ -37,8 +44,6 @@ export default function PasswordStrength({
       setContentHeight(0);
     }
   }, [isFocused, childrenHeight, contentHeight]);
-
-  const animatedHeight = isFocused ? childrenHeight + contentHeight + 16 : childrenHeight;
 
   const requirements = [
     {
@@ -120,70 +125,69 @@ export default function PasswordStrength({
   };
 
   return (
-    <div className={`${isFocused? '-mx-2 transform -translate-y-2' : '-mx-0'} transition-all transition-marginX duration-300 ease-in-out-quint relative before:absolute before:top-0 before:left-0 before:w-full before:h-full before:pointer-events-none z-50`} style={{ height: childrenHeight }}>
-      <motion.div
-        className="relative top-0 left-0 w-full overflow-hidden"
-        initial={{ height: childrenHeight }}
-        animate={{ height: isFocused ? animatedHeight : childrenHeight }}
-        transition={{ duration: 0.3, ease: [0.83, 0, 0.17, 1] }}
-      >
-        <Card className={`rounded-2xl absolute top-0 left-0 w-full h-full transition-z ${isFocused ? 'z-50' : 'z-0'}`}>
-          <div className="relative w-full h-full bg-white bg-opacity-[2%]">
-            <div className={`${isFocused ? 'p-2' : 'p-0'} transition-[padding] duration-300 ease-in-out-quint`}>
-              <div className={`z-10`} ref={childrenRef}>
-                {children}
-              </div>
-            </div>
-            <div className={`${isFocused ? 'mx-0' : '-mx-2'} transition-[margin] duration-300 ease-in-out-quint`}>
-              <AnimatePresence mode="wait" initial={false}>
-                {isFocused && (
-                  <motion.div
-                    key="passwordStrengthCard"
-                    ref={contentRef}
-                    initial={slideTransition.reflect.enterFrom}
-                    animate={slideTransition.reflect.enterTo}
-                    exit={slideTransition.reflect.leaveTo}
-                    transition={slideTransition.reflect.enterActive.transition}
-                    className="w-full left-0 top-[100%]"
-                  >
-                    <div className="p-2">
-                      <div className="progress h-2 w-full rounded-full bg-white/10">
-                        <div
-                          className={`h-full rounded-full transition-all duration-300 ease-in-out-quint ${
-                            passwordStrength === 0
-                              ? 'bg-red-700'
-                              : passwordStrength === 1
-                                ? 'bg-red-500'
-                                : passwordStrength === 2
-                                  ? 'bg-orange-500'
-                                  : passwordStrength === 3
-                                    ? 'bg-yellow-500'
-                                    : passwordStrength === 4
-                                      ? 'bg-green-500'
-                                      : 'bg-green-700'
-                          }`}
-                        style={{ width: `${(passwordStrength / 5) * 100}%` }}
-                        ></div>
-                      </div>
-                    </div>
-                    <Divider />
-                    <div className="flex flex-row items-center justify-between p-2">
-                      <p className={`text-sm ${getTextColor()} truncate max-w-[80%]`}>
-                        {getMissingRequirementsText()}
-                      </p>
-                      {!hideCharacterCount && (
-                        <p className="text-xs text-neutral-400">
-                          {password.length} / 8
-                        </p>
-                      )}
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          </div>
-        </Card>
-      </motion.div>
+    <div className="relative">
+      <div>{children}</div>
+      <div className="absolute z-50 mt-1 w-full">
+        <AnimatePresence mode="popLayout" initial={false}>
+          <motion.div
+            key={isFocused ? 'focused' : 'blurred'}
+            initial={slideFromBottomReflect.enterFrom}
+            animate={slideFromBottomReflect.enterTo}
+            exit={slideFromBottomReflect.leaveTo}
+            transition={slideFromBottomReflect.enterActive.transition}
+          >
+            {isFocused && (
+              <Card radius="md">
+                <CardBody className="bg-white/5">
+                  <div className="progress h-2 w-full rounded-full bg-white/10">
+                    <div
+                      className={`h-full rounded-full transition-all duration-300 ease-in-out-quint ${
+                        passwordStrength === 0
+                          ? 'bg-red-700'
+                          : passwordStrength === 1
+                            ? 'bg-red-500'
+                            : passwordStrength === 2
+                              ? 'bg-orange-500'
+                              : passwordStrength === 3
+                                ? 'bg-yellow-500'
+                                : passwordStrength === 4
+                                  ? 'bg-green-500'
+                                  : 'bg-green-700'
+                      }`}
+                      style={{ width: `${(passwordStrength / 5) * 100}%` }}
+                    ></div>
+                  </div>
+                </CardBody>
+                <Divider />
+                <CardBody className="overflow-hidden bg-white/5">
+                  <div className="flex flex-row items-center justify-between">
+                    <p
+                      className={`text-sm ${getTextColor()} truncate ${password.length > 8 || !hideCharacterCount ? 'max-w-[80%]' : 'max-w-[100%]'}`}
+                    >
+                      {getMissingRequirementsText()}
+                    </p>
+                    <AnimatePresence mode="popLayout" initial={false}>
+                      <motion.div
+                        key={password.length > 7 ? 'hidden' : 'visible'}
+                        initial={slideFromLeftReflect.enterFrom}
+                        animate={slideFromLeftReflect.enterTo}
+                        exit={slideFromLeftReflect.leaveTo}
+                        transition={slideFromLeftReflect.enterActive.transition}
+                      >
+                        {!hideCharacterCount && password.length < 8 && (
+                          <p className="whitespace-nowrap text-xs text-neutral-400">
+                            {password.length} / 8
+                          </p>
+                        )}
+                      </motion.div>
+                    </AnimatePresence>
+                  </div>
+                </CardBody>
+              </Card>
+            )}
+          </motion.div>
+        </AnimatePresence>
+      </div>
     </div>
   );
 }
