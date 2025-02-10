@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import MaterialSymbol from '@/app/components/common/materialSymbol';
 import '@testing-library/jest-dom';
+import { expect, describe, it } from 'vitest';
 
 describe('MaterialSymbol', () => {
   it('renders with default props', () => {
@@ -46,11 +47,11 @@ describe('MaterialSymbol', () => {
   });
 
   it('applies custom grade', () => {
-    render(<MaterialSymbol symbol="home" grade={100} />);
+    render(<MaterialSymbol symbol="home" grade={200} />);
     const icon = screen.getByText('home');
     const style = window.getComputedStyle(icon);
     expect(style.getPropertyValue('font-variation-settings')).toContain(
-      "'GRAD' 100",
+      "'GRAD' 200",
     );
   });
 
