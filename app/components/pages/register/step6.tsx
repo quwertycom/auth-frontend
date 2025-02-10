@@ -32,64 +32,64 @@ export default function RegisterStep6() {
         </p>
       </div>
       <div className="flex w-full flex-col items-stretch justify-center gap-4">
-        <PasswordStrength
-          isFocused={isFocused}
-          password={formData.password}
+        <div
+          className={`${
+            errors.find((error) => error.input === 'password') ? 'mb-0' : 'mb-6'
+          }`}
         >
-          <Input
-            label="Password"
-            variant="bordered"
-            type={showPassword ? 'text' : 'password'}
-            className={`${
-              errors.find((error) => error.input === 'password')
-                ? 'mb-0'
-                : 'mb-6'
-            }`}
-            classNames={{ input: 'text-md' }}
-            value={formData.password}
-            onChange={(e) => {
-              dispatch(
-                updateFormData({
-                  password: e.target.value,
-                }),
-              );
-            }}
-            isRequired
-            isInvalid={
-              errors.find((error) => error.input === 'password') ? true : false
-            }
-            errorMessage={
-              errors.find((error) => error.input === 'password')?.message
-            }
-            ref={passwordInputRef}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
-            endContent={
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="focus:outline-none"
-              >
-                <MaterialSymbol
-                  symbol={showPassword ? 'visibility_off' : 'visibility'}
-                  size={20}
-                  className="text-neutral-500"
-                />
-              </button>
-            }
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                e.preventDefault();
-                document
-                  .querySelector<HTMLInputElement>(
-                    'input[name="confirmPassword"]',
-                  )
-                  ?.focus();
+          <PasswordStrength isFocused={isFocused} password={formData.password}>
+            <Input
+              label="Password"
+              variant="bordered"
+              type={showPassword ? 'text' : 'password'}
+              classNames={{ input: 'text-md' }}
+              value={formData.password}
+              onChange={(e) => {
+                dispatch(
+                  updateFormData({
+                    password: e.target.value,
+                  }),
+                );
+              }}
+              isRequired
+              isInvalid={
+                errors.find((error) => error.input === 'password')
+                  ? true
+                  : false
               }
-            }}
-            name="password"
-          />
-        </PasswordStrength>
+              errorMessage={
+                errors.find((error) => error.input === 'password')?.message
+              }
+              ref={passwordInputRef}
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
+              endContent={
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="focus:outline-none"
+                >
+                  <MaterialSymbol
+                    symbol={showPassword ? 'visibility_off' : 'visibility'}
+                    size={20}
+                    className="text-neutral-500"
+                  />
+                </button>
+              }
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  document
+                    .querySelector<HTMLInputElement>(
+                      'input[name="confirmPassword"]',
+                    )
+                    ?.focus();
+                }
+              }}
+              name="password"
+            />
+          </PasswordStrength>
+        </div>
 
         <Input
           label="Confirm password"
