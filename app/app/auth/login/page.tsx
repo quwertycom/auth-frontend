@@ -8,13 +8,12 @@ import {
   Input,
   Button,
   Divider,
-  Link,
   Spinner,
 } from '@heroui/react';
 import { useState, useRef } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import { useNavigateWithAnimation } from '@/app/utils/NavigateWithAnimation';
-import TransitionLink from '@/app/components/transitionLink';
+import TransitionLink from '@/app/components/common/transitionLink';
 export default function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -121,7 +120,9 @@ export default function LoginPage() {
               }}
               onChange={(e) => setPassword(e.target.value)}
             />
-            <Link href="/app/auth/forgot-password">Forgot Password?</Link>
+            <TransitionLink href="/app/auth/forgot-password">
+              Forgot Password?
+            </TransitionLink>
           </CardBody>
           <CardBody>
             <div className="relative flex w-full items-center justify-center">

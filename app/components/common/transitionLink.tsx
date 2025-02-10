@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useNavigateWithAnimation } from '../utils/NavigateWithAnimation';
+import { useNavigateWithAnimation } from '../../utils/NavigateWithAnimation';
 
 interface TransitionLinkProps
   extends React.AnchorHTMLAttributes<HTMLAnchorElement> {

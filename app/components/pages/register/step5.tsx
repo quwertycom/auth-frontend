@@ -33,7 +33,7 @@ export default function RegisterStep5(props: {
       <div className="flex flex-col items-stretch justify-center gap-4">
         <DatePicker
           label="Date of birth"
-          variant="bordered"
+          variant="flat"
           showMonthAndYearPickers
           className={`${errors.find((error) => error.input === 'dateOfBirth') ? 'mb-0' : 'mb-6'}`}
           classNames={{ input: 'text-md' }}
@@ -71,7 +71,7 @@ export default function RegisterStep5(props: {
         <Select
           label="Gender"
           className={`${errors.find((error) => error.input === 'gender') ? 'mb-0' : 'mb-6'}`}
-          variant="bordered"
+          variant="flat"
           selectedKeys={[formData.gender]}
           onSelectionChange={(keys) =>
             dispatch(

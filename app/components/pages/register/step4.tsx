@@ -2,7 +2,7 @@ import { updateFormData } from '@/app/store/features/registerSlice';
 import { Input } from '@heroui/react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/app/store/store';
-import MaterialSymbol from '@/app/components/materialSymbol';
+import MaterialSymbol from '@/app/components/common/materialSymbol';
 import { useRef, useEffect } from 'react';
 
 export default function Step4() {
@@ -29,7 +29,7 @@ export default function Step4() {
       <div className="flex flex-col items-stretch justify-center gap-4">
         <Input
           label="Username"
-          variant="bordered"
+          variant="flat"
           className={`${errors.find((error) => error.input === 'username') ? 'mb-0' : 'mb-6'}`}
           classNames={{ input: 'text-md' }}
           value={formData.username}

@@ -1,50 +1,46 @@
-import { Input } from '@heroui/react';
-import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/app/store/store';
+import { useSelector, useDispatch } from 'react-redux';
 import { updateFormData } from '@/app/store/features/registerSlice';
-import { useRef, useEffect } from 'react';
+import { Input } from '@heroui/react';
+import { useEffect, useRef } from 'react';
 
-export default function Step2() {
+export default function Step1() {
   const dispatch = useDispatch();
   const formData = useSelector((state: RootState) => state.register.formData);
   const errors = useSelector((state: RootState) => state.register.errors);
 
-  const emailInputRef = useRef<HTMLInputElement>(null);
-  const phoneInputRef = useRef<HTMLInputElement>(null);
+  const firstNameInputRef = useRef<HTMLInputElement>(null);
+  const lastNameInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    emailInputRef.current?.focus();
+    firstNameInputRef.current?.focus();
   }, []);
 
   return (
-    <div className="flex h-full w-full flex-col items-stretch justify-evenly gap-6">
+    <div className="flex h-full w-full flex-col items-stretch justify-around gap-6">
       <div className="flex flex-col items-center justify-center gap-2">
         <h2 className="text-2xl font-bold text-foreground">
-          Contact Information
+          Personal Information
         </h2>
         <p className="text-sm text-neutral-500">
-          Tell us how we can contact you
+          Tell us how we should address you
         </p>
       </div>
       <div className="flex flex-col items-stretch justify-center gap-4">
         <Input
-          label="Email"
-          variant="bordered"
-          className={`${errors.find((error) => error.input === 'email') ? 'mb-0' : 'mb-6'}`}
+          label="First name"
+          variant="flat"
+          className={`${errors.find((error) => error.input === 'firstName') ? 'mb-0' : 'mb-6'}`}
           classNames={{ input: 'text-md' }}
-          value={formData.email}
+          value={formData.firstName}
           onChange={(e) => {
-            dispatch(
-              updateFormData({
-                email: e.target.value,
-              }),
-            );
+            dispatch(updateFormData({ firstName: e.target.value }));
           }}
           isRequired
           isInvalid={
             errors.find(
               (error: { input: string; message: string }) =>
-                error.input === 'email',
+                error.input === 'firstName',
             )
               ? true
               : false
@@ -52,35 +48,32 @@ export default function Step2() {
           errorMessage={
             errors.find(
               (error: { input: string; message: string }) =>
-                error.input === 'email',
+                error.input === 'firstName',
             )?.message
           }
-          ref={emailInputRef}
+          ref={firstNameInputRef}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
               e.preventDefault();
-              phoneInputRef.current?.focus();
+              lastNameInputRef.current?.focus();
             }
           }}
-          name="email"
+          name="firstName"
         />
         <Input
-          label="Phone number"
-          variant="bordered"
-          className={`${errors.find((error) => error.input === 'phone') ? 'mb-0' : 'mb-6'}`}
+          label="Last name"
+          variant="flat"
+          className={`${errors.find((error) => error.input === 'lastName') ? 'mb-0' : 'mb-6'}`}
           classNames={{ input: 'text-md' }}
-          value={formData.phone}
+          value={formData.lastName}
           onChange={(e) => {
-            dispatch(
-              updateFormData({
-                phone: e.target.value,
-              }),
-            );
+            dispatch(updateFormData({ lastName: e.target.value }));
           }}
+          isRequired
           isInvalid={
             errors.find(
               (error: { input: string; message: string }) =>
-                error.input === 'phone',
+                error.input === 'lastName',
             )
               ? true
               : false
@@ -88,17 +81,17 @@ export default function Step2() {
           errorMessage={
             errors.find(
               (error: { input: string; message: string }) =>
-                error.input === 'phone',
+                error.input === 'lastName',
             )?.message
           }
-          ref={phoneInputRef}
+          ref={lastNameInputRef}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
               e.preventDefault();
               document.getElementById('next-step-button')?.click();
             }
           }}
-          name="phone"
+          name="lastName"
         />
       </div>
     </div>

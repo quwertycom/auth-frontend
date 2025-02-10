@@ -223,6 +223,67 @@ export const centerPopTransition = (
   reflect: centerPopReflect(duration, easing),
 });
 
+// --- Center Pop Emphasis ------------------------------------
+
+export const centerPopEmphasis = (
+  duration = 750,
+  easing: EasingOption = 'cubic',
+): Transition => ({
+  enterFrom: {
+    opacity: 0,
+    transform: 'scale(0.75)',
+    filter: 'blur(2px)',
+  },
+  enterTo: {
+    transform: 'scale(1)',
+    opacity: 1,
+    filter: 'blur(0)',
+  },
+  enterActive: {
+    transition: {
+      type: 'tween',
+      ease: getEasing(easing, 'out'),
+      duration: duration / 2000,
+    },
+  },
+  leaveFrom: {
+    transform: 'scale(1)',
+    opacity: 1,
+    filter: 'blur(0)',
+  },
+  leaveTo: {
+    opacity: 0,
+    transform: 'scale(1.25)',
+    filter: 'blur(2px)',
+  },
+  leaveActive: {
+    transition: {
+      type: 'tween',
+      ease: getEasing(easing, 'in'),
+      duration: duration / 2000,
+    },
+  },
+});
+
+export const centerPopEmphasisReverse = (
+  duration = 750,
+  easing: EasingOption = 'cubic',
+): Transition => reverseTransition(centerPopEmphasis(duration, easing));
+
+export const centerPopEmphasisReflect = (
+  duration = 750,
+  easing: EasingOption = 'cubic',
+): Transition => reflectTransition(centerPopEmphasis(duration, easing));
+
+export const centerPopEmphasisTransition = (
+  duration = 750,
+  easing: EasingOption = 'cubic',
+): TransitionBundle => ({
+  normal: centerPopEmphasis(duration, easing),
+  reverse: centerPopEmphasisReverse(duration, easing),
+  reflect: centerPopEmphasisReflect(duration, easing),
+});
+
 // --- Center Pop Down ------------------------------------
 
 export const centerPopDown = (

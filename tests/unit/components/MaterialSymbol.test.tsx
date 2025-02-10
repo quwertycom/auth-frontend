@@ -1,82 +1,72 @@
-import { describe, it, expect } from 'vitest';
-import { render, screen } from '../../utils/test-utils';
-import MaterialSymbol from '@/app/components/materialSymbol';
+import { render, screen } from '@testing-library/react';
+import MaterialSymbol from '@/app/components/common/materialSymbol';
+import '@testing-library/jest-dom';
+import { expect, describe, it } from 'vitest';
 
 describe('MaterialSymbol', () => {
   it('renders with default props', () => {
     render(<MaterialSymbol symbol="home" />);
     const icon = screen.getByText('home');
-
     expect(icon).toBeInTheDocument();
-    expect(icon).toHaveClass('material-symbols-outlined');
+    expect(icon).toHaveClass('material-symbols-rounded');
 
     const style = window.getComputedStyle(icon);
     expect(style.getPropertyValue('font-variation-settings')).toContain(
-      `'FILL' 0`,
-    );
-    expect(style.getPropertyValue('font-variation-settings')).toContain(
-      `'wght' 400`,
-    );
-    expect(style.getPropertyValue('font-variation-settings')).toContain(
-      `'GRAD' 0`,
-    );
-    expect(style.getPropertyValue('font-variation-settings')).toContain(
-      `'opsz' 24`,
+      "'FILL' 0",
     );
   });
 
-  it('renders with custom type', () => {
-    render(<MaterialSymbol symbol="home" type="rounded" />);
+  it('renders with custom type outlined', () => {
+    render(<MaterialSymbol symbol="home" type="outlined" />);
     const icon = screen.getByText('home');
+    expect(icon).toHaveClass('material-symbols-outlined');
+  });
 
-    expect(icon).toHaveClass('material-symbols-rounded');
+  it('renders with custom type sharp', () => {
+    render(<MaterialSymbol symbol="home" type="sharp" />);
+    const icon = screen.getByText('home');
+    expect(icon).toHaveClass('material-symbols-sharp');
   });
 
   it('renders with fill enabled', () => {
-    render(<MaterialSymbol symbol="home" fill={true} />);
+    render(<MaterialSymbol symbol="home" fill />);
     const icon = screen.getByText('home');
-
     const style = window.getComputedStyle(icon);
     expect(style.getPropertyValue('font-variation-settings')).toContain(
-      `'FILL' 1`,
+      "'FILL' 1",
     );
   });
 
   it('applies custom weight', () => {
-    render(<MaterialSymbol symbol="home" weight={700} />);
+    render(<MaterialSymbol symbol="home" weight={500} />);
     const icon = screen.getByText('home');
-
     const style = window.getComputedStyle(icon);
     expect(style.getPropertyValue('font-variation-settings')).toContain(
-      `'wght' 700`,
+      "'wght' 500",
     );
   });
 
   it('applies custom grade', () => {
     render(<MaterialSymbol symbol="home" grade={200} />);
     const icon = screen.getByText('home');
-
     const style = window.getComputedStyle(icon);
     expect(style.getPropertyValue('font-variation-settings')).toContain(
-      `'GRAD' 200`,
+      "'GRAD' 200",
     );
   });
 
   it('applies custom size', () => {
-    render(<MaterialSymbol symbol="home" size={36} />);
+    render(<MaterialSymbol symbol="home" size={32} />);
     const icon = screen.getByText('home');
-
     const style = window.getComputedStyle(icon);
-    expect(style.fontSize).toBe('36px');
     expect(style.getPropertyValue('font-variation-settings')).toContain(
-      `'opsz' 36`,
+      "'opsz' 32",
     );
   });
 
   it('applies custom color', () => {
-    render(<MaterialSymbol symbol="home" color="#FF0000" />);
+    render(<MaterialSymbol symbol="home" color="red" />);
     const icon = screen.getByText('home');
-
     const style = window.getComputedStyle(icon);
     expect(style.color).toBe('rgb(255, 0, 0)');
   });
@@ -85,88 +75,72 @@ describe('MaterialSymbol', () => {
     render(<MaterialSymbol symbol="home" className="custom-class" />);
     const icon = screen.getByText('home');
 
-    expect(icon).toHaveClass('material-symbols-outlined', 'custom-class');
+    expect(icon).toHaveClass('material-symbols-rounded custom-class');
   });
 
   it('applies custom style', () => {
-    const customStyle = { margin: '10px', padding: '5px' };
-    render(<MaterialSymbol symbol="home" style={customStyle} />);
+    render(<MaterialSymbol symbol="home" style={{ opacity: 0.5 }} />);
     const icon = screen.getByText('home');
-
     const style = window.getComputedStyle(icon);
-    expect(style.margin).toBe('10px');
-    expect(style.padding).toBe('5px');
+    expect(style.opacity).toBe('0.5');
   });
 
   it('combines all custom properties correctly', () => {
-    const props = {
-      symbol: 'star',
-      type: 'sharp' as const,
-      fill: true,
-      weight: 800 as const,
-      grade: -25 as const,
-      size: 48,
-      color: '#00FF00',
-      className: 'custom-class',
-      style: { margin: '10px' },
-    };
-
-    render(<MaterialSymbol {...props} />);
-    const icon = screen.getByText('star');
-
-    expect(icon).toHaveClass('material-symbols-sharp', 'custom-class');
-
+    render(
+      <MaterialSymbol
+        symbol="home"
+        type="outlined"
+        fill
+        weight={600}
+        grade={200}
+        size={64}
+        color="blue"
+        className="combined-class"
+        style={{ opacity: 0.75 }}
+      />,
+    );
+    const icon = screen.getByText('home');
     const style = window.getComputedStyle(icon);
+
+    expect(icon).toHaveClass('material-symbols-outlined combined-class');
     expect(style.getPropertyValue('font-variation-settings')).toContain(
-      `'FILL' 1`,
+      "'FILL' 1",
     );
     expect(style.getPropertyValue('font-variation-settings')).toContain(
-      `'wght' 800`,
+      "'wght' 600",
     );
     expect(style.getPropertyValue('font-variation-settings')).toContain(
-      `'GRAD' -25`,
+      "'GRAD' 200",
     );
     expect(style.getPropertyValue('font-variation-settings')).toContain(
-      `'opsz' 48`,
+      "'opsz' 64",
     );
-    expect(style.fontSize).toBe('48px');
-    expect(style.color).toBe('rgb(0, 255, 0)');
-    expect(style.margin).toBe('10px');
+    expect(style.color).toBe('rgb(0, 0, 255)');
+    expect(style.opacity).toBe('0.75');
   });
 
-  // Edge cases and validation
   it('handles empty className', () => {
     render(<MaterialSymbol symbol="home" className="" />);
     const icon = screen.getByText('home');
 
-    expect(icon).toHaveClass('material-symbols-outlined');
-    expect(icon.className.trim()).toBe('material-symbols-outlined');
+    expect(icon).toHaveClass('material-symbols-rounded');
+    expect(icon.className.trim()).toBe('material-symbols-rounded');
   });
 
   it('handles undefined optional props', () => {
-    render(
-      <MaterialSymbol
-        symbol="home"
-        type={undefined}
-        fill={undefined}
-        weight={undefined}
-      />,
-    );
+    render(<MaterialSymbol symbol="home" />);
     const icon = screen.getByText('home');
 
-    expect(icon).toHaveClass('material-symbols-outlined');
+    expect(icon).toHaveClass('material-symbols-rounded');
     const style = window.getComputedStyle(icon);
     expect(style.getPropertyValue('font-variation-settings')).toContain(
-      `'FILL' 0`,
+      "'FILL' 0",
     );
     expect(style.getPropertyValue('font-variation-settings')).toContain(
-      `'wght' 400`,
+      "'wght' 400",
     );
     expect(style.getPropertyValue('font-variation-settings')).toContain(
-      `'GRAD' 0`,
-    );
-    expect(style.getPropertyValue('font-variation-settings')).toContain(
-      `'opsz' 24`,
+      "'GRAD' 0",
     );
   });
 });

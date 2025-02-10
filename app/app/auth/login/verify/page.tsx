@@ -10,7 +10,7 @@ import {
   CardFooter,
   Link,
 } from '@heroui/react';
-import MaterialSymbol from '@/app/components/materialSymbol';
+import MaterialSymbol from '@/app/components/common/materialSymbol';
 
 export default function VerifyPage() {
   return (

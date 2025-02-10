@@ -14,7 +14,7 @@ interface MaterialSymbolProps {
 
 export default function MaterialSymbol({
   symbol,
-  type = 'outlined',
+  type = 'rounded',
   fill = false,
   weight,
   grade,

@@ -1,5 +1,5 @@
 import { Button, Card, CardBody } from '@heroui/react';
-import MaterialSymbol from '../materialSymbol';
+import MaterialSymbol from '../../common/materialSymbol';
 
 export default function RegisterStep7() {
   return (
