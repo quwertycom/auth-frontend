@@ -29,7 +29,7 @@ export default function Step2() {
       <div className="flex flex-col items-stretch justify-center gap-4">
         <Input
           label="Email"
-          variant="bordered"
+          variant="flat"
           className={`${errors.find((error) => error.input === 'email') ? 'mb-0' : 'mb-6'}`}
           classNames={{ input: 'text-md' }}
           value={formData.email}
@@ -66,7 +66,7 @@ export default function Step2() {
         />
         <Input
           label="Phone number"
-          variant="bordered"
+          variant="flat"
           className={`${errors.find((error) => error.input === 'phone') ? 'mb-0' : 'mb-6'}`}
           classNames={{ input: 'text-md' }}
           value={formData.phone}

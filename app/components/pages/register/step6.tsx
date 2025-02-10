@@ -40,7 +40,7 @@ export default function RegisterStep6() {
           <PasswordStrength isFocused={isFocused} password={formData.password}>
             <Input
               label="Password"
-              variant="bordered"
+              variant="flat"
               type={showPassword ? 'text' : 'password'}
               classNames={{ input: 'text-md' }}
               value={formData.password}
@@ -93,7 +93,7 @@ export default function RegisterStep6() {
 
         <Input
           label="Confirm password"
-          variant="bordered"
+          variant="flat"
           type={showConfirmPassword ? 'text' : 'password'}
           className={`${confirmPasswordError ? 'mb-0' : 'mb-6'}`}
           classNames={{ input: 'text-md' }}
