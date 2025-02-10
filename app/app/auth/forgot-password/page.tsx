@@ -24,7 +24,7 @@ export default function ForgotPassword() {
 
   const [status, setStatus] = useState<
     'idle' | 'loading' | 'success' | 'error'
-  >('error');
+  >('idle');
   const nodeRef = useRef(null);
 
   const handleSubmit = () => {
